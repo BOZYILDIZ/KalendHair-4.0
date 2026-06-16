@@ -1,0 +1,22 @@
+# Dépendances & build
+node_modules
+.next
+out
+build
+coverage
+
+# Lockfiles & artefacts
+pnpm-lock.yaml
+next-env.d.ts
+*.tsbuildinfo
+
+# Assets
+public
+
+# Prisma (client généré)
+src/generated
+prisma/migrations
+
+# Documentation gérée manuellement (Markdown non reformaté par Prettier)
+*.md
+docs
