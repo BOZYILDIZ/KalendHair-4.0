@@ -6,51 +6,41 @@
 
 ## Phase actuelle
 
-**Phase 0 — Fondations documentaires.**
+**Phase 0 terminée** ✅ → démarrage de la **Phase 1 / Sprint 1 (bootstrap technique)**.
 
 ## État du code
 
 - **Aucun code métier développé.**
-- Aucune initialisation technique (pas de Next.js, Prisma, Tailwind installés).
-- Seuls les documents fondateurs existent.
+- Aucune initialisation technique encore réalisée (Next.js / Prisma / Tailwind à venir en Sprint 1).
+- Les fondations **documentaires** sont mergées dans `main`.
+
+## Git / Release
+
+- PR **#1** mergée dans `main` (merge commit `f0fe828`).
+- Branche `docs/phase-0-foundations` **supprimée** (locale + distante).
+- Branche par défaut du repo = **`main`**.
+- Tag **`v0.1.0-foundations`** créé sur `main` (fondations Phase 0).
+- Nouvelle branche de travail : **`feature/bootstrap-nextjs`** (Sprint 1).
 
 ## Objectif actuel
 
-Créer et stabiliser les **fondations documentaires et organisationnelles** du projet.
+Préparer le **Sprint 1 — bootstrap technique** : Next.js, TypeScript, Tailwind,
+Prisma, PostgreSQL, ESLint, Prettier, structure modulaire.
 
-## Documents créés
+> ⛔ **Aucune fonctionnalité métier.** Un **plan détaillé du Sprint 1 doit être validé
+> AVANT toute installation.**
 
-- `CLAUDE.md`
-- `docs/VISION.md`
-- `docs/MVP.md`
-- `docs/ROADMAP.md`
-- `docs/ARCHITECTURE.md`
-- `docs/DATABASE.md`
-- `docs/DECISIONS.md`
-- `docs/PROJECT_STATE.md`
-- `docs/CURRENT_SPRINT.md`
-- `docs/SESSION_LOG.md`
-- `docs/INTEGRATIONS.md`
-- `docs/WORKFLOW.md`
+## Documents fondateurs (dans `main`)
 
-## Règle Git officielle
-
-La procédure de fin de tâche (mise à jour docs → vérifications → commit → push →
-affichage → pas de merge auto sur `main`) est désormais inscrite dans `CLAUDE.md`
-et `docs/WORKFLOW.md`. Le travail se fait sur une **branche dédiée** ; le merge vers
-`main` n'intervient **qu'après validation**.
-
-**GitHub CLI (`gh`)** est l'outil privilégié pour créer/consulter les PR (jamais de
-merge automatique). La branche `main` existe désormais sur le remote (base de PR).
+`CLAUDE.md`, `docs/VISION.md`, `docs/MVP.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`,
+`docs/DATABASE.md`, `docs/DECISIONS.md`, `docs/PROJECT_STATE.md`, `docs/CURRENT_SPRINT.md`,
+`docs/SESSION_LOG.md`, `docs/INTEGRATIONS.md`, `docs/WORKFLOW.md`.
 
 ## Prochaine étape
 
-**Validation des documents par Hasan et ChatGPT.**
-
-## ⛔ Blocage volontaire
-
-> **Ne pas démarrer le code tant que la documentation n'est pas validée.**
+**Validation par Hasan / ChatGPT du plan détaillé du Sprint 1**, puis exécution de
+l'installation technique sur `feature/bootstrap-nextjs`.
 
 ---
 
-_Dernière mise à jour : 2026-06-16 — ajout de la règle Git officielle (fin de tâche)._
+_Dernière mise à jour : 2026-06-17 — merge Phase 0, tag v0.1.0-foundations, ouverture du Sprint 1._
