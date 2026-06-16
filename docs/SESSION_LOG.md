@@ -32,3 +32,20 @@
 - **Code métier modifié** : **aucun**.
 - **Git** : travail effectué sur la branche dédiée `docs/phase-0-foundations`, commit + push.
 - **État de sortie** : en attente de **validation ChatGPT** avant merge vers `main`.
+
+---
+
+## 2026-06-17 — Session 3 : adoption de GitHub CLI + base `main`
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : 0 — Fondation documentaire.
+- **Actions** :
+  - Validation ChatGPT reçue pour `docs/phase-0-foundations`.
+  - Création de la branche `main` sur le remote (commit initial vide `36ab506`),
+    rebase de `docs/phase-0-foundations` dessus (contenu identique, base commune).
+  - Ajout de la règle **GitHub CLI (`gh`)** dans `CLAUDE.md` et `docs/WORKFLOW.md`
+    (créer/consulter les PR via `gh`, jamais de merge auto).
+- **Code métier modifié** : **aucun**.
+- **Git** : commit + push sur `docs/phase-0-foundations`.
+- **PR Phase 0** : en préparation (`gh` installé mais authentification à finaliser par Hasan).
+- **État de sortie** : PR à ouvrir, **aucun merge**. Attente review finale.

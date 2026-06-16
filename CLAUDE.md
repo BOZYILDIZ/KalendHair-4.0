@@ -78,6 +78,18 @@ Merge vers main
 > Le merge vers `main` n'est jamais fait par Claude automatiquement : il intervient
 > **uniquement après validation**. Voir `docs/WORKFLOW.md`.
 
+### Outil Git : GitHub CLI (`gh`)
+
+À partir de maintenant, **privilégier GitHub CLI (`gh`) lorsqu'il est disponible** :
+
+- Utiliser `gh` pour **créer** les Pull Requests (`gh pr create`).
+- Utiliser `gh` pour **récupérer les informations** des PR (`gh pr view`, `gh pr list`).
+- Utiliser `gh` pour **vérifier l'état des branches** (`gh pr status`, `gh repo view`).
+- Utiliser `gh` pour **afficher les URL** des PR (`gh pr view --web` / `--json url`).
+
+> Rappel : `gh` ne **merge jamais** automatiquement (`gh pr merge` n'est pas exécuté
+> sans validation explicite). On crée la PR, on récupère son URL, et on attend la review.
+
 ---
 
 ## ⛔ Interdictions absolues

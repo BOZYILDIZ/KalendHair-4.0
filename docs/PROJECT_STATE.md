@@ -40,6 +40,9 @@ affichage → pas de merge auto sur `main`) est désormais inscrite dans `CLAUDE
 et `docs/WORKFLOW.md`. Le travail se fait sur une **branche dédiée** ; le merge vers
 `main` n'intervient **qu'après validation**.
 
+**GitHub CLI (`gh`)** est l'outil privilégié pour créer/consulter les PR (jamais de
+merge automatique). La branche `main` existe désormais sur le remote (base de PR).
+
 ## Prochaine étape
 
 **Validation des documents par Hasan et ChatGPT.**

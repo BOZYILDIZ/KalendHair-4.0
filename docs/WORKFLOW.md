@@ -87,6 +87,23 @@ Merge vers main
 
 ---
 
+## 🛠️ Outil Git : GitHub CLI (`gh`)
+
+**Privilégier GitHub CLI (`gh`) lorsqu'il est disponible.** Commandes de référence :
+
+| Besoin | Commande |
+|---|---|
+| Créer une Pull Request | `gh pr create --base main --head <branche> --title "..." --body "..."` |
+| Voir les infos d'une PR | `gh pr view <numéro\|branche>` |
+| Lister les PR | `gh pr list` |
+| État des branches / PR | `gh pr status` |
+| Afficher l'URL d'une PR | `gh pr view --json url -q .url` (ou `--web` pour ouvrir) |
+
+> ⚠️ Ne **jamais** exécuter `gh pr merge` automatiquement. La PR est créée et son URL
+> est transmise pour review ; le merge vers `main` n'intervient qu'**après validation**.
+
+---
+
 ## Rappel des rituels Claude
 
 - **Début de session** : lire `PROJECT_STATE.md`, `CURRENT_SPRINT.md`, `DECISIONS.md`.
