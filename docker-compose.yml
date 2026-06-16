@@ -1,0 +1,19 @@
+# PostgreSQL local pour le développement KalendHair 4.0.
+# ⚠️ Base de DÉVELOPPEMENT uniquement — jamais de données de production.
+# Démarrage : docker compose up -d
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: kalendhair_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: kalendhair
+      POSTGRES_PASSWORD: kalendhair
+      POSTGRES_DB: kalendhair_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - kalendhair_pgdata:/var/lib/postgresql/data
+
+volumes:
+  kalendhair_pgdata:

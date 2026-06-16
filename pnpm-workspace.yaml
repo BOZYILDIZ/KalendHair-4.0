@@ -1,0 +1,7 @@
+# Build scripts autorisés à s'exécuter (pnpm v10+ bloque les scripts par défaut).
+allowBuilds:
+  "@prisma/client": true
+  "@prisma/engines": true
+  prisma: true
+  sharp: true
+  unrs-resolver: true

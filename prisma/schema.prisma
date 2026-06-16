@@ -1,0 +1,13 @@
+// Prisma schema — KalendHair 4.0
+// Sprint 1 : schéma MINIMAL (datasource + generator uniquement).
+// AUCUN modèle métier ici. La modélisation des entités (Organization, Salon, etc.)
+// interviendra en Phase 2 — voir docs/DATABASE.md.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}

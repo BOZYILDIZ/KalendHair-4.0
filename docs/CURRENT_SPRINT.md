@@ -6,25 +6,33 @@
 
 ## Sprint actuel
 
-**Phase 0 — Fondation documentaire.**
+**Sprint 1 — Bootstrap technique** (Phase 1 de la roadmap).
 
 ## Objectifs du sprint
 
-- [x] Créer les documents fondateurs (CLAUDE.md + docs/).
-- [ ] Stabiliser la vision produit.
-- [ ] Éviter toute confusion avec les anciens projets (kalendhair.fr / ancien KalendHair).
-- [ ] Préparer le futur développement (architecture, base de données, workflow).
+- [x] Initialiser Next.js + TypeScript (App Router, `src/`).
+- [x] Tailwind CSS v4.
+- [x] Prisma 6 + PostgreSQL (schéma minimal, base locale Docker).
+- [x] ESLint + Prettier.
+- [x] Structure modulaire vide (`src/features/*`, `src/lib/*`) conforme à l'architecture.
+- [x] Vérifications vertes : `typecheck`, `lint`, `format:check`, `build`, `prisma validate`.
 
 ## Hors périmètre de ce sprint
 
-- Toute initialisation technique (Next.js, Prisma, Tailwind…).
-- Tout code métier.
+- Tout code métier (modèles Prisma, auth, salons, RDV, etc.).
+- Stripe, connecteurs, IA, notifications.
 
 ## Condition de sortie du sprint
 
-> Validation des documents par **Hasan** et **ChatGPT**.
-> Tant que ce n'est pas validé, on ne démarre pas la Phase 1.
+> Validation du bootstrap par **Hasan** et **ChatGPT** (review de la PR).
+> Ensuite seulement : démarrage de la **Phase 2** (Auth + Organizations + Salons).
 
 ---
 
-_Dernière mise à jour : 2026-06-16._
+## Sprint précédent (clôturé)
+
+**Phase 0 — Fondation documentaire** ✅ — mergée dans `main`, tag `v0.1.0-foundations`.
+
+---
+
+_Dernière mise à jour : 2026-06-17._

@@ -66,3 +66,30 @@
 - **Code métier modifié** : **aucun**. **Aucune installation** lancée.
 - **État de sortie** : plan détaillé du **Sprint 1** présenté, **en attente de validation**
   avant toute installation technique.
+
+---
+
+## 2026-06-17 — Session 5 : Sprint 1 — bootstrap technique
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : 1 / Sprint 1.
+- **Actions** :
+  - Scaffold Next.js (stable **16.2.9**) via `create-next-app` (pnpm, TS, Tailwind v4,
+    App Router, `src/`, alias `@/*`).
+  - TypeScript durci (`strict`, `noUncheckedIndexedAccess`, `noImplicitOverride`).
+  - ESLint 9 + **Prettier** (+ `eslint-config-prettier`, `prettier-plugin-tailwindcss`).
+  - **Prisma 6.19.3** + `@prisma/client` ; `schema.prisma` minimal (datasource + generator,
+    **aucun modèle métier**) ; client Prisma singleton (`src/lib/db/prisma.ts`).
+  - PostgreSQL local via **Docker Compose** ; `.env` / `.env.example`.
+  - **Structure modulaire vide** : `src/features/*` (auth, organizations, salons, employees,
+    services, appointments, clients, calendar, integrations) et `src/lib/*` (db, auth,
+    permissions, validations).
+  - `.nvmrc` = **22**, `README.md`, scripts pnpm (typecheck, format, db:*).
+- **Ajustements appliqués** : Node 22 (pas 24) ; Next.js non forcé (version stable
+  proposée) ; Prisma maintenu en **v6** (pnpm avait installé v7 par défaut → rétrogradé).
+- **Note technique** : pnpm 11.5 bloque les build scripts par défaut → approbation via
+  `allowBuilds` dans `pnpm-workspace.yaml` (Prisma/sharp/unrs-resolver).
+- **Vérifications** : `typecheck` ✅ · `lint` ✅ · `format:check` ✅ · `build` ✅ · `prisma validate` ✅.
+- **Code métier** : **aucun**.
+- **État de sortie** : commit + push sur `feature/bootstrap-nextjs`, **PR vers `main`**
+  ouverte via `gh`, **aucun merge**. En attente de review.
