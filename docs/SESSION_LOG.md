@@ -93,3 +93,22 @@
 - **Code métier** : **aucun**.
 - **État de sortie** : commit + push sur `feature/bootstrap-nextjs`, **PR vers `main`**
   ouverte via `gh`, **aucun merge**. En attente de review.
+
+---
+
+## 2026-06-17 — Session 6 : merge Sprint 1 + tag v0.2.0-bootstrap
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : 1 (clôture du Sprint 1).
+- **Actions** :
+  - Correction pré-merge : suppression des SVG par défaut inutilisés de `public/`
+    (commit `674fcd0`) ; vérifs `typecheck` / `lint` / `build` ✅.
+  - PR **#2** validée par ChatGPT et **mergée** dans `main` (merge commit `cf7c936`).
+  - Branche `feature/bootstrap-nextjs` **supprimée** (locale + distante).
+  - Vérification : `main` contient bien le bootstrap technique.
+  - Tag annoté **`v0.2.0-bootstrap`** créé et poussé.
+  - Mise à jour de `PROJECT_STATE.md` / `SESSION_LOG.md` sur la branche de suivi
+    `docs/post-bootstrap-state` (PR dédiée, **pas de commit direct sur `main`**).
+- **Code métier** : **aucun**. **Sprint 2 non démarré.**
+- **État de sortie** : `main` à jour (fondations + bootstrap), tags `v0.1.0-foundations`
+  et `v0.2.0-bootstrap`. En attente de la suite (Sprint 2) après validation.
