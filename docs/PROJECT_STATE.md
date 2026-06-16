@@ -6,7 +6,8 @@
 
 ## Phase actuelle
 
-**Phase 1 / Sprint 1 — Bootstrap technique : RÉALISÉ** (en attente de validation).
+**Phase 1 / Sprint 1 — Bootstrap technique : TERMINÉ et mergé** ✅
+(Sprint 2 non démarré.)
 
 ## État du code
 
@@ -34,9 +35,11 @@
 
 ## Git / Release
 
-- `main` = fondations Phase 0 (tag `v0.1.0-foundations`).
-- Branche de travail : **`feature/bootstrap-nextjs`** (ce Sprint 1).
-- PR vers `main` à ouvrir via `gh` après ce commit. **Pas de merge auto.**
+- `main` contient les fondations (tag `v0.1.0-foundations`) **et** le bootstrap technique.
+- PR **#2** (`feature/bootstrap-nextjs`) **mergée** dans `main` (merge commit `cf7c936`).
+- Branche `feature/bootstrap-nextjs` **supprimée** (locale + distante).
+- Tag **`v0.2.0-bootstrap`** créé sur `main`.
+- Prochaine étape Git : démarrage du **Sprint 2** sur une branche dédiée (non commencé).
 
 ## Base de données
 
@@ -50,4 +53,4 @@ avec modélisation des entités Prisma (voir `docs/DATABASE.md`).
 
 ---
 
-_Dernière mise à jour : 2026-06-17 — Sprint 1 bootstrap technique réalisé, vérifications OK._
+_Dernière mise à jour : 2026-06-17 — PR #2 mergée dans main, tag v0.2.0-bootstrap. Sprint 2 non démarré._
