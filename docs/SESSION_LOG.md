@@ -96,6 +96,26 @@
 
 ---
 
+## 2026-06-17 — Session 8 : clôture Sprint 2 — merge PR #4 + tag v0.3.0-prisma-schema
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : 2 / Sprint 2 (clôture).
+- **Actions** :
+  - Corrections pré-merge (review ChatGPT, commit `e7c8b67`) :
+    Subscription 1:1, Client.email sans @unique, SalonSchedule/EmployeeSchedule sans @@unique,
+    NotificationType réduit (3 valeurs), IntegrationProvider aligné KalendHair (5 valeurs),
+    SubscriptionPlan réduit (FREE/STARTER/PRO), nettoyage index redondants.
+  - Vérifications post-correction : `prisma validate` ✅ · `prisma format` ✅ · `typecheck` ✅ · `lint` ✅ · `build` ✅.
+  - PR **#4** validée par ChatGPT et **mergée** dans `main` (merge commit `3ae299c`).
+  - Branche `feature/prisma-schema` **supprimée** (locale + distante).
+  - Vérification : `main` = 21 modèles + 13 enums confirmés.
+  - Tag annoté **`v0.3.0-prisma-schema`** créé et poussé.
+  - Mise à jour : `PROJECT_STATE.md`, `SESSION_LOG.md`, `CURRENT_SPRINT.md`.
+- **Code métier** : **aucun**. Pas d'auth, pas de pages, pas de services.
+- **État de sortie** : Sprint 2 **TERMINÉ**. `main` propre. En attente de Sprint 3.
+
+---
+
 ## 2026-06-17 — Session 7 : Sprint 2 — schéma Prisma complet
 
 - **Auteur** : Claude Code (exécutant technique).

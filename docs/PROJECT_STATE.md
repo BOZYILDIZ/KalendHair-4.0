@@ -8,8 +8,8 @@
 
 **Phase 1 / Sprint 1 — Bootstrap technique : TERMINÉ et mergé** ✅
 
-**Phase 2 / Sprint 2 — Schéma Prisma : EN COURS** 🔄
-(Branche `feature/prisma-schema`, PR ouverte, en attente de validation.)
+**Phase 2 / Sprint 2 — Schéma Prisma : TERMINÉ et mergé** ✅
+(Sprint 3 non démarré.)
 
 ## État du code
 
@@ -53,14 +53,16 @@
 
 ## Git / Release
 
-- `main` contient les fondations (tag `v0.1.0-foundations`) **et** le bootstrap technique (tag `v0.2.0-bootstrap`).
-- Branche active : **`feature/prisma-schema`** (Sprint 2, PR ouverte, aucun merge).
-- Prochaine étape : validation ChatGPT → merge → tag `v0.3.0-schema`.
+- `main` = seule branche active.
+- Tags : `v0.1.0-foundations` · `v0.2.0-bootstrap` · **`v0.3.0-prisma-schema`**.
+- PR **#4** (`feature/prisma-schema`) **mergée** dans `main` (merge commit `3ae299c`).
+- Branche `feature/prisma-schema` **supprimée** (locale + distante).
+- Prochaine étape Git : **Sprint 3** sur une branche dédiée (non commencé).
 
 ## Prochaine étape
 
-Validation ChatGPT de la PR `feature/prisma-schema`, puis **Sprint 3 — Authentification**.
+Validation Hasan / ChatGPT, puis **Sprint 3 — Authentification** (ProUser login, sessions, guards).
 
 ---
 
-_Dernière mise à jour : 2026-06-17 — Sprint 2 en cours, schéma Prisma complet, PR ouverte._
+_Dernière mise à jour : 2026-06-17 — PR #4 mergée, tag v0.3.0-prisma-schema. Sprint 2 terminé._

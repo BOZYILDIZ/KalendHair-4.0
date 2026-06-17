@@ -17,7 +17,7 @@
 - [x] `lint` ✅
 - [x] `build` ✅
 - [ ] `prisma migrate dev --name init` — **différé** (PostgreSQL local non disponible).
-- [ ] Validation ChatGPT + merge PR vers `main`.
+- [x] Validation ChatGPT + merge PR #4 vers `main`. Tag `v0.3.0-prisma-schema`.
 
 ## Arbitrages appliqués
 
@@ -49,8 +49,8 @@
 
 ## Condition de sortie du sprint
 
-> PR `feature/prisma-schema` validée par ChatGPT, puis mergée dans `main`.
-> Ensuite : **Sprint 3 — Authentification**.
+> ✅ PR `feature/prisma-schema` validée par ChatGPT, mergée dans `main`, tag `v0.3.0-prisma-schema`.
+> **Sprint 2 TERMINÉ.**
 
 ---
 
