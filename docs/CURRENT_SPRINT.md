@@ -6,32 +6,58 @@
 
 ## Sprint actuel
 
-**Sprint 1 — Bootstrap technique** (Phase 1 de la roadmap).
+**Sprint 2 — Schéma Prisma** (Phase 2 de la roadmap).
 
 ## Objectifs du sprint
 
-- [x] Initialiser Next.js + TypeScript (App Router, `src/`).
-- [x] Tailwind CSS v4.
-- [x] Prisma 6 + PostgreSQL (schéma minimal, base locale Docker).
-- [x] ESLint + Prettier.
-- [x] Structure modulaire vide (`src/features/*`, `src/lib/*`) conforme à l'architecture.
-- [x] Vérifications vertes : `typecheck`, `lint`, `format:check`, `build`, `prisma validate`.
+- [x] Écrire le schéma Prisma complet (21 modèles, 13 enums) avec relations, index et contraintes.
+- [x] `prisma validate` ✅
+- [x] `prisma format` ✅
+- [x] `typecheck` ✅
+- [x] `lint` ✅
+- [x] `build` ✅
+- [ ] `prisma migrate dev --name init` — **différé** (PostgreSQL local non disponible).
+- [ ] Validation ChatGPT + merge PR vers `main`.
+
+## Arbitrages appliqués
+
+| # | Décision |
+|---|---|
+| 1 | IDs : `cuid()` |
+| 2 | Argent : `Int` centimes + `currency` |
+| 3 | Horaires : `Int` minutes depuis minuit |
+| 4 | Client : global cross-tenant |
+| 5 | Invité : champs `guest*` sur `Appointment` |
+| 6 | RDV : 1 service par RDV (MVP) |
+| 7 | `organizationId` dénormalisé sur Appointment, Employee, AuditLog, IntegrationConnection, FeatureFlag |
+| 8 | `ProUser.passwordHash String?` présent, auth non codée |
+| 9 | Stripe : placeholders nullable |
+| 10 | `ProUser.email` unique global |
+| 11 | Soft-delete : `isActive Boolean` |
+| 12 | `onDelete` : Cascade (tenant), SetNull (audit/client opt.), Restrict (RDV dangereux) |
+| 13 | Dates : `startAt`/`endAt` UTC + `Salon.timezone` |
+| 14 | Index : `startAt`, pas `appointmentDate` séparé |
+| 15 | `@@map` en snake_case sur tous les modèles et enums |
 
 ## Hors périmètre de ce sprint
 
-- Tout code métier (modèles Prisma, auth, salons, RDV, etc.).
-- Stripe, connecteurs, IA, notifications.
+- Authentification (code, routes, sessions).
+- Pages UI et composants.
+- Services métier.
+- Migration DB (requiert PostgreSQL local).
+- Seed de données.
 
 ## Condition de sortie du sprint
 
-> Validation du bootstrap par **Hasan** et **ChatGPT** (review de la PR).
-> Ensuite seulement : démarrage de la **Phase 2** (Auth + Organizations + Salons).
+> PR `feature/prisma-schema` validée par ChatGPT, puis mergée dans `main`.
+> Ensuite : **Sprint 3 — Authentification**.
 
 ---
 
-## Sprint précédent (clôturé)
+## Sprint précédents (clôturés)
 
-**Phase 0 — Fondation documentaire** ✅ — mergée dans `main`, tag `v0.1.0-foundations`.
+- **Phase 0 — Fondation documentaire** ✅ — tag `v0.1.0-foundations`.
+- **Sprint 1 — Bootstrap technique** ✅ — tag `v0.2.0-bootstrap`.
 
 ---
 

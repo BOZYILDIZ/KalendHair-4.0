@@ -96,6 +96,26 @@
 
 ---
 
+## 2026-06-17 — Session 7 : Sprint 2 — schéma Prisma complet
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : 2 / Sprint 2.
+- **Branche** : `feature/prisma-schema`.
+- **Actions** :
+  - Écriture de `prisma/schema.prisma` : **21 modèles**, **13 enums**, relations, index, `@@map` snake_case.
+  - Arbitrages intégrés : cuid(), centimes Int, minutes Int, Client cross-tenant, guest* Appointment,
+    1 service/RDV, organizationId dénormalisé, passwordHash nullable, Stripe nullable, isActive,
+    onDelete cohérents, startAt/endAt UTC, index startAt.
+  - `EmployeeSchedule` inclus (horaires par employé par jour).
+  - `prisma validate` ✅ · `prisma format` ✅ · `typecheck` ✅ · `lint` ✅ · `build` ✅
+  - Migration **non lancée** (PostgreSQL local non disponible) — différée au prochain sprint.
+  - Mise à jour : `PROJECT_STATE.md`, `SESSION_LOG.md`, `CURRENT_SPRINT.md`.
+- **Code métier** : **aucun**. Pas d'auth, pas de pages, pas de services.
+- **État de sortie** : commit + push sur `feature/prisma-schema`, PR vers `main` ouverte via `gh`.
+  **Aucun merge.** En attente de review ChatGPT.
+
+---
+
 ## 2026-06-17 — Session 6 : merge Sprint 1 + tag v0.2.0-bootstrap
 
 - **Auteur** : Claude Code (exécutant technique).
