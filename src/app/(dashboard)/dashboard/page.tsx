@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { requireSession } from "@/lib/auth/session";
 import { getOrganization } from "@/features/organizations/organization.service";
 import { getSalon } from "@/features/salons/salon.service";
@@ -20,20 +21,34 @@ export default async function DashboardPage() {
       </div>
 
       <nav className="space-y-2">
-        <a
+        <Link
           href="/dashboard/organization"
           className="flex items-center justify-between rounded border px-4 py-3 text-sm hover:bg-gray-50"
         >
           <span className="font-medium">Mon Organisation</span>
           <span className="text-gray-400">→</span>
-        </a>
-        <a
+        </Link>
+        <Link
           href="/dashboard/salon"
           className="flex items-center justify-between rounded border px-4 py-3 text-sm hover:bg-gray-50"
         >
           <span className="font-medium">Mon Salon</span>
           <span className="text-gray-400">→</span>
-        </a>
+        </Link>
+        <Link
+          href="/dashboard/employees"
+          className="flex items-center justify-between rounded border px-4 py-3 text-sm hover:bg-gray-50"
+        >
+          <span className="font-medium">Employés</span>
+          <span className="text-gray-400">→</span>
+        </Link>
+        <Link
+          href="/dashboard/services"
+          className="flex items-center justify-between rounded border px-4 py-3 text-sm hover:bg-gray-50"
+        >
+          <span className="font-medium">Services</span>
+          <span className="text-gray-400">→</span>
+        </Link>
       </nav>
 
       <form action="/api/auth/logout" method="POST">
