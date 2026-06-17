@@ -4,6 +4,25 @@
 
 ---
 
+## 2026-06-17 — Session 9 : Sprint 3 — Migration PostgreSQL + Prisma
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : 3 / Sprint 3.
+- **Branche** : `feature/sprint3-db-migration`.
+- **Actions** :
+  - Docker Desktop disponible (v29.5.3 / Compose v5.1.4).
+  - Container `kalendhair_postgres` démarré (`postgres:16-alpine`, port 5432, volume persistant).
+  - Migration `prisma migrate dev --name init` appliquée → fichier `20260617014217_init/migration.sql`.
+  - 21 tables métier + 13 enums créés en base `kalendhair_dev`.
+  - `prisma generate` relancé automatiquement → Prisma Client v6.19.3 à jour.
+  - Vérifications : `typecheck` ✅ · `lint` ✅ · `build` ✅.
+  - Documentation mise à jour : `PROJECT_STATE.md`, `CURRENT_SPRINT.md`, `SESSION_LOG.md`.
+- **Code métier** : **aucun**. Pas d'auth, pas de pages, pas de services.
+- **État de sortie** : commit + push sur `feature/sprint3-db-migration`, PR vers `main` ouverte via `gh`.
+  **Aucun merge.** En attente de review ChatGPT.
+
+---
+
 ## 2026-06-16 — Session 1 : création des fondations documentaires
 
 - **Auteur** : Claude Code (exécutant technique).

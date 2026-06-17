@@ -6,58 +6,47 @@
 
 ## Sprint actuel
 
-**Sprint 2 — Schéma Prisma** (Phase 2 de la roadmap).
+**Sprint 3 — Validation PostgreSQL + Migration Prisma** (Phase 3 de la roadmap).
 
 ## Objectifs du sprint
 
-- [x] Écrire le schéma Prisma complet (21 modèles, 13 enums) avec relations, index et contraintes.
-- [x] `prisma validate` ✅
-- [x] `prisma format` ✅
+- [x] Docker Desktop installé et opérationnel (v29.5.3 / Compose v5.1.4).
+- [x] Container `kalendhair_postgres` démarré (`postgres:16-alpine`, port 5432).
+- [x] `prisma migrate dev --name init` ✅ — migration `20260617014217_init` appliquée.
+- [x] 21 tables métier + 13 enums créés en base PostgreSQL.
+- [x] `prisma generate` ✅ — Prisma Client régénéré.
 - [x] `typecheck` ✅
 - [x] `lint` ✅
 - [x] `build` ✅
-- [ ] `prisma migrate dev --name init` — **différé** (PostgreSQL local non disponible).
-- [x] Validation ChatGPT + merge PR #4 vers `main`. Tag `v0.3.0-prisma-schema`.
+- [ ] Validation ChatGPT + merge PR vers `main`. Tag `v0.4.0-db-migration`.
 
-## Arbitrages appliqués
+## Résultat de la migration
 
-| # | Décision |
+| Élément | Valeur |
 |---|---|
-| 1 | IDs : `cuid()` |
-| 2 | Argent : `Int` centimes + `currency` |
-| 3 | Horaires : `Int` minutes depuis minuit |
-| 4 | Client : global cross-tenant |
-| 5 | Invité : champs `guest*` sur `Appointment` |
-| 6 | RDV : 1 service par RDV (MVP) |
-| 7 | `organizationId` dénormalisé sur Appointment, Employee, AuditLog, IntegrationConnection, FeatureFlag |
-| 8 | `ProUser.passwordHash String?` présent, auth non codée |
-| 9 | Stripe : placeholders nullable |
-| 10 | `ProUser.email` unique global |
-| 11 | Soft-delete : `isActive Boolean` |
-| 12 | `onDelete` : Cascade (tenant), SetNull (audit/client opt.), Restrict (RDV dangereux) |
-| 13 | Dates : `startAt`/`endAt` UTC + `Salon.timezone` |
-| 14 | Index : `startAt`, pas `appointmentDate` séparé |
-| 15 | `@@map` en snake_case sur tous les modèles et enums |
+| Fichier migration | `prisma/migrations/20260617014217_init/migration.sql` |
+| Tables créées | 21 (+ `_prisma_migrations` Prisma interne) |
+| Enums créés | 13 |
+| PostgreSQL | `localhost:5432` · DB `kalendhair_dev` · user `kalendhair` |
 
 ## Hors périmètre de ce sprint
 
 - Authentification (code, routes, sessions).
 - Pages UI et composants.
 - Services métier.
-- Migration DB (requiert PostgreSQL local).
 - Seed de données.
 
 ## Condition de sortie du sprint
 
-> ✅ PR `feature/prisma-schema` validée par ChatGPT, mergée dans `main`, tag `v0.3.0-prisma-schema`.
-> **Sprint 2 TERMINÉ.**
+> PR `feature/sprint3-db-migration` validée par ChatGPT, mergée dans `main`, tag `v0.4.0-db-migration`.
 
 ---
 
-## Sprint précédents (clôturés)
+## Sprints précédents (clôturés)
 
 - **Phase 0 — Fondation documentaire** ✅ — tag `v0.1.0-foundations`.
 - **Sprint 1 — Bootstrap technique** ✅ — tag `v0.2.0-bootstrap`.
+- **Sprint 2 — Schéma Prisma** ✅ — tag `v0.3.0-prisma-schema`.
 
 ---
 
