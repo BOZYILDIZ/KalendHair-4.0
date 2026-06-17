@@ -6,7 +6,49 @@
 
 ## Sprint actuel
 
-**Sprint 5 — Organization & Salon Management** — TERMINÉ ✅
+**Sprint 6 — Employees & Services** — EN COURS 🔄
+
+## Objectifs du sprint
+
+- [x] Migration `20260618000002_employee_photo_url` — `photoUrl TEXT` nullable sur `employees`.
+- [x] `src/lib/permissions/employee.permissions.ts` — `canManageEmployee()`.
+- [x] `src/lib/permissions/service.permissions.ts` — `canManageService()`.
+- [x] `src/features/employees/types.ts` — `EmployeeView` + `EmployeeWithServices` + `EmployeeFormState` (avec `warning`, `requireConfirmation`, `pendingData`).
+- [x] `src/features/employees/employee.schema.ts` — `CreateEmployeeSchema` / `UpdateEmployeeSchema`.
+- [x] `src/features/employees/employee.service.ts` — CRUD + `findPotentialDuplicate()` + `reactivateEmployee()`.
+- [x] `src/features/employees/employee-service.service.ts` — `syncEmployeeServices()`.
+- [x] `src/features/employees/components/employee-list.tsx` — liste actifs/inactifs.
+- [x] `src/features/employees/components/employee-form.tsx` — form avec flux de confirmation doublon.
+- [x] `src/features/employees/components/service-assignment.tsx` — checkboxes services.
+- [x] `src/features/employees/components/status-section.tsx` — désactivation/réactivation avec warning.
+- [x] `src/features/services/types.ts` — `ServiceView` + `ServiceFormState`.
+- [x] `src/features/services/service.schema.ts` — `CreateServiceSchema` / `UpdateServiceSchema`.
+- [x] `src/features/services/service.service.ts` — CRUD + `reactivateService()`.
+- [x] `src/features/services/components/service-list.tsx`.
+- [x] `src/features/services/components/service-form.tsx`.
+- [x] Routes `/dashboard/employees` (liste + new + [id]).
+- [x] Routes `/dashboard/services` (liste + new + [id]).
+- [x] Hub `/dashboard` mis à jour : 4 liens homogènes.
+- [x] `typecheck` ✅ · `lint` ✅ · `build` ✅ · `db:seed` ✅ · `prisma validate` ✅.
+
+## Décisions techniques Sprint 6
+
+| Décision | Valeur |
+|---|---|
+| Doublon employé | Avertissement + confirmation (pas de blocage strict) |
+| `pendingData` dans `EmployeeFormState` | Permet re-soumission avec `confirmed=true` |
+| `photoUrl` | Nullable, pas d'UI Sprint 6 |
+| `currency` | Fixé `"EUR"` dans le service, jamais depuis le client |
+| Liaison services→employé | `syncEmployeeServices` avec whitelist `salonServiceIds` |
+| bound actions via closures | `"use server"` dans Server Component pour injecter `id` |
+
+## Condition de sortie du sprint
+
+> PR `feature/sprint6-employees-services` en attente de validation ChatGPT + Hasan.
+
+---
+
+## Sprint précédent : Sprint 5 — Organization & Salon Management — TERMINÉ ✅
 
 ## Objectifs du sprint (tous atteints)
 

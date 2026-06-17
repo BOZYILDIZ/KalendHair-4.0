@@ -82,7 +82,7 @@ Voir `docs/ARCHITECTURE.md` et `docs/DATABASE.md`.
 
 ## État actuel
 
-**Sprint 5 — Organization & Salon Management** en cours.
+**Sprint 6 — Employees & Services** en cours.
 
 | Sprint | Description | Tag |
 |---|---|---|
@@ -91,4 +91,5 @@ Voir `docs/ARCHITECTURE.md` et `docs/DATABASE.md`.
 | Sprint 2 | Schéma Prisma complet (21 modèles) | `v0.3.0-prisma-schema` |
 | Sprint 3 | Migration PostgreSQL | `v0.4.0-db-migration` |
 | Sprint 4 | Auth custom jose (OWNER) | `v0.5.0-auth` |
-| Sprint 5 | Gestion Organisation + Salon | `v0.6.0-org-salon` (en cours) |
+| Sprint 5 | Gestion Organisation + Salon | `v0.6.0-org-salon` |
+| Sprint 6 | Employés + Services + Associations | `v0.7.0-employees-services` (en cours) |

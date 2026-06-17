@@ -4,6 +4,26 @@
 
 ---
 
+## 2026-06-18 — Session 14 : Sprint 6 — Employees & Services
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : 6 / Sprint 6.
+- **Branche** : `feature/sprint6-employees-services`.
+- **Actions** :
+  - Plan Sprint 6 finalisé (3 ajustements : `reactivateEmployee/Service`, doublon soft-warning, `photoUrl`).
+  - Migration `20260618000002_employee_photo_url` créée et appliquée.
+  - Permissions `employee.permissions.ts` + `service.permissions.ts` créées.
+  - Feature `employees` : types, schema, services métier, 4 composants Client.
+  - Feature `services` : types, schema, service métier, 2 composants Client.
+  - 6 nouvelles routes dashboard : `/dashboard/employees` (liste, new, [id]) + `/dashboard/services` (liste, new, [id]).
+  - Hub `/dashboard` mis à jour : 4 liens homogènes (Organisation, Salon, Employés, Services).
+  - Corrections : Zod v4 (`error` vs `invalid_type_error`), `<Link>` vs `<a>`, types bound actions.
+  - `prisma validate` ✅ · `typecheck` ✅ · `lint` ✅ · `build` ✅ · `db:seed` ✅.
+  - Documentation mise à jour : `PROJECT_STATE.md`, `CURRENT_SPRINT.md`, `SESSION_LOG.md`, `README.md`.
+- **État de sortie** : commit + push + PR vers `main`. **Aucun merge.** En attente de validation.
+
+---
+
 ## 2026-06-18 — Session 13 : clôture Sprint 5 — merge PR #9 + tag v0.6.0-org-salon
 
 - **Auteur** : Claude Code (exécutant technique).
