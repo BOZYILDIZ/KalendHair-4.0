@@ -6,7 +6,7 @@
 
 ## Sprint actuel
 
-**Sprint 6 — Employees & Services** — EN COURS 🔄
+**Sprint 6 — Employees & Services** — TERMINÉ ✅
 
 ## Objectifs du sprint
 
@@ -44,11 +44,20 @@
 
 ## Condition de sortie du sprint
 
-> PR `feature/sprint6-employees-services` en attente de validation ChatGPT + Hasan.
+> ✅ PR `feature/sprint6-employees-services` validée par ChatGPT et Hasan (tests logique métier 45/45), mergée dans `main`, tag `v0.7.0-employees-services`.
+> **Sprint 6 TERMINÉ.**
 
 ---
 
-## Sprint précédent : Sprint 5 — Organization & Salon Management — TERMINÉ ✅
+## Sprints précédents (clôturés)
+
+- **Phase 0 — Fondation documentaire** ✅ — tag `v0.1.0-foundations`.
+- **Sprint 1 — Bootstrap technique** ✅ — tag `v0.2.0-bootstrap`.
+- **Sprint 2 — Schéma Prisma** ✅ — tag `v0.3.0-prisma-schema`.
+- **Sprint 3 — Migration PostgreSQL** ✅ — tag `v0.4.0-db-migration`.
+- **Sprint 4 — Authentification** ✅ — tag `v0.5.0-auth`.
+- **Sprint 5 — Organization & Salon Management** ✅ — tag `v0.6.0-org-salon`.
+- **Sprint 6 — Employees & Services** ✅ — tag `v0.7.0-employees-services`.
 
 ## Objectifs du sprint (tous atteints)
 

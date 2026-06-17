@@ -16,7 +16,7 @@
 
 **Sprint 5 — Organization & Salon Management : TERMINÉ et mergé** ✅
 
-**Sprint 6 — Employees & Services : EN COURS** 🔄 (branche `feature/sprint6-employees-services`)
+**Sprint 6 — Employees & Services : TERMINÉ et mergé** ✅
 
 ## État du code
 
@@ -24,7 +24,7 @@
 - **Proxy Next.js 16** (`src/proxy.ts`) : protection `/dashboard/:path*`.
 - **Pages** :
   - `/login` — formulaire ProUser OWNER
-  - `/dashboard` — hub (4 liens : Organisation, Salon, Employés, Services)
+  - `/dashboard` — hub (4 liens homogènes : Organisation, Salon, Employés, Services)
   - `/dashboard/organization` — lecture + modification Organisation
   - `/dashboard/salon` — lecture + modification Salon
   - `/dashboard/employees` — liste employés (actifs + inactifs)
@@ -37,7 +37,7 @@
 - **Services métier** : `src/features/organizations/` + `src/features/salons/` + `src/features/employees/` + `src/features/services/`
 - **Validation** : `zod@4.4.3` — Server Actions
 - **Seed DEV** : `owner@test.local / Test1234!` (Organisation "Salon Test" + Salon "Salon Test").
-- **Schéma Prisma** : 21 modèles + 13 enums + 3 migrations appliquées (`photoUrl` nullable sur Employee).
+- **Schéma Prisma** : 21 modèles + 13 enums + 3 migrations appliquées.
 - **PostgreSQL local** : container `kalendhair_postgres` (Docker Compose, port 5432).
 
 ## Stack & versions installées
@@ -58,8 +58,8 @@
 
 ## Vérifications (toutes ✅)
 
-`pnpm typecheck` · `pnpm lint` · `pnpm build` · `pnpm db:seed` → **OK**.
-Test manuel complet validé par Hasan (login, /dashboard, /dashboard/organization, /dashboard/salon, persistance en base).
+`pnpm prisma validate` · `pnpm typecheck` · `pnpm lint` · `pnpm build` · `pnpm db:seed` → **OK**.
+Tests logique métier Sprint 6 : 45/45 ✅
 
 ## Migrations appliquées
 
@@ -72,10 +72,9 @@ Test manuel complet validé par Hasan (login, /dashboard, /dashboard/organizatio
 ## Git / Release
 
 - `main` = seule branche stable active.
-- `main` = seule branche stable active.
-- Tags : `v0.1.0-foundations` · `v0.2.0-bootstrap` · `v0.3.0-prisma-schema` · `v0.4.0-db-migration` · `v0.5.0-auth` · **`v0.6.0-org-salon`**.
-- PR **#9** (`feature/sprint5-org-salon`) **mergée** dans `main` (merge commit `fd15428`).
-- Branche en cours : `feature/sprint6-employees-services`.
+- Tags : `v0.1.0-foundations` · `v0.2.0-bootstrap` · `v0.3.0-prisma-schema` · `v0.4.0-db-migration` · `v0.5.0-auth` · `v0.6.0-org-salon` · **`v0.7.0-employees-services`**.
+- PR **#11** (`feature/sprint6-employees-services`) **mergée** dans `main` (merge commit `93c9127`).
+- Branche `feature/sprint6-employees-services` **supprimée** (locale + distante).
 
 ## Base de données
 
@@ -85,8 +84,8 @@ Test manuel complet validé par Hasan (login, /dashboard, /dashboard/organizatio
 
 ## Prochaine étape
 
-Sprint 6 en cours — PR `feature/sprint6-employees-services` ouverte, en attente de validation.
+Conception Sprint 7 (à définir) — prochains modules métier selon roadmap.
 
 ---
 
-_Dernière mise à jour : 2026-06-18 — Sprint 6 Employees & Services implémenté. En attente de review + merge._
+_Dernière mise à jour : 2026-06-18 — PR #11 mergée, tag v0.7.0-employees-services. Sprint 6 TERMINÉ._

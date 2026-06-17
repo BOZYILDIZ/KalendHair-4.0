@@ -4,6 +4,23 @@
 
 ---
 
+## 2026-06-18 — Session 15 : clôture Sprint 6 — merge PR #11 + tag v0.7.0-employees-services
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : 6 (clôture).
+- **Actions** :
+  - Tests logique métier (45/45) validés via script tsx direct sur DB.
+  - Validation ChatGPT reçue pour PR #11.
+  - PR **#11** (`feature/sprint6-employees-services`) **mergée** dans `main` (merge commit `93c9127`).
+  - Branche `feature/sprint6-employees-services` **supprimée** (locale + distante).
+  - Tag annoté **`v0.7.0-employees-services`** créé et poussé.
+  - Branche `docs/sprint6-closure` créée.
+  - Mise à jour : `PROJECT_STATE.md`, `CURRENT_SPRINT.md`, `SESSION_LOG.md`, `README.md`.
+- **Code métier** : aucun. Clôture documentaire uniquement.
+- **État de sortie** : commit + push + PR documentaire ouverte. **Aucun merge.** En attente de validation.
+
+---
+
 ## 2026-06-18 — Session 14 : Sprint 6 — Employees & Services
 
 - **Auteur** : Claude Code (exécutant technique).
