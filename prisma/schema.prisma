@@ -1,7 +1,9 @@
 // Prisma schema — KalendHair 4.0
-// Sprint 1 : schéma MINIMAL (datasource + generator uniquement).
-// AUCUN modèle métier ici. La modélisation des entités (Organization, Salon, etc.)
-// interviendra en Phase 2 — voir docs/DATABASE.md.
+// Sprint 2 : schéma complet (21 modèles, 13 enums).
+// Arbitrages validés : cuid(), Int centimes, Int minutes, Client cross-tenant,
+// guest* sur Appointment, 1 service/RDV MVP, organizationId dénormalisé,
+// passwordHash nullable, Stripe placeholders nullable, soft-delete isActive,
+// startAt/endAt UTC + Salon.timezone, @@map snake_case.
 
 generator client {
   provider = "prisma-client-js"
@@ -10,4 +12,562 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// ENUMS
+// ---------------------------------------------------------------------------
+
+enum ProRole {
+  OWNER
+  MANAGER
+  EMPLOYEE
+
+  @@map("pro_role")
+}
+
+enum SubscriptionPlan {
+  FREE
+  STARTER
+  PROFESSIONAL
+  ENTERPRISE
+
+  @@map("subscription_plan")
+}
+
+enum SubscriptionStatus {
+  TRIALING
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  UNPAID
+
+  @@map("subscription_status")
+}
+
+enum DayOfWeek {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+
+  @@map("day_of_week")
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  NO_SHOW
+  COMPLETED
+
+  @@map("appointment_status")
+}
+
+enum AppointmentModificationType {
+  CREATED
+  RESCHEDULED
+  CANCELLED
+  STATUS_CHANGED
+  NOTE_UPDATED
+
+  @@map("appointment_modification_type")
+}
+
+enum NotificationChannel {
+  EMAIL
+
+  @@map("notification_channel")
+}
+
+enum NotificationType {
+  APPOINTMENT_CONFIRMATION
+  APPOINTMENT_REMINDER
+  APPOINTMENT_CANCELLATION
+  APPOINTMENT_RESCHEDULED
+  REVIEW_REQUEST
+  WELCOME
+
+  @@map("notification_type")
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  FAILED
+  SKIPPED
+
+  @@map("notification_status")
+}
+
+enum NotificationPreferenceScope {
+  PRO_USER
+  CLIENT
+  SALON
+
+  @@map("notification_preference_scope")
+}
+
+enum IntegrationProvider {
+  GOOGLE_CALENDAR
+  STRIPE
+  SENDGRID
+  TWILIO
+
+  @@map("integration_provider")
+}
+
+enum IntegrationAuthType {
+  OAUTH2
+  API_KEY
+  WEBHOOK
+
+  @@map("integration_auth_type")
+}
+
+enum IntegrationStatus {
+  ACTIVE
+  INACTIVE
+  ERROR
+  PENDING_AUTH
+
+  @@map("integration_status")
+}
+
+// ---------------------------------------------------------------------------
+// TENANT & COMPTES
+// ---------------------------------------------------------------------------
+
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  proUsers      ProUser[]
+  salons        Salon[]
+  employees     Employee[]
+  subscriptions Subscription[]
+  integrations  IntegrationConnection[]
+  auditLogs     AuditLog[]
+  featureFlags  FeatureFlag[]
+
+  @@map("organizations")
+}
+
+model ProUser {
+  id             String   @id @default(cuid())
+  organizationId String
+  email          String   @unique
+  firstName      String
+  lastName       String
+  role           ProRole  @default(EMPLOYEE)
+  passwordHash   String?
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  employees    Employee[]
+  auditLogs    AuditLog[]   @relation("AuditLogActor")
+
+  @@index([organizationId])
+  @@map("pro_users")
+}
+
+model Subscription {
+  id                     String             @id @default(cuid())
+  organizationId         String
+  plan                   SubscriptionPlan   @default(FREE)
+  status                 SubscriptionStatus @default(TRIALING)
+  // Stripe placeholders — nullable, inactifs au MVP
+  stripeCustomerId       String?            @unique
+  stripeSubscriptionId   String?            @unique
+  stripePriceId          String?
+  stripeCurrentPeriodEnd DateTime?
+  createdAt              DateTime           @default(now())
+  updatedAt              DateTime           @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@map("subscriptions")
+}
+
+// ---------------------------------------------------------------------------
+// SALON & RÉFÉRENTIEL
+// ---------------------------------------------------------------------------
+
+model Salon {
+  id             String   @id @default(cuid())
+  organizationId String
+  name           String
+  slug           String   @unique
+  description    String?
+  phone          String?
+  email          String?
+  address        String?
+  city           String?
+  postalCode     String?
+  timezone       String   @default("Europe/Paris")
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization   Organization            @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  employees      Employee[]
+  services       Service[]
+  appointments   Appointment[]
+  salonSchedules SalonSchedule[]
+  closedDays     ClosedDay[]
+  salonClients   SalonClient[]
+  notifications  Notification[]
+  integrations   IntegrationConnection[]
+
+  @@index([organizationId])
+  @@map("salons")
+}
+
+model FrenchCity {
+  id         String @id @default(cuid())
+  insee      String @unique
+  name       String
+  postalCode String
+  department String
+  region     String
+
+  @@index([postalCode])
+  @@index([name])
+  @@map("french_cities")
+}
+
+// ---------------------------------------------------------------------------
+// ÉQUIPE & PRESTATIONS
+// ---------------------------------------------------------------------------
+
+model Employee {
+  id             String   @id @default(cuid())
+  organizationId String
+  salonId        String
+  proUserId      String?
+  firstName      String
+  lastName       String
+  email          String?
+  phone          String?
+  color          String? // couleur agenda
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization      Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  salon             Salon              @relation(fields: [salonId], references: [id], onDelete: Cascade)
+  proUser           ProUser?           @relation(fields: [proUserId], references: [id], onDelete: SetNull)
+  employeeServices  EmployeeService[]
+  employeeSchedules EmployeeSchedule[]
+  appointments      Appointment[]
+
+  @@index([organizationId])
+  @@index([salonId])
+  @@map("employees")
+}
+
+model Service {
+  id              String   @id @default(cuid())
+  organizationId  String
+  salonId         String
+  name            String
+  description     String?
+  durationMinutes Int
+  priceCents      Int
+  currency        String   @default("EUR")
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  salon            Salon             @relation(fields: [salonId], references: [id], onDelete: Cascade)
+  employeeServices EmployeeService[]
+  appointments     Appointment[]
+
+  @@index([salonId])
+  @@map("services")
+}
+
+model EmployeeService {
+  id         String   @id @default(cuid())
+  employeeId String
+  serviceId  String
+  createdAt  DateTime @default(now())
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  service  Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@unique([employeeId, serviceId])
+  @@map("employee_services")
+}
+
+// ---------------------------------------------------------------------------
+// HORAIRES
+// ---------------------------------------------------------------------------
+
+model SalonSchedule {
+  id          String    @id @default(cuid())
+  salonId     String
+  dayOfWeek   DayOfWeek
+  startMinute Int // minutes depuis minuit (ex: 540 = 09:00)
+  endMinute   Int // minutes depuis minuit (ex: 1080 = 18:00)
+  isOpen      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  salon Salon @relation(fields: [salonId], references: [id], onDelete: Cascade)
+
+  @@unique([salonId, dayOfWeek])
+  @@map("salon_schedules")
+}
+
+model EmployeeSchedule {
+  id          String    @id @default(cuid())
+  employeeId  String
+  dayOfWeek   DayOfWeek
+  startMinute Int
+  endMinute   Int
+  isWorking   Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@unique([employeeId, dayOfWeek])
+  @@map("employee_schedules")
+}
+
+model ClosedDay {
+  id        String   @id @default(cuid())
+  salonId   String
+  date      DateTime @db.Date
+  reason    String?
+  createdAt DateTime @default(now())
+
+  salon Salon @relation(fields: [salonId], references: [id], onDelete: Cascade)
+
+  @@unique([salonId, date])
+  @@index([salonId, date])
+  @@map("closed_days")
+}
+
+// ---------------------------------------------------------------------------
+// RENDEZ-VOUS
+// ---------------------------------------------------------------------------
+
+model Appointment {
+  id             String            @id @default(cuid())
+  organizationId String
+  salonId        String
+  employeeId     String
+  serviceId      String
+  clientId       String? // null si RDV invité
+  // Champs invité (guest) — null si clientId renseigné
+  guestFirstName String?
+  guestLastName  String?
+  guestEmail     String?
+  guestPhone     String?
+  startAt        DateTime // UTC
+  endAt          DateTime // UTC
+  status         AppointmentStatus @default(PENDING)
+  notes          String?
+  isActive       Boolean           @default(true)
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  salon         Salon                     @relation(fields: [salonId], references: [id], onDelete: Restrict)
+  employee      Employee                  @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  service       Service                   @relation(fields: [serviceId], references: [id], onDelete: Restrict)
+  client        Client?                   @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  modifications AppointmentModification[]
+  review        Review?
+  notifications Notification[]
+
+  @@index([salonId, startAt])
+  @@index([employeeId, startAt])
+  @@index([clientId])
+  @@index([organizationId, startAt])
+  @@map("appointments")
+}
+
+model AppointmentModification {
+  id               String                      @id @default(cuid())
+  appointmentId    String
+  modifiedById     String? // ProUser ou null (client/guest)
+  modificationType AppointmentModificationType
+  previousStartAt  DateTime?
+  previousEndAt    DateTime?
+  previousStatus   AppointmentStatus?
+  note             String?
+  createdAt        DateTime                    @default(now())
+
+  appointment Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+
+  @@index([appointmentId])
+  @@map("appointment_modifications")
+}
+
+// ---------------------------------------------------------------------------
+// CLIENTS & AVIS
+// ---------------------------------------------------------------------------
+
+model Client {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  firstName String
+  lastName  String
+  phone     String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Cross-tenant : le client existe globalement,
+  // les liens salon passent par SalonClient.
+  salonClients  SalonClient[]
+  appointments  Appointment[]
+  notifications Notification[]
+
+  @@map("clients")
+}
+
+model SalonClient {
+  id        String   @id @default(cuid())
+  salonId   String
+  clientId  String
+  notes     String? // notes internes du salon
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  salon  Salon  @relation(fields: [salonId], references: [id], onDelete: Cascade)
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@unique([salonId, clientId])
+  @@map("salon_clients")
+}
+
+model Review {
+  id            String   @id @default(cuid())
+  appointmentId String   @unique // 1 avis par RDV
+  clientId      String
+  salonId       String
+  rating        Int // 1–5
+  comment       String?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  appointment Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+
+  @@index([salonId])
+  @@map("reviews")
+}
+
+// ---------------------------------------------------------------------------
+// NOTIFICATIONS
+// ---------------------------------------------------------------------------
+
+model Notification {
+  id            String              @id @default(cuid())
+  salonId       String
+  clientId      String?
+  appointmentId String?
+  channel       NotificationChannel @default(EMAIL)
+  type          NotificationType
+  status        NotificationStatus  @default(PENDING)
+  sentAt        DateTime?
+  errorMessage  String?
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  salon       Salon        @relation(fields: [salonId], references: [id], onDelete: Cascade)
+  client      Client?      @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  appointment Appointment? @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
+
+  @@index([salonId])
+  @@index([clientId])
+  @@index([appointmentId])
+  @@map("notifications")
+}
+
+model NotificationPreference {
+  id        String                      @id @default(cuid())
+  scope     NotificationPreferenceScope
+  scopeId   String // proUserId, clientId ou salonId selon scope
+  type      NotificationType
+  channel   NotificationChannel
+  isEnabled Boolean                     @default(true)
+  createdAt DateTime                    @default(now())
+  updatedAt DateTime                    @updatedAt
+
+  @@unique([scope, scopeId, type, channel])
+  @@map("notification_preferences")
+}
+
+// ---------------------------------------------------------------------------
+// INTÉGRATIONS & TRANSVERSE
+// ---------------------------------------------------------------------------
+
+model IntegrationConnection {
+  id                   String              @id @default(cuid())
+  organizationId       String
+  salonId              String?
+  provider             IntegrationProvider
+  authType             IntegrationAuthType
+  status               IntegrationStatus   @default(INACTIVE)
+  // Les credentials ne sont JAMAIS stockés en clair.
+  // Ils sont chiffrés avant insertion et déchiffrés à la lecture.
+  encryptedCredentials String?
+  expiresAt            DateTime?
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  salon        Salon?       @relation(fields: [salonId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@map("integration_connections")
+}
+
+model AuditLog {
+  id             String   @id @default(cuid())
+  organizationId String
+  actorId        String? // ProUser (null si action système)
+  action         String
+  entityType     String
+  entityId       String
+  metadata       Json?
+  ipAddress      String?
+  createdAt      DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  actor        ProUser?     @relation("AuditLogActor", fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId, createdAt])
+  @@index([entityType, entityId])
+  @@map("audit_logs")
+}
+
+model FeatureFlag {
+  id             String   @id @default(cuid())
+  organizationId String
+  flag           String
+  isEnabled      Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, flag])
+  @@index([organizationId])
+  @@map("feature_flags")
 }

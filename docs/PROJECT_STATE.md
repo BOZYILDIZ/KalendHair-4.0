@@ -7,11 +7,15 @@
 ## Phase actuelle
 
 **Phase 1 / Sprint 1 — Bootstrap technique : TERMINÉ et mergé** ✅
-(Sprint 2 non démarré.)
+
+**Phase 2 / Sprint 2 — Schéma Prisma : EN COURS** 🔄
+(Branche `feature/prisma-schema`, PR ouverte, en attente de validation.)
 
 ## État du code
 
-- **Aucune fonctionnalité métier.** Aucun modèle Prisma métier, aucun auth, aucun connecteur.
+- **Schéma Prisma complet** : 21 modèles + 13 enums + relations + index + contraintes.
+  Migration non encore appliquée (PostgreSQL local requis).
+- Aucune page UI, aucun service métier, aucune auth.
 - Socle technique en place : **Next.js 16.2.9** (App Router, `src/`), **TypeScript strict**,
   **Tailwind CSS v4**, **Prisma 6.19.3 + PostgreSQL**, **ESLint 9 + Prettier**.
 - Structure modulaire vide conforme à `docs/ARCHITECTURE.md` (`src/features/*`, `src/lib/*`).
@@ -44,13 +48,19 @@
 ## Base de données
 
 - PostgreSQL local via **Docker Compose** (`docker-compose.yml`) — base de DEV isolée, jamais la prod.
-- `schema.prisma` minimal (datasource + generator), **aucun modèle**. Modélisation = Phase 2.
+- `schema.prisma` **COMPLET** : 21 modèles, 13 enums, relations, index, `@@map` snake_case.
+- Migration différée : `prisma migrate dev --name init` à lancer quand PostgreSQL sera disponible.
+
+## Git / Release
+
+- `main` contient les fondations (tag `v0.1.0-foundations`) **et** le bootstrap technique (tag `v0.2.0-bootstrap`).
+- Branche active : **`feature/prisma-schema`** (Sprint 2, PR ouverte, aucun merge).
+- Prochaine étape : validation ChatGPT → merge → tag `v0.3.0-schema`.
 
 ## Prochaine étape
 
-Validation Hasan / ChatGPT du bootstrap, puis **Phase 2** (Auth + Organizations + Salons),
-avec modélisation des entités Prisma (voir `docs/DATABASE.md`).
+Validation ChatGPT de la PR `feature/prisma-schema`, puis **Sprint 3 — Authentification**.
 
 ---
 
-_Dernière mise à jour : 2026-06-17 — PR #2 mergée dans main, tag v0.2.0-bootstrap. Sprint 2 non démarré._
+_Dernière mise à jour : 2026-06-17 — Sprint 2 en cours, schéma Prisma complet, PR ouverte._
