@@ -14,16 +14,22 @@
 
 **Sprint 4 — Authentification ProUser (OWNER) : TERMINÉ et mergé** ✅
 
+**Sprint 5 — Organization & Salon Management : EN COURS** 🔄
+
 ## État du code
 
 - **Auth custom** : `jose` (JWT HS256, 24h) + `bcryptjs` + cookie `HttpOnly`.
 - **Proxy Next.js 16** (`src/proxy.ts`) : protection `/dashboard/:path*`.
-- **Pages** : `/login` (formulaire) · `/dashboard` (placeholder protégé).
-- **Seed DEV** : `owner@test.local / Test1234!` (Organisation "Salon Test").
-- **Permissions** : `src/lib/auth/permissions.ts` placeholder (Sprint 5+).
-- **Schéma Prisma complet** : 21 modèles + 13 enums + migration `20260617014217_init` appliquée.
+- **Pages** :
+  - `/login` — formulaire ProUser OWNER
+  - `/dashboard` — hub (nom org + nom salon + navigation)
+  - `/dashboard/organization` — lecture + modification Organisation
+  - `/dashboard/salon` — lecture + modification Salon
+- **Permissions** : `src/lib/permissions/` — `tenant.ts` + `organization.permissions.ts` + `salon.permissions.ts`
+- **Services** : `src/features/organizations/` + `src/features/salons/`
+- **Seed DEV** : `owner@test.local / Test1234!` (Organisation "Salon Test" + Salon "Salon Test").
+- **Schéma Prisma complet** : 21 modèles + 13 enums + migrations appliquées.
 - **PostgreSQL local** : container `kalendhair_postgres` (Docker Compose, port 5432).
-- Aucune page métier, aucun service métier.
 
 ## Stack & versions installées
 
@@ -37,6 +43,7 @@
 | jose | 6.2.3 |
 | bcryptjs | 3.0.3 |
 | tsx | 4.22.4 |
+| zod | 4.4.3 |
 | Gestionnaire | pnpm 11.5 |
 | Node (cible) | 22 LTS (`.nvmrc`) |
 
@@ -44,23 +51,29 @@
 
 `pnpm typecheck` · `pnpm lint` · `pnpm build` · `pnpm db:seed` → **OK**.
 
+## Migrations appliquées
+
+| Nom | Description |
+|---|---|
+| `20260617014217_init` | Schéma initial (21 tables + 13 enums) |
+| `20260618000001_salon_org_unique` | Contrainte unique `Salon.organizationId` (1 salon/org MVP) |
+
 ## Git / Release
 
 - `main` = seule branche stable active.
-- Tags : `v0.1.0-foundations` · `v0.2.0-bootstrap` · `v0.3.0-prisma-schema` · `v0.4.0-db-migration` · **`v0.5.0-auth`**.
-- PR **#7** (`feature/sprint4-auth`) **mergée** dans `main` (merge commit `3b25821`).
-- Branche `feature/sprint4-auth` **supprimée** (locale + distante).
+- Tags : `v0.1.0-foundations` · `v0.2.0-bootstrap` · `v0.3.0-prisma-schema` · `v0.4.0-db-migration` · `v0.5.0-auth`.
+- Branche en cours : `feature/sprint5-org-salon`.
 
 ## Base de données
 
 - PostgreSQL local via Docker Compose — base DEV isolée.
-- Migration `20260617014217_init` appliquée (21 tables + 13 enums).
-- Seed DEV : `owner@test.local / Test1234!` (commande : `pnpm db:seed`).
+- Migrations appliquées : voir tableau ci-dessus.
+- Seed DEV : `owner@test.local / Test1234!` + Salon "Salon Test" (commande : `pnpm db:seed`).
 
 ## Prochaine étape
 
-Conception Sprint 5 (à définir) — permissions fines et/ou premiers modules métier.
+Sprint 5 en cours (`feature/sprint5-org-salon`) — en attente de validation ChatGPT + merge.
 
 ---
 
-_Dernière mise à jour : 2026-06-17 — PR #7 mergée, tag v0.5.0-auth. Sprint 4 terminé._
+_Dernière mise à jour : 2026-06-18 — Sprint 5 implémenté, PR en attente de review._
