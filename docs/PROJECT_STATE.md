@@ -14,7 +14,7 @@
 
 **Sprint 4 — Authentification ProUser (OWNER) : TERMINÉ et mergé** ✅
 
-**Sprint 5 — Organization & Salon Management : EN COURS** 🔄
+**Sprint 5 — Organization & Salon Management : TERMINÉ et mergé** ✅
 
 ## État du code
 
@@ -22,13 +22,14 @@
 - **Proxy Next.js 16** (`src/proxy.ts`) : protection `/dashboard/:path*`.
 - **Pages** :
   - `/login` — formulaire ProUser OWNER
-  - `/dashboard` — hub (nom org + nom salon + navigation)
+  - `/dashboard` — hub (nom org + nom salon + navigation + logout)
   - `/dashboard/organization` — lecture + modification Organisation
   - `/dashboard/salon` — lecture + modification Salon
 - **Permissions** : `src/lib/permissions/` — `tenant.ts` + `organization.permissions.ts` + `salon.permissions.ts`
-- **Services** : `src/features/organizations/` + `src/features/salons/`
+- **Services métier** : `src/features/organizations/` + `src/features/salons/`
+- **Validation** : `zod@4.4.3` — Server Actions
 - **Seed DEV** : `owner@test.local / Test1234!` (Organisation "Salon Test" + Salon "Salon Test").
-- **Schéma Prisma complet** : 21 modèles + 13 enums + migrations appliquées.
+- **Schéma Prisma** : 21 modèles + 13 enums + 2 migrations appliquées.
 - **PostgreSQL local** : container `kalendhair_postgres` (Docker Compose, port 5432).
 
 ## Stack & versions installées
@@ -50,6 +51,7 @@
 ## Vérifications (toutes ✅)
 
 `pnpm typecheck` · `pnpm lint` · `pnpm build` · `pnpm db:seed` → **OK**.
+Test manuel complet validé par Hasan (login, /dashboard, /dashboard/organization, /dashboard/salon, persistance en base).
 
 ## Migrations appliquées
 
@@ -61,8 +63,9 @@
 ## Git / Release
 
 - `main` = seule branche stable active.
-- Tags : `v0.1.0-foundations` · `v0.2.0-bootstrap` · `v0.3.0-prisma-schema` · `v0.4.0-db-migration` · `v0.5.0-auth`.
-- Branche en cours : `feature/sprint5-org-salon`.
+- Tags : `v0.1.0-foundations` · `v0.2.0-bootstrap` · `v0.3.0-prisma-schema` · `v0.4.0-db-migration` · `v0.5.0-auth` · **`v0.6.0-org-salon`**.
+- PR **#9** (`feature/sprint5-org-salon`) **mergée** dans `main` (merge commit `fd15428`).
+- Branche `feature/sprint5-org-salon` **supprimée** (locale + distante).
 
 ## Base de données
 
@@ -72,8 +75,8 @@
 
 ## Prochaine étape
 
-Sprint 5 en cours (`feature/sprint5-org-salon`) — en attente de validation ChatGPT + merge.
+Conception Sprint 6 (à définir) — prochains modules métier (Employees, Services, ou autre selon roadmap).
 
 ---
 
-_Dernière mise à jour : 2026-06-18 — Sprint 5 implémenté, PR en attente de review._
+_Dernière mise à jour : 2026-06-18 — PR #9 mergée, tag v0.6.0-org-salon. Sprint 5 TERMINÉ._
