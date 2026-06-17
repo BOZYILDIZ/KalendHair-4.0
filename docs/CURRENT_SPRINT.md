@@ -18,7 +18,7 @@
 - [x] `typecheck` ✅
 - [x] `lint` ✅
 - [x] `build` ✅
-- [ ] Validation ChatGPT + merge PR vers `main`. Tag `v0.4.0-db-migration`.
+- [x] Validation ChatGPT + merge PR #5 vers `main`. Tag `v0.4.0-db-migration`. ✅
 
 ## Résultat de la migration
 
@@ -38,7 +38,8 @@
 
 ## Condition de sortie du sprint
 
-> PR `feature/sprint3-db-migration` validée par ChatGPT, mergée dans `main`, tag `v0.4.0-db-migration`.
+> ✅ PR `feature/sprint3-db-migration` validée par ChatGPT, mergée dans `main`, tag `v0.4.0-db-migration`.
+> **Sprint 3 TERMINÉ.**
 
 ---
 
