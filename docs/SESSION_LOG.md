@@ -4,6 +4,27 @@
 
 ---
 
+## 2026-06-17 — Session 10 : Sprint 4 — Auth custom jose (ProUser OWNER)
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : 4 / Sprint 4.
+- **Branche** : `feature/sprint4-auth`.
+- **Actions** :
+  - Décision ChatGPT : auth custom `jose` (pas de next-auth — incompatibilité Next.js 16).
+  - Dépendances installées : `jose@6.2.3`, `bcryptjs@3.0.3`, `tsx@4.22.4`. `esbuild` approuvé dans `pnpm-workspace.yaml`.
+  - `JWT_SECRET` généré (Node.js crypto) → `.env` + `.env.example`.
+  - 8 fichiers sources créés : `types.ts`, `password.utils.ts`, `session.utils.ts`, `auth.service.ts`, `session.ts`, `permissions.ts` (placeholder), route logout, proxy.
+  - Pages : `(auth)/login/` (formulaire `useActionState` + Server Action) · `(dashboard)/` (placeholder protégé).
+  - `src/proxy.ts` (convention Next.js 16 — remplace `middleware.ts`). Matcher : `/dashboard/:path*`.
+  - `prisma/seed.ts` : Organisation "Salon Test" + ProUser `owner@test.local / Test1234!`.
+  - `package.json` : script `db:seed` + `prisma.seed`.
+  - Vérifications : `typecheck` ✅ · `lint` ✅ · `build` ✅ · `db:seed` ✅.
+  - ProUser OWNER confirmé en base PostgreSQL.
+- **Code métier** : aucun. Auth uniquement.
+- **État de sortie** : commit + push + PR vers `main`. **Aucun merge.** En attente de review ChatGPT.
+
+---
+
 ## 2026-06-17 — Session 9 : Sprint 3 — Migration PostgreSQL + Prisma
 
 - **Auteur** : Claude Code (exécutant technique).

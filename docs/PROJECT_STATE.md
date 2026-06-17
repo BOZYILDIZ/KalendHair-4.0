@@ -12,60 +12,56 @@
 
 **Sprint 3 — Validation PostgreSQL + Migration Prisma : TERMINÉ et mergé** ✅
 
+**Sprint 4 — Authentification ProUser (OWNER) : EN COURS** 🔄
+(Implémentation terminée — PR en attente de review.)
+
 ## État du code
 
-- **Schéma Prisma complet** : 21 modèles + 13 enums + relations + index + contraintes.
-- **Migration initiale appliquée** : `20260617014217_init` — 21 tables + 13 enums en base.
-- **PostgreSQL local** : container `kalendhair_postgres` (Docker Compose, port 5432) opérationnel.
-- Aucune page UI, aucun service métier, aucune auth.
-- Socle technique en place : **Next.js 16.2.9** (App Router, `src/`), **TypeScript strict**,
-  **Tailwind CSS v4**, **Prisma 6.19.3 + PostgreSQL**, **ESLint 9 + Prettier**.
-- Structure modulaire vide conforme à `docs/ARCHITECTURE.md` (`src/features/*`, `src/lib/*`).
-- Page d'accueil = placeholder technique neutre.
+- **Auth custom** : `jose` (JWT HS256, 24h) + `bcryptjs` + cookie `HttpOnly`.
+- **Proxy Next.js 16** (`src/proxy.ts`) : protection `/dashboard/*`.
+- **Pages** : `/login` (formulaire) · `/dashboard` (placeholder protégé).
+- **Seed DEV** : `owner@test.local / Test1234!` créé en base.
+- **Schéma Prisma complet** : 21 modèles + 13 enums + migration appliquée.
+- **PostgreSQL local** : container `kalendhair_postgres` (Docker Compose, port 5432).
+- Aucune page métier, aucun service métier.
+- Socle : **Next.js 16.2.9** · **TypeScript strict** · **Tailwind v4** · **Prisma 6.19.3** · **pnpm 11.5**.
 
 ## Stack & versions installées
 
 | Élément | Version |
 |---|---|
-| Next.js | 16.2.9 (version stable proposée par create-next-app) |
+| Next.js | 16.2.9 |
 | React | 19.2.4 |
 | TypeScript | 5.x (strict + `noUncheckedIndexedAccess`) |
 | Tailwind CSS | v4 |
 | Prisma / @prisma/client | 6.19.3 |
+| jose | 6.2.3 |
+| bcryptjs | 3.0.3 |
+| tsx | 4.22.4 |
 | Gestionnaire | pnpm 11.5 |
 | Node (cible) | 22 LTS (`.nvmrc`) |
 
-## Vérifications (toutes ✅)
+## Vérifications Sprint 4 (toutes ✅)
 
-`pnpm typecheck` · `pnpm lint` · `pnpm format:check` · `pnpm build` · `pnpm prisma validate` → **OK**.
+`pnpm typecheck` · `pnpm lint` · `pnpm build` · `pnpm db:seed` → **OK**.
 
 ## Git / Release
 
-- `main` contient les fondations (tag `v0.1.0-foundations`) **et** le bootstrap technique.
-- PR **#2** (`feature/bootstrap-nextjs`) **mergée** dans `main` (merge commit `cf7c936`).
-- Branche `feature/bootstrap-nextjs` **supprimée** (locale + distante).
-- Tag **`v0.2.0-bootstrap`** créé sur `main`.
-- Prochaine étape Git : démarrage du **Sprint 2** sur une branche dédiée (non commencé).
+- `main` = branche stable (Sprints 1–3 + clôture docs).
+- Tags : `v0.1.0-foundations` · `v0.2.0-bootstrap` · `v0.3.0-prisma-schema` · `v0.4.0-db-migration`.
+- Branche active : **`feature/sprint4-auth`**.
+- Tag cible après merge : `v0.5.0-auth`.
 
 ## Base de données
 
-- PostgreSQL local via **Docker Compose** (`docker-compose.yml`) — base de DEV isolée, jamais la prod.
-- `schema.prisma` **COMPLET** : 21 modèles, 13 enums, relations, index, `@@map` snake_case.
-- Migration différée : `prisma migrate dev --name init` à lancer quand PostgreSQL sera disponible.
-
-## Git / Release
-
-- `main` = branche stable (Sprint 1 + 2 mergés).
-- Tags : `v0.1.0-foundations` · `v0.2.0-bootstrap` · `v0.3.0-prisma-schema`.
-- Branche active : **`main`** uniquement (Sprint 3 mergé).
-- Tags : `v0.1.0-foundations` · `v0.2.0-bootstrap` · `v0.3.0-prisma-schema` · **`v0.4.0-db-migration`**.
-- PR **#5** (`feature/sprint3-db-migration`) **mergée** dans `main` (merge commit `c575df8`).
-- Branche `feature/sprint3-db-migration` **supprimée** (locale + distante).
+- PostgreSQL local via Docker Compose — base DEV isolée.
+- Migration `20260617014217_init` appliquée (21 tables + 13 enums).
+- Seed DEV : `owner@test.local / Test1234!` (Organisation "Salon Test").
 
 ## Prochaine étape
 
-Conception Sprint 4 (phase design avant implémentation) → **Sprint 4 — Authentification** (ProUser login, sessions, guards).
+Review ChatGPT → merge PR Sprint 4 → tag `v0.5.0-auth` → **Sprint 5** (à définir).
 
 ---
 
-_Dernière mise à jour : 2026-06-17 — PR #5 mergée, tag v0.4.0-db-migration. Sprint 3 terminé._
+_Dernière mise à jour : 2026-06-17 — Sprint 4 auth implémenté. PR en attente de review._
