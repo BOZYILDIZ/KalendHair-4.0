@@ -1,0 +1,23 @@
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { verifyToken } from "@/features/auth/session.utils";
+
+export async function proxy(request: NextRequest) {
+  const token = request.cookies.get("session")?.value;
+
+  if (!token) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  const session = await verifyToken(token);
+
+  if (!session) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  return NextResponse.next();
+}
+
+export const config = {
+  matcher: ["/dashboard/:path*"],
+};
