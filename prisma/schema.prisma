@@ -225,6 +225,7 @@ model Salon {
   notifications  Notification[]
   integrations   IntegrationConnection[]
 
+  @@unique([organizationId])
   @@index([organizationId])
   @@map("salons")
 }

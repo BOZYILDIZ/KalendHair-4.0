@@ -30,6 +30,17 @@ async function main() {
     },
   });
 
+  await prisma.salon.upsert({
+    where: { organizationId: org.id },
+    update: {},
+    create: {
+      organizationId: org.id,
+      name: "Salon Test",
+      slug: "salon-test",
+      timezone: "Europe/Paris",
+    },
+  });
+
   console.log("✅  Seed terminé : owner@test.local / Test1234!");
 }
 

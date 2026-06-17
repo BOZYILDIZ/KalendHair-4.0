@@ -4,6 +4,32 @@
 
 ---
 
+## 2026-06-18 — Session 12 : Sprint 5 — Organization & Salon Management
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : 5 / Sprint 5.
+- **Branche** : `feature/sprint5-org-salon`.
+- **Actions** :
+  - Plan Sprint 5 conçu (session précédente) + corrections ChatGPT intégrées.
+  - Dépendance `zod@4.4.3` installée.
+  - Schéma Prisma : ajout `@@unique([organizationId])` sur `Salon` (1 salon/org MVP).
+  - Migration `20260618000001_salon_org_unique` créée manuellement et appliquée via `prisma migrate deploy`.
+  - Client Prisma régénéré (`prisma generate`).
+  - `prisma/seed.ts` mis à jour : création d'un `Salon "Salon Test"` pour l'organisation de test.
+  - Permissions créées : `lib/permissions/tenant.ts` (logique centralisée) + `organization.permissions.ts` + `salon.permissions.ts`.
+  - Features organizations : `types.ts`, `organization.schema.ts`, `organization.service.ts`, `components/organization-form.tsx`.
+  - Features salons : `types.ts`, `salon.schema.ts`, `salon.service.ts`, `components/salon-form.tsx`.
+  - Correction structurelle : routes dashboard déplacées dans `(dashboard)/dashboard/` (fix routing Sprint 4 — les routes étaient à `/` et `/organization` au lieu de `/dashboard` et `/dashboard/organization`).
+  - Pages : `/dashboard` (hub), `/dashboard/organization`, `/dashboard/salon`.
+  - Server Actions : `updateOrganizationAction`, `updateSalonAction`.
+  - `README.md` mis à jour : stack, scripts, compte DEV, état actuel, tableau des sprints.
+  - Vérifications : `typecheck` ✅ · `lint` ✅ · `build` ✅ · `db:seed` ✅.
+  - Build : routes `/dashboard`, `/dashboard/organization`, `/dashboard/salon` confirmées.
+- **Code métier** : Organization + Salon (lecture + modification).
+- **État de sortie** : commit + push + PR vers `main`. **Aucun merge.** En attente de review ChatGPT.
+
+---
+
 ## 2026-06-17 — Session 11 : clôture Sprint 4 — merge PR #7 + tag v0.5.0-auth
 
 - **Auteur** : Claude Code (exécutant technique).

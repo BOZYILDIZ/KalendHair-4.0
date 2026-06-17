@@ -1,0 +1,49 @@
+import { requireSession } from "@/lib/auth/session";
+import { getOrganization } from "@/features/organizations/organization.service";
+import { getSalon } from "@/features/salons/salon.service";
+
+export default async function DashboardPage() {
+  const session = await requireSession();
+  const [organization, salon] = await Promise.all([
+    getOrganization(session.organizationId),
+    getSalon(session.organizationId),
+  ]);
+
+  return (
+    <main className="mx-auto max-w-lg space-y-8 px-4 py-10">
+      <div>
+        <h1 className="text-xl font-semibold">Tableau de bord</h1>
+        <p className="text-sm text-gray-500">
+          {organization?.name ?? "—"}
+          {salon ? ` · ${salon.name}` : ""}
+        </p>
+      </div>
+
+      <nav className="space-y-2">
+        <a
+          href="/dashboard/organization"
+          className="flex items-center justify-between rounded border px-4 py-3 text-sm hover:bg-gray-50"
+        >
+          <span className="font-medium">Mon Organisation</span>
+          <span className="text-gray-400">→</span>
+        </a>
+        <a
+          href="/dashboard/salon"
+          className="flex items-center justify-between rounded border px-4 py-3 text-sm hover:bg-gray-50"
+        >
+          <span className="font-medium">Mon Salon</span>
+          <span className="text-gray-400">→</span>
+        </a>
+      </nav>
+
+      <form action="/api/auth/logout" method="POST">
+        <button
+          type="submit"
+          className="rounded border px-4 py-2 text-sm hover:bg-gray-50"
+        >
+          Se déconnecter
+        </button>
+      </form>
+    </main>
+  );
+}

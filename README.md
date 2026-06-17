@@ -7,9 +7,11 @@ SaaS moderne de gestion de rendez-vous pour salons de coiffure.
 
 ## Stack
 
-- **Next.js** (App Router) + **TypeScript** (strict)
+- **Next.js 16** (App Router) + **TypeScript** (strict)
 - **Tailwind CSS v4**
-- **Prisma** + **PostgreSQL**
+- **Prisma 6** + **PostgreSQL 16**
+- **jose** (JWT HS256) + **bcryptjs** (auth custom)
+- **Zod** (validation)
 - **ESLint** + **Prettier**
 - Gestionnaire de paquets : **pnpm**
 
@@ -27,16 +29,34 @@ pnpm install
 
 # 2. Variables d'environnement
 cp .env.example .env
+# Éditer .env : DATABASE_URL + JWT_SECRET (voir .env.example)
 
 # 3. Base de données PostgreSQL locale (Docker)
 docker compose up -d
 
-# 4. Générer le client Prisma
+# 4. Appliquer les migrations
+pnpm db:migrate
+
+# 5. Générer le client Prisma
 pnpm db:generate
 
-# 5. Lancer le serveur de dev
+# 6. Seeder la base DEV
+pnpm db:seed
+
+# 7. Lancer le serveur de dev
 pnpm dev
 ```
+
+## Compte DEV
+
+Après le seed :
+
+| Champ | Valeur |
+|---|---|
+| Email | `owner@test.local` |
+| Mot de passe | `Test1234!` |
+| Rôle | `OWNER` |
+| Organisation | Salon Test |
 
 ## Scripts
 
@@ -50,6 +70,7 @@ pnpm dev
 | `pnpm format` / `pnpm format:check` | Prettier (écriture / vérification) |
 | `pnpm db:generate` | Générer le client Prisma |
 | `pnpm db:migrate` | Migration de développement |
+| `pnpm db:seed` | Seeder la base DEV |
 | `pnpm db:studio` | Prisma Studio |
 | `pnpm db:validate` | Valider le schéma Prisma |
 
@@ -59,4 +80,15 @@ Projet **multi-tenant**, organisé **par modules / features** (`src/features/*`)
 avec séparation UI / logique métier / accès données (`src/lib/*`).
 Voir `docs/ARCHITECTURE.md` et `docs/DATABASE.md`.
 
-> État actuel : **Sprint 1 — bootstrap technique**. Aucune fonctionnalité métier.
+## État actuel
+
+**Sprint 5 — Organization & Salon Management** en cours.
+
+| Sprint | Description | Tag |
+|---|---|---|
+| Phase 0 | Fondations documentaires | `v0.1.0-foundations` |
+| Sprint 1 | Bootstrap Next.js / Prisma / TypeScript | `v0.2.0-bootstrap` |
+| Sprint 2 | Schéma Prisma complet (21 modèles) | `v0.3.0-prisma-schema` |
+| Sprint 3 | Migration PostgreSQL | `v0.4.0-db-migration` |
+| Sprint 4 | Auth custom jose (OWNER) | `v0.5.0-auth` |
+| Sprint 5 | Gestion Organisation + Salon | `v0.6.0-org-salon` (en cours) |
