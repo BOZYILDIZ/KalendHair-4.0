@@ -4,6 +4,24 @@
 
 ---
 
+## 2026-06-17 — Session 11 : clôture Sprint 4 — merge PR #7 + tag v0.5.0-auth
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : 4 (clôture).
+- **Actions** :
+  - Rapport de sécurité produit (15 points) sur le code Sprint 4 — aucune anomalie bloquante.
+  - Validation ChatGPT reçue pour PR #7.
+  - PR **#7** (`feature/sprint4-auth`) **mergée** dans `main` (merge commit `3b25821`).
+  - Branche `feature/sprint4-auth` **supprimée** (locale + distante).
+  - Vérification : `src/proxy.ts`, `src/features/auth/session.utils.ts`, `src/lib/auth/permissions.ts`, `prisma/seed.ts` présents sur `main`.
+  - Tag annoté **`v0.5.0-auth`** créé et poussé.
+  - Branche `docs/sprint4-closure` créée.
+  - Mise à jour : `PROJECT_STATE.md`, `CURRENT_SPRINT.md`, `SESSION_LOG.md`.
+- **Code métier** : aucun. Clôture documentaire uniquement.
+- **État de sortie** : commit + push + PR #8 ouverte. **Aucun merge.** En attente de validation.
+
+---
+
 ## 2026-06-17 — Session 10 : Sprint 4 — Auth custom jose (ProUser OWNER)
 
 - **Auteur** : Claude Code (exécutant technique).
