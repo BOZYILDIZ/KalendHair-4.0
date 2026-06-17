@@ -29,8 +29,7 @@ enum ProRole {
 enum SubscriptionPlan {
   FREE
   STARTER
-  PROFESSIONAL
-  ENTERPRISE
+  PRO
 
   @@map("subscription_plan")
 }
@@ -86,10 +85,7 @@ enum NotificationChannel {
 enum NotificationType {
   APPOINTMENT_CONFIRMATION
   APPOINTMENT_REMINDER
-  APPOINTMENT_CANCELLATION
-  APPOINTMENT_RESCHEDULED
-  REVIEW_REQUEST
-  WELCOME
+  APPOINTMENT_CANCELLED
 
   @@map("notification_type")
 }
@@ -113,9 +109,10 @@ enum NotificationPreferenceScope {
 
 enum IntegrationProvider {
   GOOGLE_CALENDAR
-  STRIPE
-  SENDGRID
-  TWILIO
+  OUTLOOK
+  WHATSAPP
+  BREVO
+  INSTAGRAM
 
   @@map("integration_provider")
 }
@@ -149,13 +146,13 @@ model Organization {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  proUsers      ProUser[]
-  salons        Salon[]
-  employees     Employee[]
-  subscriptions Subscription[]
-  integrations  IntegrationConnection[]
-  auditLogs     AuditLog[]
-  featureFlags  FeatureFlag[]
+  proUsers     ProUser[]
+  salons       Salon[]
+  employees    Employee[]
+  subscription Subscription?
+  integrations IntegrationConnection[]
+  auditLogs    AuditLog[]
+  featureFlags FeatureFlag[]
 
   @@map("organizations")
 }
@@ -182,7 +179,7 @@ model ProUser {
 
 model Subscription {
   id                     String             @id @default(cuid())
-  organizationId         String
+  organizationId         String             @unique
   plan                   SubscriptionPlan   @default(FREE)
   status                 SubscriptionStatus @default(TRIALING)
   // Stripe placeholders — nullable, inactifs au MVP
@@ -195,7 +192,6 @@ model Subscription {
 
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  @@index([organizationId])
   @@map("subscriptions")
 }
 
@@ -242,7 +238,6 @@ model FrenchCity {
   region     String
 
   @@index([postalCode])
-  @@index([name])
   @@map("french_cities")
 }
 
@@ -326,7 +321,7 @@ model SalonSchedule {
 
   salon Salon @relation(fields: [salonId], references: [id], onDelete: Cascade)
 
-  @@unique([salonId, dayOfWeek])
+  @@index([salonId])
   @@map("salon_schedules")
 }
 
@@ -342,7 +337,7 @@ model EmployeeSchedule {
 
   employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
 
-  @@unique([employeeId, dayOfWeek])
+  @@index([employeeId])
   @@map("employee_schedules")
 }
 
@@ -356,7 +351,6 @@ model ClosedDay {
   salon Salon @relation(fields: [salonId], references: [id], onDelete: Cascade)
 
   @@unique([salonId, date])
-  @@index([salonId, date])
   @@map("closed_days")
 }
 
@@ -422,7 +416,7 @@ model AppointmentModification {
 
 model Client {
   id        String   @id @default(cuid())
-  email     String   @unique
+  email     String
   firstName String
   lastName  String
   phone     String?
@@ -436,6 +430,7 @@ model Client {
   appointments  Appointment[]
   notifications Notification[]
 
+  @@index([email])
   @@map("clients")
 }
 
