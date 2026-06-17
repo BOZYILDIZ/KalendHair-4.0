@@ -4,6 +4,23 @@
 
 ---
 
+## 2026-06-18 — Session 13 : clôture Sprint 5 — merge PR #9 + tag v0.6.0-org-salon
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : 5 (clôture).
+- **Actions** :
+  - Test manuel complet effectué par Hasan : login ✅ · /dashboard ✅ · /dashboard/organization ✅ · /dashboard/salon ✅ · persistance organisation ✅ · persistance salon ✅ · rechargement ✅.
+  - Validation ChatGPT reçue pour PR #9.
+  - PR **#9** (`feature/sprint5-org-salon`) **mergée** dans `main` (merge commit `fd15428`).
+  - Branche `feature/sprint5-org-salon` **supprimée** (locale + distante, supprimée automatiquement par `gh pr merge --delete-branch`).
+  - Tag annoté **`v0.6.0-org-salon`** créé et poussé.
+  - Branche `docs/sprint5-closure` créée.
+  - Mise à jour : `PROJECT_STATE.md`, `CURRENT_SPRINT.md`, `SESSION_LOG.md`.
+- **Code métier** : aucun. Clôture documentaire uniquement.
+- **État de sortie** : commit + push + PR documentaire ouverte. **Aucun merge.** En attente de validation.
+
+---
+
 ## 2026-06-18 — Session 12 : Sprint 5 — Organization & Salon Management
 
 - **Auteur** : Claude Code (exécutant technique).
