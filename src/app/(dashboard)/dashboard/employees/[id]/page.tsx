@@ -118,12 +118,20 @@ export default async function EmployeePage({ params }: Props) {
         />
       </section>
 
-      <Link
-        href="/dashboard/employees"
-        className="block text-sm text-gray-400 hover:underline"
-      >
-        ← Retour aux employés
-      </Link>
+      <div className="flex items-center gap-4">
+        <Link
+          href={`/dashboard/employees/${id}/schedule`}
+          className="text-sm text-blue-600 hover:underline"
+        >
+          Horaires →
+        </Link>
+        <Link
+          href="/dashboard/employees"
+          className="text-sm text-gray-400 hover:underline"
+        >
+          ← Retour aux employés
+        </Link>
+      </div>
     </main>
   );
 }

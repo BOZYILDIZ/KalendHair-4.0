@@ -4,6 +4,32 @@
 
 ---
 
+## 2026-06-18 — Session 16 : Sprint 7 — Horaires & Disponibilités
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : 7 / Sprint 7.
+- **Branche** : `feature/sprint7-schedules`.
+- **Actions** :
+  - Plan Sprint 7 validé par ChatGPT (3 ajustements : pas de @@unique, pas de getAvailableSlots, employee.isActive check).
+  - Implémentation complète Sprint 7 :
+    - `src/lib/utils/time.ts` — minutesToTime / timeToMinutes.
+    - `src/lib/permissions/schedule.permissions.ts` — canManageSchedule.
+    - `src/features/schedules/types.ts` — types, constantes, defaults.
+    - `src/features/schedules/schedule.schema.ts` — Zod schemas.
+    - `src/features/schedules/salon-schedule.service.ts` — getSalonSchedule, saveSalonSchedule.
+    - `src/features/schedules/employee-schedule.service.ts` — getEmployeeSchedule, saveEmployeeSchedule (cross-validation).
+    - `src/features/schedules/closed-day.service.ts` — CRUD jours fermeture.
+    - `src/features/schedules/availability.service.ts` — isEmployeeAvailable (isActive + salon + closedDay + horaires).
+    - 3 composants Client : SalonScheduleForm, EmployeeScheduleForm, ClosedDayManager.
+    - Routes : `/dashboard/salon/schedule`, `/dashboard/employees/[id]/schedule`, `/dashboard/closed-days`.
+    - Hub `/dashboard` : +2 liens (Horaires du salon, Jours de fermeture).
+    - `/dashboard/employees/[id]` : lien Horaires →.
+  - Vérifications : `pnpm typecheck` ✅ · `pnpm lint` ✅ · `pnpm build` ✅ · `pnpm db:seed` ✅.
+- **Build** : 15 routes Next.js ✅.
+- **État de sortie** : commit + push + PR vers main. **Aucun merge.** En attente de validation ChatGPT + Hasan.
+
+---
+
 ## 2026-06-18 — Session 15 : clôture Sprint 6 — merge PR #11 + tag v0.7.0-employees-services
 
 - **Auteur** : Claude Code (exécutant technique).
