@@ -18,26 +18,36 @@
 
 **Sprint 6 — Employees & Services : TERMINÉ et mergé** ✅
 
+**Sprint 7 — Horaires & Disponibilités : EN COURS** 🚧 (branche `feature/sprint7-schedules`)
+
 ## État du code
 
 - **Auth custom** : `jose` (JWT HS256, 24h) + `bcryptjs` + cookie `HttpOnly`.
 - **Proxy Next.js 16** (`src/proxy.ts`) : protection `/dashboard/:path*`.
 - **Pages** :
   - `/login` — formulaire ProUser OWNER
-  - `/dashboard` — hub (4 liens homogènes : Organisation, Salon, Employés, Services)
+  - `/dashboard` — hub (6 liens : Organisation, Salon, Employés, Services, Horaires du salon, Jours de fermeture)
   - `/dashboard/organization` — lecture + modification Organisation
   - `/dashboard/salon` — lecture + modification Salon
+  - `/dashboard/salon/schedule` — grille 7 jours horaires du salon (**Sprint 7**)
   - `/dashboard/employees` — liste employés (actifs + inactifs)
   - `/dashboard/employees/new` — création employé (avec avertissement doublon)
-  - `/dashboard/employees/[id]` — édition + associations services + statut
+  - `/dashboard/employees/[id]` — édition + associations services + statut + lien Horaires
+  - `/dashboard/employees/[id]/schedule` — grille 7 jours horaires employé (**Sprint 7**)
   - `/dashboard/services` — liste services (actifs + inactifs)
   - `/dashboard/services/new` — création service
   - `/dashboard/services/[id]` — édition + statut
-- **Permissions** : `src/lib/permissions/` — `tenant.ts` + `organization.permissions.ts` + `salon.permissions.ts` + `employee.permissions.ts` + `service.permissions.ts`
-- **Services métier** : `src/features/organizations/` + `src/features/salons/` + `src/features/employees/` + `src/features/services/`
+  - `/dashboard/closed-days` — gestion jours fermeture exceptionnels (**Sprint 7**)
+- **Permissions** : `src/lib/permissions/` — `tenant.ts` + `organization.permissions.ts` + `salon.permissions.ts` + `employee.permissions.ts` + `service.permissions.ts` + `schedule.permissions.ts`
+- **Services métier** : `src/features/organizations/` + `src/features/salons/` + `src/features/employees/` + `src/features/services/` + `src/features/schedules/`
 - **Validation** : `zod@4.4.3` — Server Actions
 - **Seed DEV** : `owner@test.local / Test1234!` (Organisation "Salon Test" + Salon "Salon Test").
 - **Schéma Prisma** : 21 modèles + 13 enums + 3 migrations appliquées.
+- **Horaires Sprint 7** :
+  - `SalonSchedule` — grille 7 jours (saveMany en `$transaction`)
+  - `EmployeeSchedule` — grille 7 jours (cross-validé vs salon)
+  - `ClosedDay` — fermetures exceptionnelles (date UTC, motif optionnel)
+  - `isEmployeeAvailable()` — vérifie salon ouvert + pas ClosedDay + employé actif + horaires employé
 - **PostgreSQL local** : container `kalendhair_postgres` (Docker Compose, port 5432).
 
 ## Stack & versions installées
@@ -60,6 +70,7 @@
 
 `pnpm prisma validate` · `pnpm typecheck` · `pnpm lint` · `pnpm build` · `pnpm db:seed` → **OK**.
 Tests logique métier Sprint 6 : 45/45 ✅
+Sprint 7 : `pnpm typecheck` ✅ · `pnpm lint` ✅ · `pnpm build` ✅ · `pnpm db:seed` ✅
 
 ## Migrations appliquées
 
@@ -84,8 +95,9 @@ Tests logique métier Sprint 6 : 45/45 ✅
 
 ## Prochaine étape
 
-Conception Sprint 7 (à définir) — prochains modules métier selon roadmap.
+Sprint 7 PR ouverte — en attente de validation ChatGPT + merge.
+Sprint 8 : Rendez-vous (appointments) + `getAvailableSlots()`.
 
 ---
 
-_Dernière mise à jour : 2026-06-18 — PR #11 mergée, tag v0.7.0-employees-services. Sprint 6 TERMINÉ._
+_Dernière mise à jour : 2026-06-18 — Sprint 7 (Horaires & Disponibilités) implémenté. PR en attente de validation._

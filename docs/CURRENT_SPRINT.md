@@ -6,9 +6,51 @@
 
 ## Sprint actuel
 
+**Sprint 7 — Horaires & Disponibilités** — IMPLÉMENTÉ 🚧 (PR ouverte, attente validation)
+
 **Sprint 6 — Employees & Services** — TERMINÉ ✅
 
-## Objectifs du sprint
+---
+
+## Objectifs Sprint 7
+
+- [x] `src/lib/permissions/schedule.permissions.ts` — `canManageSchedule()`.
+- [x] `src/lib/utils/time.ts` — `minutesToTime()` / `timeToMinutes()`.
+- [x] `src/features/schedules/types.ts` — DayOfWeek, DAYS_OF_WEEK, DAY_LABELS, UTC_DAY_MAP, DEFAULT_SALON_SCHEDULE, SalonScheduleGridEntry, EmployeeScheduleGridEntry, ClosedDayView, AvailabilityResult, ScheduleFormState, ClosedDayFormState.
+- [x] `src/features/schedules/schedule.schema.ts` — SalonScheduleDaySchema, EmployeeScheduleDaySchema, ClosedDaySchema.
+- [x] `src/features/schedules/salon-schedule.service.ts` — getSalonSchedule, getSalonScheduleRaw, saveSalonSchedule.
+- [x] `src/features/schedules/employee-schedule.service.ts` — getEmployeeSchedule, saveEmployeeSchedule (cross-validation vs salon).
+- [x] `src/features/schedules/closed-day.service.ts` — getClosedDays, addClosedDay (UTC, P2002), removeClosedDay.
+- [x] `src/features/schedules/availability.service.ts` — isEmployeeAvailable (isActive check + salon + closedDay + employee schedule). PAS de getAvailableSlots.
+- [x] `src/features/schedules/components/salon-schedule-form.tsx` — Client Component grille 7 jours.
+- [x] `src/features/schedules/components/employee-schedule-form.tsx` — Client Component grille 7 jours + contexte salon.
+- [x] `src/features/schedules/components/closed-day-manager.tsx` — Client Component ajout + suppression.
+- [x] `src/app/(dashboard)/dashboard/salon/schedule/actions.ts` + `page.tsx`.
+- [x] `src/app/(dashboard)/dashboard/employees/[id]/schedule/actions.ts` + `page.tsx`.
+- [x] `src/app/(dashboard)/dashboard/closed-days/actions.ts` + `page.tsx`.
+- [x] Hub `/dashboard` — 2 nouveaux liens : Horaires du salon + Jours de fermeture.
+- [x] `/dashboard/employees/[id]` — lien Horaires vers `/dashboard/employees/[id]/schedule`.
+- [x] `typecheck` ✅ · `lint` ✅ · `build` ✅ · `db:seed` ✅.
+
+## Décisions techniques Sprint 7
+
+| Décision | Valeur |
+|---|---|
+| Pas de @@unique sur SalonSchedule / EmployeeSchedule | Index simples pour multi-créneaux futur |
+| Pas de getAvailableSlots | Reporté Sprint 8 avec les rendez-vous |
+| isEmployeeAvailable | Vérifie employee.isActive === true (ajustement ChatGPT) |
+| saveSchedule | $transaction([deleteMany, createMany]) |
+| ClosedDay date | Date.UTC(y, m-1, d) pour éviter ambiguïté timezone |
+| DayOfWeek ordering | Toujours trié via DAYS_OF_WEEK (pas l'ordre DB alphabétique) |
+| organizationId | JWT uniquement — jamais depuis FormData |
+
+## Condition de sortie du sprint
+
+> PR `feature/sprint7-schedules` validée par ChatGPT et Hasan, mergée dans `main`, tag `v0.8.0-schedules`.
+
+---
+
+## Objectifs du sprint (Sprint 6)
 
 - [x] Migration `20260618000002_employee_photo_url` — `photoUrl TEXT` nullable sur `employees`.
 - [x] `src/lib/permissions/employee.permissions.ts` — `canManageEmployee()`.

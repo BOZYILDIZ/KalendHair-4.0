@@ -82,7 +82,7 @@ Voir `docs/ARCHITECTURE.md` et `docs/DATABASE.md`.
 
 ## État actuel
 
-**Sprint 6 — Employees & Services** — TERMINÉ ✅
+**Sprint 7 — Horaires & Disponibilités** — EN COURS 🚧
 
 | Sprint | Description | Tag |
 |---|---|---|
@@ -93,3 +93,4 @@ Voir `docs/ARCHITECTURE.md` et `docs/DATABASE.md`.
 | Sprint 4 | Auth custom jose (OWNER) | `v0.5.0-auth` |
 | Sprint 5 | Gestion Organisation + Salon | `v0.6.0-org-salon` |
 | Sprint 6 | Employés + Services + Associations | `v0.7.0-employees-services` |
+| Sprint 7 | Horaires salon + employé + jours fermeture | `v0.8.0-schedules` (à venir) |
