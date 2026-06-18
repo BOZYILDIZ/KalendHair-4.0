@@ -6,7 +6,7 @@
 
 ## Sprint actuel
 
-**Sprint 7 — Horaires & Disponibilités** — IMPLÉMENTÉ 🚧 (PR ouverte, attente validation)
+**Sprint 7 — Horaires & Disponibilités** — TERMINÉ ✅
 
 **Sprint 6 — Employees & Services** — TERMINÉ ✅
 
@@ -46,7 +46,8 @@
 
 ## Condition de sortie du sprint
 
-> PR `feature/sprint7-schedules` validée par ChatGPT et Hasan, mergée dans `main`, tag `v0.8.0-schedules`.
+> ✅ PR `feature/sprint7-schedules` validée par ChatGPT et Hasan (22/22 tests), mergée dans `main`, tag `v0.8.0-schedules`.
+> **Sprint 7 TERMINÉ.**
 
 ---
 

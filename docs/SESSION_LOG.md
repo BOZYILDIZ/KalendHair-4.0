@@ -4,6 +4,23 @@
 
 ---
 
+## 2026-06-18 — Session 17 : clôture Sprint 7 — merge PR #13 + tag v0.8.0-schedules
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : 7 (clôture).
+- **Actions** :
+  - Tests manuels Sprint 7 (22/22) validés via script tsx direct sur DB.
+  - Validation ChatGPT reçue pour PR #13.
+  - PR **#13** (`feature/sprint7-schedules`) **mergée** dans `main` (merge commit `ddda498`).
+  - Branche `feature/sprint7-schedules` **supprimée** (locale + distante via `--delete-branch`).
+  - Tag annoté **`v0.8.0-schedules`** créé et poussé.
+  - Branche `docs/sprint7-closure` créée.
+  - Mise à jour : `PROJECT_STATE.md`, `CURRENT_SPRINT.md`, `SESSION_LOG.md`, `README.md`.
+- **Code métier** : aucun. Clôture documentaire uniquement.
+- **État de sortie** : commit + push + PR documentaire ouverte. **Aucun merge.** En attente de validation.
+
+---
+
 ## 2026-06-18 — Session 16 : Sprint 7 — Horaires & Disponibilités
 
 - **Auteur** : Claude Code (exécutant technique).
