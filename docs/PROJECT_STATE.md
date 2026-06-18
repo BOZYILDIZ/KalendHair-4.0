@@ -18,7 +18,7 @@
 
 **Sprint 6 — Employees & Services : TERMINÉ et mergé** ✅
 
-**Sprint 7 — Horaires & Disponibilités : EN COURS** 🚧 (branche `feature/sprint7-schedules`)
+**Sprint 7 — Horaires & Disponibilités : TERMINÉ et mergé** ✅
 
 ## État du code
 
@@ -83,9 +83,9 @@ Sprint 7 : `pnpm typecheck` ✅ · `pnpm lint` ✅ · `pnpm build` ✅ · `pnpm 
 ## Git / Release
 
 - `main` = seule branche stable active.
-- Tags : `v0.1.0-foundations` · `v0.2.0-bootstrap` · `v0.3.0-prisma-schema` · `v0.4.0-db-migration` · `v0.5.0-auth` · `v0.6.0-org-salon` · **`v0.7.0-employees-services`**.
-- PR **#11** (`feature/sprint6-employees-services`) **mergée** dans `main` (merge commit `93c9127`).
-- Branche `feature/sprint6-employees-services` **supprimée** (locale + distante).
+- Tags : `v0.1.0-foundations` · `v0.2.0-bootstrap` · `v0.3.0-prisma-schema` · `v0.4.0-db-migration` · `v0.5.0-auth` · `v0.6.0-org-salon` · `v0.7.0-employees-services` · **`v0.8.0-schedules`**.
+- PR **#13** (`feature/sprint7-schedules`) **mergée** dans `main` (merge commit `ddda498`).
+- Branche `feature/sprint7-schedules` **supprimée** (locale + distante).
 
 ## Base de données
 
@@ -95,9 +95,8 @@ Sprint 7 : `pnpm typecheck` ✅ · `pnpm lint` ✅ · `pnpm build` ✅ · `pnpm 
 
 ## Prochaine étape
 
-Sprint 7 PR ouverte — en attente de validation ChatGPT + merge.
-Sprint 8 : Rendez-vous (appointments) + `getAvailableSlots()`.
+Sprint 8 : Rendez-vous (Appointments) + `getAvailableSlots()`.
 
 ---
 
-_Dernière mise à jour : 2026-06-18 — Sprint 7 (Horaires & Disponibilités) implémenté. PR en attente de validation._
+_Dernière mise à jour : 2026-06-18 — PR #13 mergée, tag v0.8.0-schedules. Sprint 7 TERMINÉ._
