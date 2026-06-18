@@ -6,9 +6,50 @@
 
 ## Sprint actuel
 
+**Sprint 8 — Rendez-vous** — EN COURS 🔄 (PR #15 en attente de validation)
+
 **Sprint 7 — Horaires & Disponibilités** — TERMINÉ ✅
 
 **Sprint 6 — Employees & Services** — TERMINÉ ✅
+
+---
+
+## Objectifs Sprint 8
+
+- [x] Dépendance : `date-fns-tz@3.2.0` installée.
+- [x] Migration `20260618120356_appointment_conflict_index` — index composite `@@index([employeeId, startAt, endAt])`.
+- [x] `src/lib/permissions/appointment.permissions.ts` — `canManageAppointment()`.
+- [x] `src/features/appointments/types.ts` — AppointmentStatus, AppointmentModificationType, ALLOWED_TRANSITIONS, STATUS_LABELS, STATUS_COLORS, **SLOT_INTERVAL_MINUTES = 15**, vues, états de form.
+- [x] `src/features/appointments/appointment.schema.ts` — CreateAppointmentSchema (email normalisé via preprocess), UpdateAppointmentSchema, CancelAppointmentSchema, UpdateStatusSchema.
+- [x] `src/features/appointments/appointment-modification.service.ts` — logModification (champ **modifiedById** confirmé), getModifications.
+- [x] `src/features/appointments/appointment.service.ts` — createAppointment, updateAppointment, cancelAppointment, updateAppointmentStatus, getAppointments, getAppointment, getServiceEmployeesMap, getActiveServices, getEmployeesForService.
+- [x] `src/features/appointments/slots.service.ts` — getAvailableSlots (timezone-aware, sans N+1).
+- [x] `src/features/schedules/availability.service.ts` — Step 8 rempli + `options?: { excludeAppointmentId?, startAtUTC? }`.
+- [x] `src/features/appointments/components/appointment-status-badge.tsx`
+- [x] `src/features/appointments/components/appointment-list.tsx`
+- [x] `src/features/appointments/components/appointment-form.tsx`
+- [x] `src/features/appointments/components/appointment-detail.tsx`
+- [x] Routes `/dashboard/appointments` (liste + filtres), `/dashboard/appointments/new`, `/dashboard/appointments/[id]`.
+- [x] Hub `/dashboard` — lien "Rendez-vous" ajouté (7 liens total).
+- [x] `typecheck` ✅ · `lint` ✅ · `build` ✅ · `db:seed` ✅.
+- [x] 24/24 tests manuels ✅.
+
+## Décisions techniques Sprint 8
+
+| Décision | Valeur |
+|---|---|
+| Timezone | `fromZonedTime()` de `date-fns-tz` v3 — saisie locale → UTC pour stockage |
+| Email normalization | `email.trim().toLowerCase()` dans Zod preprocess ET dans `resolveOrCreateClient` |
+| SLOT_INTERVAL_MINUTES | Constante 15 dans `types.ts` (pas de valeur magique) |
+| modifiedById | Champ Prisma confirmé (pas `actorProUserId`) |
+| Conflit RDV | `isEmployeeAvailable` Step 8 + param `startAtUTC` pour timezone correcte |
+| getAvailableSlots | 1 requête appels parallèles + filtrage mémoire (pas N+1) |
+| organizationId | JWT uniquement — jamais depuis FormData |
+| Race condition | Documentée : READ COMMITTED ne prévient pas les phantom reads (MVP) |
+
+## Condition de sortie du sprint
+
+> PR `feature/sprint8-appointments` en attente de validation ChatGPT + Hasan (24/24 tests).
 
 ---
 

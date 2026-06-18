@@ -82,7 +82,7 @@ Voir `docs/ARCHITECTURE.md` et `docs/DATABASE.md`.
 
 ## État actuel
 
-**Sprint 7 — Horaires & Disponibilités** — TERMINÉ ✅
+**Sprint 8 — Rendez-vous** — EN COURS 🔄 (PR #15 en attente de validation)
 
 | Sprint | Description | Tag |
 |---|---|---|
@@ -94,3 +94,4 @@ Voir `docs/ARCHITECTURE.md` et `docs/DATABASE.md`.
 | Sprint 5 | Gestion Organisation + Salon | `v0.6.0-org-salon` |
 | Sprint 6 | Employés + Services + Associations | `v0.7.0-employees-services` |
 | Sprint 7 | Horaires salon + employé + jours fermeture + disponibilité | `v0.8.0-schedules` |
+| Sprint 8 | Rendez-vous CRUD + slots disponibles + historique (en cours) | — |

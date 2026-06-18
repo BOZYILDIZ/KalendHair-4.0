@@ -390,6 +390,7 @@ model Appointment {
 
   @@index([salonId, startAt])
   @@index([employeeId, startAt])
+  @@index([employeeId, startAt, endAt])
   @@index([clientId])
   @@index([organizationId, startAt])
   @@map("appointments")
