@@ -24,13 +24,15 @@
 
 **Sprint 9 — Agenda visuel Jour & Semaine : TERMINÉ et mergé** ✅
 
+**Sprint 10 — CRM Clients : TERMINÉ et mergé** ✅
+
 ## État du code
 
 - **Auth custom** : `jose` (JWT HS256, 24h) + `bcryptjs` + cookie `HttpOnly`.
 - **Proxy Next.js 16** (`src/proxy.ts`) : protection `/dashboard/:path*`.
 - **Pages** :
   - `/login` — formulaire ProUser OWNER
-  - `/dashboard` — hub (9 liens : Organisation, Salon, Employés, Services, Horaires du salon, Jours de fermeture, Rendez-vous, **Agenda**)
+  - `/dashboard` — hub (10 liens : Organisation, Salon, Employés, Services, Horaires du salon, Jours de fermeture, Rendez-vous, Agenda, **Clients**)
   - `/dashboard/organization` — lecture + modification Organisation
   - `/dashboard/salon` — lecture + modification Salon
   - `/dashboard/salon/schedule` — grille 7 jours horaires du salon (**Sprint 7**)
@@ -44,15 +46,26 @@
   - `/dashboard/closed-days` — gestion jours fermeture exceptionnels (**Sprint 7**)
   - `/dashboard/appointments` — liste RDV avec filtres (date, employé, statut) (**Sprint 8**)
   - `/dashboard/appointments/new` — création RDV (service → employé → date/heure → client) (**Sprint 8**)
-  - `/dashboard/appointments/[id]` — détail RDV + actions statut + annulation + historique (**Sprint 8**)
+  - `/dashboard/appointments/[id]` — détail RDV + actions statut + annulation + historique + bouton Lier client (**Sprint 8 / 10**)
   - `/dashboard/agenda` — agenda visuel Jour & Semaine + nav + filtre employé (**Sprint 9**)
-- **Permissions** : `src/lib/permissions/` — `tenant.ts` + `organization.permissions.ts` + `salon.permissions.ts` + `employee.permissions.ts` + `service.permissions.ts` + `schedule.permissions.ts` + `appointment.permissions.ts`
-- **Services métier** : `src/features/organizations/` + `src/features/salons/` + `src/features/employees/` + `src/features/services/` + `src/features/schedules/` + `src/features/appointments/`
+  - `/dashboard/clients` — liste CRM paginée + recherche (**Sprint 10**)
+  - `/dashboard/clients/[id]` — fiche client : stats + historique RDV + notes internes (**Sprint 10**)
+- **Permissions** : `src/lib/permissions/` — `tenant.ts` + `organization.permissions.ts` + `salon.permissions.ts` + `employee.permissions.ts` + `service.permissions.ts` + `schedule.permissions.ts` + `appointment.permissions.ts` + `client.permissions.ts`
+- **Services métier** : `src/features/organizations/` + `src/features/salons/` + `src/features/employees/` + `src/features/services/` + `src/features/schedules/` + `src/features/appointments/` + `src/features/clients/`
 - **Validation** : `zod@4.4.3` — Server Actions
 - **Seed DEV** : `owner@test.local / Test1234!` (Organisation "Salon Test" + Salon "Salon Test").
-- **Schéma Prisma** : 21 modèles + 13 enums + 4 migrations appliquées.
+- **Schéma Prisma** : 21 modèles + 13 enums + 5 migrations (4 appliquées + 1 en attente Docker).
 - **Dépendances Sprint 8** : `date-fns-tz@3.2.0` (conversion timezone ↔ UTC).
 - **Dépendances Sprint 9** : `date-fns@4.4.0` (requis par `date-fns-tz`).
+- **CRM Sprint 10** :
+  - `src/features/clients/types.ts` — ClientListItem, ClientView, ClientStats, ClientAppointmentRow
+  - `src/features/clients/client.schema.ts` — UpdateNotesSchema (Zod, max 500 car)
+  - `src/features/clients/client.service.ts` — getClients, getClient, getClientStats, getClientAppointments, updateClientNotes, convertGuestToClient
+  - 5 composants : client-search (Client), client-list, client-stats-card, client-appointment-history, client-notes-form (Client)
+  - `priceCentsSnapshot Int?` capturé à la création du RDV (`createAppointment`) — fallback `service.priceCents` pour RDV antérieurs
+  - Notes internes isolées par salon (`SalonClient.notes`)
+  - Conversion invité → client : `clientId` renseigné, champs `guest*` conservés comme snapshot historique
+- **⚠️ Migration en attente** : `prisma/migrations/20260624000001_crm_snapshot_and_indexes/migration.sql` — à appliquer via `pnpm db:migrate` dès que Docker + `.env` disponibles (non destructive : colonne nullable + 2 index).
 - **Agenda Sprint 9** :
   - `src/features/agenda/types.ts` — AgendaView, GridConfig, AgendaBlock, AgendaColumn, AgendaDayData, AgendaWeekData, SLOT_HEIGHT_REM
   - `src/features/agenda/agenda.service.ts` — `getAgendaDay()`, `getAgendaWeek()`, `computeWeekStart()` (5 requêtes Prisma parallèles chacun)
@@ -96,6 +109,7 @@ Tests logique métier Sprint 6 : 45/45 ✅
 Sprint 7 : `pnpm typecheck` ✅ · `pnpm lint` ✅ · `pnpm build` ✅ · `pnpm db:seed` ✅
 Sprint 8 : `pnpm typecheck` ✅ · `pnpm lint` ✅ · `pnpm build` ✅ · `pnpm db:seed` ✅ · 24/24 tests manuels ✅
 Sprint 9 : `pnpm typecheck` ✅ · `pnpm lint` ✅ · `pnpm build` ✅ (20 routes) · 20/20 tests manuels ✅ · `pnpm db:seed` : prérequis environnement (Docker + `.env` requis, non fonctionnel hors environnement local configuré)
+Sprint 10 : `pnpm typecheck` ✅ · `pnpm lint` ✅ · `pnpm build` ✅ (22 routes) · 22/22 tests manuels ✅ · `pnpm db:migrate` / `pnpm db:seed` : ⚠️ en attente Docker + `.env` (migration non destructive prête)
 
 ## Migrations appliquées
 
@@ -105,13 +119,16 @@ Sprint 9 : `pnpm typecheck` ✅ · `pnpm lint` ✅ · `pnpm build` ✅ (20 route
 | `20260618000001_salon_org_unique` | Contrainte unique `Salon.organizationId` (1 salon/org MVP) |
 | `20260618000002_employee_photo_url` | `photoUrl TEXT` nullable sur `employees` (préparation Sprint 7+) |
 | `20260618120356_appointment_conflict_index` | Index composite `@@index([employeeId, startAt, endAt])` sur `appointments` (**Sprint 8**) |
+| `20260624000001_crm_snapshot_and_indexes` | ⚠️ **EN ATTENTE** — `priceCentsSnapshot INT?` sur `appointments` + `@@index([phone])` sur `clients` + `@@index([salonId, createdAt])` sur `salon_clients` (**Sprint 10**) |
 
 ## Git / Release
 
 - `main` = seule branche stable active.
-- Tags : `v0.1.0-foundations` · `v0.2.0-bootstrap` · `v0.3.0-prisma-schema` · `v0.4.0-db-migration` · `v0.5.0-auth` · `v0.6.0-org-salon` · `v0.7.0-employees-services` · `v0.8.0-schedules` · `v0.9.0-appointments` · **`v1.0.0-agenda`**.
+- Tags : `v0.1.0-foundations` · `v0.2.0-bootstrap` · `v0.3.0-prisma-schema` · `v0.4.0-db-migration` · `v0.5.0-auth` · `v0.6.0-org-salon` · `v0.7.0-employees-services` · `v0.8.0-schedules` · `v0.9.0-appointments` · `v1.0.0-agenda` · **`v1.1.0-crm-clients`**.
 - PR **#17** (`feature/sprint9-agenda`) **mergée** dans `main` (merge commit `36156b1`).
-- Branche `feature/sprint9-agenda` **supprimée** (locale + distante).
+- PR **#18** (`docs/sprint9-closure`) **mergée** dans `main` (commit `7976531`).
+- PR **#19** (`feature/sprint10-crm-clients`) **mergée** dans `main` (merge commit `361155b`).
+- Branches feature/sprint9-agenda, docs/sprint9-closure, feature/sprint10-crm-clients **supprimées** (locale + distante).
 
 ## Base de données
 
@@ -121,8 +138,10 @@ Sprint 9 : `pnpm typecheck` ✅ · `pnpm lint` ✅ · `pnpm build` ✅ (20 route
 
 ## Prochaine étape
 
-Sprint 10 : à définir avec ChatGPT (notifications, réservation en ligne, rapports, etc.)
+Sprint 11 : à définir avec ChatGPT (notifications, réservation en ligne, rapports, tableau de bord analytics, etc.)
+
+⚠️ **Prérequis avant Sprint 11** : appliquer la migration `20260624000001_crm_snapshot_and_indexes` via `pnpm db:migrate` dès que Docker + `.env` disponibles.
 
 ---
 
-_Dernière mise à jour : 2026-06-23 — PR #17 mergée, tag v1.0.0-agenda. Sprint 9 TERMINÉ._
+_Dernière mise à jour : 2026-06-23 — PR #19 mergée, tag v1.1.0-crm-clients. Sprint 10 CRM Clients TERMINÉ._

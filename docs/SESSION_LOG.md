@@ -4,6 +4,48 @@
 
 ---
 
+## 2026-06-23 — Session 23 : clôture Sprint 10 — merge PR #19 + tag v1.1.0-crm-clients
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : 10 (clôture).
+- **Actions** :
+  - Validation ChatGPT reçue pour PR #19 (22/22 tests manuels OK).
+  - PR **#19** (`feature/sprint10-crm-clients`) **mergée** dans `main` (merge commit `361155b`).
+  - Branche `feature/sprint10-crm-clients` **supprimée** (distante).
+  - Tag annoté **`v1.1.0-crm-clients`** créé et poussé.
+  - Branche `docs/sprint10-closure` créée.
+  - Mise à jour : `PROJECT_STATE.md`, `CURRENT_SPRINT.md`, `SESSION_LOG.md`, `README.md`.
+- **Code métier** : aucun. Clôture documentaire uniquement.
+- **Note environnement** : migration `20260624000001_crm_snapshot_and_indexes` non appliquée (Docker + `.env` absents). SQL prêt dans `prisma/migrations/` — à appliquer via `pnpm db:migrate`.
+- **État de sortie** : commit + push + PR documentaire ouverte (PR #20). **Aucun merge.** En attente de validation.
+
+---
+
+## 2026-06-23 — Session 22 : Sprint 10 — CRM Clients
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : 10 (implémentation).
+- **Branche** : `feature/sprint10-crm-clients`.
+- **Actions** :
+  - Migration `20260624000001_crm_snapshot_and_indexes` écrite (SQL manuel — Docker non disponible) : `priceCentsSnapshot INT?` sur `appointments`, index `clients(phone)`, index `salon_clients(salonId, createdAt)`.
+  - `src/lib/permissions/client.permissions.ts` — `canManageClient()` via `canAccessTenant`.
+  - `src/features/clients/types.ts` — 8 types : ClientListItem, ClientView, ClientStats, ClientAppointmentRow, ClientsPage, ClientAppointmentsPage, ClientNotesFormState, ConvertGuestFormState.
+  - `src/features/clients/client.schema.ts` — UpdateNotesSchema (Zod v4, max 500 car).
+  - `src/features/clients/client.service.ts` — 6 fonctions : getClients (pagination safePage, recherche insensible), getClient (isolation SalonClient), getClientStats (5 `Promise.all`, `priceCentsSnapshot ?? service.priceCents`), getClientAppointments (pagination safePage), updateClientNotes (vérif SalonClient), convertGuestToClient ($transaction, guest* préservés).
+  - 5 composants : client-search (Client, debounce 300ms), client-list, client-stats-card, client-appointment-history, client-notes-form (Client, `useActionState`).
+  - Routes : `/dashboard/clients` (liste + recherche + pagination), `/dashboard/clients/[id]` (fiche + stats + historique + notes).
+  - Server Actions : `updateNotesAction` (Zod `.issues[0]?.message`), `convertGuestAndRedirectAction`.
+  - `appointment.service.ts` modifié : `priceCentsSnapshot` capturé à la création + `service.priceCents` inclus dans le select.
+  - `appointment-detail.tsx` modifié : bouton "Lier ce client au CRM →" pour RDV invité sans `clientId`.
+  - `/dashboard/appointments/[id]/page.tsx` modifié : `convertGuestAndRedirectAction` passé en prop.
+  - `/dashboard/page.tsx` modifié : 10ème lien "Clients".
+  - Correction artefacts contexte compacté : 6 fichiers dupliqués (`* 2.tsx/ts`) supprimés.
+  - `typecheck` ✅ · `lint` ✅ · `build` ✅ (22 routes) · 22/22 tests manuels ✅ (analyse statique).
+  - Commit + push + PR #19 créée (en attente validation).
+- **Fichiers créés** : 13 nouveaux fichiers. **Fichiers modifiés** : 5.
+
+---
+
 ## 2026-06-23 — Session 21 : clôture Sprint 9 — merge PR #17 + tag v1.0.0-agenda
 
 - **Auteur** : Claude Code (exécutant technique).

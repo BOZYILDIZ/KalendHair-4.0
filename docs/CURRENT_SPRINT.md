@@ -6,6 +6,8 @@
 
 ## Sprint actuel
 
+**Sprint 10 — CRM Clients** — TERMINÉ ✅
+
 **Sprint 9 — Agenda visuel Jour & Semaine** — TERMINÉ ✅
 
 **Sprint 8 — Rendez-vous** — TERMINÉ ✅
@@ -13,6 +15,50 @@
 **Sprint 7 — Horaires & Disponibilités** — TERMINÉ ✅
 
 **Sprint 6 — Employees & Services** — TERMINÉ ✅
+
+---
+
+## Objectifs Sprint 10
+
+- [x] Migration `20260624000001_crm_snapshot_and_indexes` — `priceCentsSnapshot INT?` sur `appointments` + index `clients(phone)` + index `salon_clients(salonId, createdAt)`.
+- [x] `src/lib/permissions/client.permissions.ts` — `canManageClient()`.
+- [x] `src/features/clients/types.ts` — ClientListItem, ClientView, ClientStats, ClientAppointmentRow, ClientsPage, ClientAppointmentsPage, ClientNotesFormState, ConvertGuestFormState.
+- [x] `src/features/clients/client.schema.ts` — UpdateNotesSchema (Zod, max 500 car).
+- [x] `src/features/clients/client.service.ts` — getClients, getClient, getClientStats, getClientAppointments, updateClientNotes, convertGuestToClient.
+- [x] `src/features/clients/components/client-search.tsx` — Client Component, debounce 300ms, `useRouter`.
+- [x] `src/features/clients/components/client-list.tsx` — liste paginée, empty states.
+- [x] `src/features/clients/components/client-stats-card.tsx` — 4 stats : total RDV, dernière visite, dépense totale, annulations.
+- [x] `src/features/clients/components/client-appointment-history.tsx` — historique RDV paginé.
+- [x] `src/features/clients/components/client-notes-form.tsx` — Client Component, `useActionState`.
+- [x] `src/app/(dashboard)/dashboard/clients/page.tsx` — liste CRM avec recherche + pagination.
+- [x] `src/app/(dashboard)/dashboard/clients/[id]/page.tsx` — fiche client : stats + historique + notes.
+- [x] `src/app/(dashboard)/dashboard/clients/[id]/actions.ts` — updateNotesAction, convertGuestAndRedirectAction.
+- [x] `src/features/appointments/appointment.service.ts` modifié — `priceCentsSnapshot` capturé à la création.
+- [x] `src/features/appointments/components/appointment-detail.tsx` modifié — bouton "Lier ce client au CRM →" pour invités.
+- [x] `src/app/(dashboard)/dashboard/appointments/[id]/page.tsx` modifié — `convertGuestAction` passé à `AppointmentDetail`.
+- [x] `src/app/(dashboard)/dashboard/page.tsx` modifié — 10ème lien "Clients".
+- [x] `typecheck` ✅ · `lint` ✅ · `build` ✅ (22 routes) · 22/22 tests manuels ✅.
+
+## Décisions techniques Sprint 10
+
+| Décision | Valeur |
+|---|---|
+| `priceCentsSnapshot` | Capturé à la création du RDV — fallback `service.priceCents` pour RDV antérieurs |
+| Dépense totale | `priceCentsSnapshot ?? service.priceCents` — jamais depuis `Service.priceCents` actuel seul |
+| Notes internes | Isolées par salon (`SalonClient.notes`) — vérification `findUnique` avant update |
+| Conversion invité → client | `$transaction` + upsert Client/SalonClient — champs `guest*` conservés intacts |
+| Isolation CRM | Toutes les requêtes via `SalonClient.salonId` — cross-tenant bloqué |
+| Recherche | `OR` sur firstName/lastName/email/phone avec `mode: "insensitive"` |
+| Pagination safePage | `Math.min(page, pageCount)` — dernière page valide sans redirect |
+| organizationId | JWT uniquement — jamais depuis searchParams ou FormData |
+| Déduplification | Jamais par téléphone en Sprint 10 |
+| Zod v4 | `.issues[0]?.message` (pas `.errors`) pour les messages d'erreur |
+
+## Condition de sortie du sprint
+
+> ✅ PR `feature/sprint10-crm-clients` validée par ChatGPT et Hasan (22/22 tests manuels), mergée dans `main` (merge commit `361155b`), tag `v1.1.0-crm-clients`.
+> ⚠️ Migration `20260624000001_crm_snapshot_and_indexes` à appliquer via `pnpm db:migrate` dès que Docker + `.env` disponibles.
+> **Sprint 10 TERMINÉ.**
 
 ---
 
@@ -240,4 +286,4 @@
 
 ---
 
-_Dernière mise à jour : 2026-06-18._
+_Dernière mise à jour : 2026-06-23 — Sprint 10 CRM Clients TERMINÉ, tag v1.1.0-crm-clients._
