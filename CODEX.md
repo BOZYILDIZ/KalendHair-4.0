@@ -265,6 +265,18 @@ Codex **n'intervient jamais** dans les étapes de commit, push, review ou merge.
 - Si Codex doit écrire des fichiers, il les écrit sur la branche active
   que Claude lui indique. Il ne gère pas le cycle Git lui-même.
 
+### Co-authorship
+
+Quand Codex contribue matériellement à un commit (génération de fichiers livrés
+dans le commit), Claude doit ajouter la ligne suivante dans le message de commit :
+
+```
+Co-authored-by: OpenAI Codex <noreply@openai.com>
+```
+
+Cette ligne doit figurer dans le corps du commit (après le corps descriptif),
+conformément au format GitHub Co-authored-by reconnu par l'interface GitHub.
+
 ---
 
 ## 14. Que faire en cas de doute
