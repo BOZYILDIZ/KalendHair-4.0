@@ -6,6 +6,8 @@
 
 ## Sprint actuel
 
+**Sprint 11 — Réservation Publique** — TERMINÉ ✅
+
 **Sprint 10 — CRM Clients** — TERMINÉ ✅
 
 **Sprint 9 — Agenda visuel Jour & Semaine** — TERMINÉ ✅
@@ -15,6 +17,49 @@
 **Sprint 7 — Horaires & Disponibilités** — TERMINÉ ✅
 
 **Sprint 6 — Employees & Services** — TERMINÉ ✅
+
+---
+
+## Objectifs Sprint 11
+
+- [x] `src/features/booking/types.ts` — PublicSalonView, PublicServiceView, PublicEmployeeView, PublicBookingInput, BookingStep, PublicBookingFormState, `BOOKING_LEAD_MINUTES = 30`.
+- [x] `src/features/booking/booking.schema.ts` — PublicBookingSchema (Zod v4, 8 champs).
+- [x] `src/features/booking/booking.service.ts` — getPublicSalon (slug + isActive), getPublicServices, getPublicEmployeesForService, getPublicSlots (filtrage timezone-aware, BOOKING_LEAD_MINUTES), createPublicAppointment → createAppointment().
+- [x] `src/app/(public)/book/[slug]/page.tsx` — wizard URL 4 étapes (service → employé → date → créneau).
+- [x] `src/app/(public)/book/[slug]/confirm/page.tsx` — récapitulatif (service, employé, date, prix) + BookingForm. organizationId bindé server-side.
+- [x] `src/app/(public)/book/[slug]/confirm/actions.ts` — bookAppointmentAction : Zod + createPublicAppointment + redirect success.
+- [x] `src/app/(public)/book/[slug]/success/page.tsx` — page de confirmation + lien rebooking.
+- [x] `src/features/booking/components/booking-salon-header.tsx` — Server Component.
+- [x] `src/features/booking/components/booking-service-list.tsx` — Server Component, empty state, liens `?serviceId=`.
+- [x] `src/features/booking/components/booking-employee-list.tsx` — Server Component, point de couleur, liens `?serviceId=x&employeeId=y`.
+- [x] `src/features/booking/components/booking-date-picker.tsx` — Client Component, `useRouter`, `min={today}`.
+- [x] `src/features/booking/components/booking-slot-picker.tsx` — Server Component, liens `/confirm?...&slot=`.
+- [x] `src/features/booking/components/booking-form.tsx` — Client Component, `useActionState`, 4 hidden inputs, 4 champs.
+- [x] `src/proxy.ts` inchangé — `/book/*` public sans auth.
+- [x] Aucune migration Prisma.
+- [x] `typecheck` ✅ · `lint` ✅ · `build` ✅ (25 routes) · 23/23 tests manuels ✅.
+- [x] Contributeurs : Claude Sonnet 4.6 (architecture, service, actions, pages, sécurité) + OpenAI Codex (types, schema, 6 composants UI).
+
+## Décisions techniques Sprint 11
+
+| Décision | Valeur |
+|---|---|
+| État wizard | URL searchParams (zéro state client entre étapes) |
+| organizationId isolation | Résolu depuis slug via `getPublicSalon()` server-side, bindé via `.bind()` |
+| Date passée | `Intl.DateTimeFormat("fr-CA", { timeZone })` — comparaison lexicographique YYYY-MM-DD |
+| Créneaux passés | `toZonedTime(new Date(), salonTimezone)` + `nowMinutes + BOOKING_LEAD_MINUTES` |
+| BOOKING_LEAD_MINUTES | Constante = 30 dans `types.ts` |
+| priceCentsSnapshot | Capturé automatiquement dans `createAppointment()` — aucune modification du service |
+| slug immuable | `updateSalon()` n'inclut jamais `slug` dans `data` |
+| Revalidation IDs URL | serviceId + employeeId retournés par les services avec filtre salonId → cross-tenant bloqué |
+| "use client" | BookingDatePicker (useRouter) + BookingForm (useActionState) uniquement |
+| Named exports | Tous les composants — `export default` réservé aux pages (Next.js) |
+| Zod v4 | `.issues[0]?.message` |
+
+## Condition de sortie du sprint
+
+> ✅ PR `feature/sprint11-public-booking` validée par ChatGPT et Hasan (23/23 tests manuels), mergée dans `main` (squash commit `2146c45`), tag `v1.2.0-public-booking`.
+> **Sprint 11 TERMINÉ.**
 
 ---
 
@@ -286,4 +331,4 @@
 
 ---
 
-_Dernière mise à jour : 2026-06-23 — Sprint 10 CRM Clients TERMINÉ, tag v1.1.0-crm-clients._
+_Dernière mise à jour : 2026-06-23 — Sprint 11 Réservation Publique TERMINÉ, tag v1.2.0-public-booking._

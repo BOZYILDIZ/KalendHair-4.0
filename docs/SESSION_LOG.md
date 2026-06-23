@@ -4,6 +4,44 @@
 
 ---
 
+## 2026-06-23 — Session 25 : clôture Sprint 11 — merge PR #21 + tag v1.2.0-public-booking
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : 11 (clôture).
+- **Actions** :
+  - Validation ChatGPT reçue pour PR #21 (23/23 tests manuels OK).
+  - PR **#21** (`feature/sprint11-public-booking`) **mergée** dans `main` (squash commit `2146c45`).
+  - Branche `feature/sprint11-public-booking` **supprimée** (distante + locale).
+  - Tag annoté **`v1.2.0-public-booking`** créé et poussé.
+  - Branche `docs/sprint11-closure` créée.
+  - Mise à jour : `PROJECT_STATE.md`, `CURRENT_SPRINT.md`, `SESSION_LOG.md`, `README.md`.
+- **Code métier** : aucun. Clôture documentaire uniquement.
+- **État de sortie** : commit + push + PR documentaire ouverte. **Aucun merge.** En attente de validation.
+
+---
+
+## 2026-06-23 — Session 24 : Sprint 11 — Réservation Publique
+
+- **Auteur** : Claude Code + OpenAI Codex (contributeur encadré).
+- **Phase** : 11 (implémentation).
+- **Branche** : `feature/sprint11-public-booking`.
+- **Actions** :
+  - `src/features/booking/types.ts` — 6 types + constante `BOOKING_LEAD_MINUTES = 30` (Codex).
+  - `src/features/booking/booking.schema.ts` — PublicBookingSchema Zod v4, 8 champs (Codex).
+  - `src/features/booking/booking.service.ts` — 4 fonctions : getPublicSalon, getPublicServices, getPublicEmployeesForService, getPublicSlots (filtrage dates/créneaux passés timezone-aware), createPublicAppointment (Claude).
+  - `src/app/(public)/book/[slug]/page.tsx` — wizard URL 4 étapes, Server Component (Claude).
+  - `src/app/(public)/book/[slug]/confirm/page.tsx` — récapitulatif + BookingForm, `.bind()` server-side (Claude).
+  - `src/app/(public)/book/[slug]/confirm/actions.ts` — bookAppointmentAction (Zod + createPublicAppointment + redirect) (Claude).
+  - `src/app/(public)/book/[slug]/success/page.tsx` — page confirmation (Claude).
+  - 6 composants UI (Codex, corrigés export default→named par Claude) : booking-salon-header, booking-service-list, booking-employee-list, booking-date-picker (Client), booking-slot-picker, booking-form (Client).
+  - `proxy.ts`, `slots.service.ts`, `availability.service.ts`, `appointment.service.ts` non modifiés.
+  - Aucune migration Prisma.
+  - `typecheck` ✅ · `lint` ✅ · `build` ✅ (25 routes) · 23/23 tests manuels ✅.
+  - PR #21 créée, PR #22 (CODEX.md), PR #23 (règle Co-authored-by) créées et mergées.
+- **Fichiers créés** : 13. **Fichiers modifiés** : 0.
+
+---
+
 ## 2026-06-23 — Session 23 : clôture Sprint 10 — merge PR #19 + tag v1.1.0-crm-clients
 
 - **Auteur** : Claude Code (exécutant technique).

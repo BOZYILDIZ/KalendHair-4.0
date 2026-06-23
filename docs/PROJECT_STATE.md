@@ -26,6 +26,8 @@
 
 **Sprint 10 — CRM Clients : TERMINÉ et mergé** ✅
 
+**Sprint 11 — Réservation Publique : TERMINÉ et mergé** ✅
+
 ## État du code
 
 - **Auth custom** : `jose` (JWT HS256, 24h) + `bcryptjs` + cookie `HttpOnly`.
@@ -50,6 +52,9 @@
   - `/dashboard/agenda` — agenda visuel Jour & Semaine + nav + filtre employé (**Sprint 9**)
   - `/dashboard/clients` — liste CRM paginée + recherche (**Sprint 10**)
   - `/dashboard/clients/[id]` — fiche client : stats + historique RDV + notes internes (**Sprint 10**)
+  - `/book/[slug]` — wizard public réservation : étape 1 (services) (**Sprint 11**)
+  - `/book/[slug]/confirm` — récapitulatif + formulaire coordonnées (**Sprint 11**)
+  - `/book/[slug]/success` — confirmation réservation (**Sprint 11**)
 - **Permissions** : `src/lib/permissions/` — `tenant.ts` + `organization.permissions.ts` + `salon.permissions.ts` + `employee.permissions.ts` + `service.permissions.ts` + `schedule.permissions.ts` + `appointment.permissions.ts` + `client.permissions.ts`
 - **Services métier** : `src/features/organizations/` + `src/features/salons/` + `src/features/employees/` + `src/features/services/` + `src/features/schedules/` + `src/features/appointments/` + `src/features/clients/`
 - **Validation** : `zod@4.4.3` — Server Actions
@@ -65,6 +70,16 @@
   - `priceCentsSnapshot Int?` capturé à la création du RDV (`createAppointment`) — fallback `service.priceCents` pour RDV antérieurs
   - Notes internes isolées par salon (`SalonClient.notes`)
   - Conversion invité → client : `clientId` renseigné, champs `guest*` conservés comme snapshot historique
+- **Réservation publique Sprint 11** :
+  - `src/features/booking/types.ts` — PublicSalonView, PublicServiceView, PublicEmployeeView, PublicBookingInput, BookingStep, PublicBookingFormState, `BOOKING_LEAD_MINUTES = 30`
+  - `src/features/booking/booking.schema.ts` — PublicBookingSchema (Zod v4 : firstName, lastName, email, phone, serviceId, employeeId, date, slot)
+  - `src/features/booking/booking.service.ts` — getPublicSalon (résolution slug + isActive), getPublicServices, getPublicEmployeesForService, getPublicSlots (filtrage dates/créneaux passés timezone-aware), createPublicAppointment → createAppointment()
+  - `src/app/(public)/book/[slug]/confirm/actions.ts` — bookAppointmentAction (salonId + organizationId bindés server-side)
+  - 6 composants UI : booking-salon-header, booking-service-list, booking-employee-list, booking-date-picker (Client), booking-slot-picker, booking-form (Client)
+  - Wizard URL multi-étapes : service → employé → date → créneau → confirm → success
+  - `organizationId` résolu depuis le slug, jamais transmis par le client
+  - `priceCentsSnapshot` capturé automatiquement via `createAppointment()`
+  - `proxy.ts` matcher `/dashboard/:path*` inchangé — `/book/*` public sans auth
 - **⚠️ Migration en attente** : `prisma/migrations/20260624000001_crm_snapshot_and_indexes/migration.sql` — à appliquer via `pnpm db:migrate` dès que Docker + `.env` disponibles (non destructive : colonne nullable + 2 index).
 - **Agenda Sprint 9** :
   - `src/features/agenda/types.ts` — AgendaView, GridConfig, AgendaBlock, AgendaColumn, AgendaDayData, AgendaWeekData, SLOT_HEIGHT_REM
@@ -110,6 +125,7 @@ Sprint 7 : `pnpm typecheck` ✅ · `pnpm lint` ✅ · `pnpm build` ✅ · `pnpm 
 Sprint 8 : `pnpm typecheck` ✅ · `pnpm lint` ✅ · `pnpm build` ✅ · `pnpm db:seed` ✅ · 24/24 tests manuels ✅
 Sprint 9 : `pnpm typecheck` ✅ · `pnpm lint` ✅ · `pnpm build` ✅ (20 routes) · 20/20 tests manuels ✅ · `pnpm db:seed` : prérequis environnement (Docker + `.env` requis, non fonctionnel hors environnement local configuré)
 Sprint 10 : `pnpm typecheck` ✅ · `pnpm lint` ✅ · `pnpm build` ✅ (22 routes) · 22/22 tests manuels ✅ · `pnpm db:migrate` / `pnpm db:seed` : ⚠️ en attente Docker + `.env` (migration non destructive prête)
+Sprint 11 : `typecheck` ✅ · `lint` ✅ · `build` ✅ (25 routes) · 23/23 tests manuels ✅
 
 ## Migrations appliquées
 
@@ -124,11 +140,14 @@ Sprint 10 : `pnpm typecheck` ✅ · `pnpm lint` ✅ · `pnpm build` ✅ (22 rout
 ## Git / Release
 
 - `main` = seule branche stable active.
-- Tags : `v0.1.0-foundations` · `v0.2.0-bootstrap` · `v0.3.0-prisma-schema` · `v0.4.0-db-migration` · `v0.5.0-auth` · `v0.6.0-org-salon` · `v0.7.0-employees-services` · `v0.8.0-schedules` · `v0.9.0-appointments` · `v1.0.0-agenda` · **`v1.1.0-crm-clients`**.
+- Tags : `v0.1.0-foundations` · `v0.2.0-bootstrap` · `v0.3.0-prisma-schema` · `v0.4.0-db-migration` · `v0.5.0-auth` · `v0.6.0-org-salon` · `v0.7.0-employees-services` · `v0.8.0-schedules` · `v0.9.0-appointments` · `v1.0.0-agenda` · `v1.1.0-crm-clients` · **`v1.2.0-public-booking`**.
 - PR **#17** (`feature/sprint9-agenda`) **mergée** dans `main` (merge commit `36156b1`).
 - PR **#18** (`docs/sprint9-closure`) **mergée** dans `main` (commit `7976531`).
 - PR **#19** (`feature/sprint10-crm-clients`) **mergée** dans `main` (merge commit `361155b`).
-- Branches feature/sprint9-agenda, docs/sprint9-closure, feature/sprint10-crm-clients **supprimées** (locale + distante).
+- PR **#21** (`feature/sprint11-public-booking`) **mergée** dans `main` (squash commit `2146c45`).
+- PR **#22** (`docs/codex-guidelines`) **mergée** dans `main` (squash commit `2dbf910`).
+- PR **#23** (`docs/codex-coauthor-rule`) **mergée** dans `main` (squash commit `86716e8`).
+- Branches feature/sprint9-agenda, docs/sprint9-closure, feature/sprint10-crm-clients, feature/sprint11-public-booking, docs/codex-guidelines, docs/codex-coauthor-rule **supprimées** (locale + distante).
 
 ## Base de données
 
@@ -138,10 +157,10 @@ Sprint 10 : `pnpm typecheck` ✅ · `pnpm lint` ✅ · `pnpm build` ✅ (22 rout
 
 ## Prochaine étape
 
-Sprint 11 : à définir avec ChatGPT (notifications, réservation en ligne, rapports, tableau de bord analytics, etc.)
+Sprint 12 : à définir avec ChatGPT (notifications, rapports, tableau de bord analytics, gestion multi-salons, etc.)
 
-⚠️ **Prérequis avant Sprint 11** : appliquer la migration `20260624000001_crm_snapshot_and_indexes` via `pnpm db:migrate` dès que Docker + `.env` disponibles.
+⚠️ **Prérequis persistant** : appliquer la migration `20260624000001_crm_snapshot_and_indexes` via `pnpm db:migrate` dès que Docker + `.env` disponibles.
 
 ---
 
-_Dernière mise à jour : 2026-06-23 — PR #19 mergée, tag v1.1.0-crm-clients. Sprint 10 CRM Clients TERMINÉ._
+_Dernière mise à jour : 2026-06-23 — PR #21 mergée, tag v1.2.0-public-booking. Sprint 11 Réservation Publique TERMINÉ._
