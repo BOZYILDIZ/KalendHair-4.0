@@ -82,7 +82,7 @@ Voir `docs/ARCHITECTURE.md` et `docs/DATABASE.md`.
 
 ## État actuel
 
-**Sprint 11 — Réservation Publique** — TERMINÉ ✅
+**Sprint 12 — Notifications Email** — TERMINÉ ✅
 
 | Sprint | Description | Tag |
 |---|---|---|
@@ -98,3 +98,4 @@ Voir `docs/ARCHITECTURE.md` et `docs/DATABASE.md`.
 | Sprint 9 | Agenda visuel Jour & Semaine + navigation + filtre employé | `v1.0.0-agenda` |
 | Sprint 10 | CRM Clients : liste, recherche, fiche, stats, historique, notes internes | `v1.1.0-crm-clients` |
 | Sprint 11 | Réservation publique /book/[slug] : wizard URL, slots timezone-aware, isolation tenant | `v1.2.0-public-booking` |
+| Sprint 12 | Notifications email : confirmation + annulation, fire-and-forget, journalisation DB | `v1.3.0-email-notifications` |
