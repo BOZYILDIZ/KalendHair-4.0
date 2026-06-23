@@ -6,6 +6,8 @@
 
 ## Sprint actuel
 
+**Sprint 15 — Professionnalisation (Rappels email + Numérotation reçus)** — TERMINÉ ✅
+
 **Sprint 14 — Module Caisse POS (Payments)** — TERMINÉ ✅
 
 **Sprint 13 — Dashboard & KPI** — TERMINÉ ✅
@@ -460,7 +462,33 @@
 - **Sprint 3 — Migration PostgreSQL** ✅ — tag `v0.4.0-db-migration`.
 - **Sprint 4 — Authentification** ✅ — tag `v0.5.0-auth`.
 - **Sprint 5 — Organization & Salon Management** ✅ — tag `v0.6.0-org-salon`.
+- **Sprint 6 — Employees & Services** ✅ — tag `v0.7.0-employees-services`.
+- **Sprint 7 — Horaires & Disponibilités** ✅ — tag `v0.8.0-schedules`.
+- **Sprint 8 — Rendez-vous** ✅ — tag `v0.9.0-appointments`.
+- **Sprint 9 — Agenda visuel** ✅ — tag `v1.0.0-agenda`.
+- **Sprint 10 — CRM Clients** ✅ — tag `v1.1.0-crm-clients`.
+- **Sprint 11 — Réservation Publique** ✅ — tag `v1.2.0-public-booking`.
+- **Sprint 12 — Notifications Email** ✅ — tag `v1.3.0-email-notifications`.
+- **Sprint 13 — Dashboard & KPI** ✅ — tag `v1.4.0-dashboard-kpi`.
+- **Sprint 14 — Module Caisse POS** ✅ — tag `v1.5.0-payments-pos`.
+- **Sprint 15 — Professionnalisation** ✅ — tag `v1.6.0-reminders-receipts`.
 
 ---
 
-_Dernière mise à jour : 2026-06-24 — Sprint 14 Module Caisse POS TERMINÉ, tag v1.5.0-payments-pos._
+## Objectifs Sprint 15 (TERMINÉ ✅)
+
+- [x] Vercel CRON `"0 * * * *"` → `/api/cron/reminders` sécurisé `CRON_SECRET`.
+- [x] `reminder.service.ts` : fenêtre 22–26h, CONFIRMED, déduplication Notification.none SENT.
+- [x] `notification.service.ts` : dispatch exhaustif CONFIRMATION | REMINDER | CANCELLED + throw final.
+- [x] `appointment-reminder.template.ts` : email HTML ambre, Prestation/Coiffeur/Date/Durée, sans prix.
+- [x] `SalonReceiptCounter` : modèle Prisma + migration `20260624000003_receipt_counter`.
+- [x] `receipt.service.ts` : upsert atomique dans `$transaction`, format `{YEAR}-{00001}`.
+- [x] `payment.service.ts` : receiptNumber injecté, `year = paidAt.getUTCFullYear()`.
+- [x] `/dashboard/payments/[id]/receipt` : reçu imprimable + bandeau ANNULÉ.
+- [x] `ReceiptPrintButton` : Client Component, `print:hidden`, `window.print()`.
+- [x] Lien "Imprimer le reçu →" dans page détail si receiptNumber.
+- [x] 54/54 vérifications PASS · 0 régression Sprint 12/14.
+
+---
+
+_Dernière mise à jour : 2026-06-24 — Sprint 15 Professionnalisation TERMINÉ, tag v1.6.0-reminders-receipts._
