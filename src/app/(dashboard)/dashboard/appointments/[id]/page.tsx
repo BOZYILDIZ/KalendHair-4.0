@@ -9,6 +9,7 @@ import {
   cancelAppointmentAction,
   updateStatusAction,
 } from "./actions";
+import { convertGuestAndRedirectAction } from "@/app/(dashboard)/dashboard/clients/[id]/actions";
 import type { CancelFormState, StatusFormState } from "@/features/appointments/types";
 
 type Props = {
@@ -64,6 +65,7 @@ export default async function AppointmentDetailPage({ params }: Props) {
         salonTimezone={salon.timezone}
         updateStatusAction={boundStatusAction}
         cancelAction={boundCancelAction}
+        convertGuestAction={convertGuestAndRedirectAction}
       />
     </div>
   );
