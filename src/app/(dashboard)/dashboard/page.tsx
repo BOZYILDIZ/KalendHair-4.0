@@ -70,6 +70,13 @@ export default async function DashboardPage() {
           <span className="font-medium">Rendez-vous</span>
           <span className="text-gray-400">→</span>
         </Link>
+        <Link
+          href="/dashboard/agenda"
+          className="flex items-center justify-between rounded border px-4 py-3 text-sm hover:bg-gray-50"
+        >
+          <span className="font-medium">Agenda</span>
+          <span className="text-gray-400">→</span>
+        </Link>
       </nav>
 
       <form action="/api/auth/logout" method="POST">
