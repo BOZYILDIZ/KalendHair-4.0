@@ -22,13 +22,15 @@
 
 **Sprint 8 — Rendez-vous : TERMINÉ et mergé** ✅
 
+**Sprint 9 — Agenda visuel Jour & Semaine : TERMINÉ et mergé** ✅
+
 ## État du code
 
 - **Auth custom** : `jose` (JWT HS256, 24h) + `bcryptjs` + cookie `HttpOnly`.
 - **Proxy Next.js 16** (`src/proxy.ts`) : protection `/dashboard/:path*`.
 - **Pages** :
   - `/login` — formulaire ProUser OWNER
-  - `/dashboard` — hub (7 liens : Organisation, Salon, Employés, Services, Horaires du salon, Jours de fermeture, **Rendez-vous**)
+  - `/dashboard` — hub (9 liens : Organisation, Salon, Employés, Services, Horaires du salon, Jours de fermeture, Rendez-vous, **Agenda**)
   - `/dashboard/organization` — lecture + modification Organisation
   - `/dashboard/salon` — lecture + modification Salon
   - `/dashboard/salon/schedule` — grille 7 jours horaires du salon (**Sprint 7**)
@@ -43,12 +45,21 @@
   - `/dashboard/appointments` — liste RDV avec filtres (date, employé, statut) (**Sprint 8**)
   - `/dashboard/appointments/new` — création RDV (service → employé → date/heure → client) (**Sprint 8**)
   - `/dashboard/appointments/[id]` — détail RDV + actions statut + annulation + historique (**Sprint 8**)
+  - `/dashboard/agenda` — agenda visuel Jour & Semaine + nav + filtre employé (**Sprint 9**)
 - **Permissions** : `src/lib/permissions/` — `tenant.ts` + `organization.permissions.ts` + `salon.permissions.ts` + `employee.permissions.ts` + `service.permissions.ts` + `schedule.permissions.ts` + `appointment.permissions.ts`
 - **Services métier** : `src/features/organizations/` + `src/features/salons/` + `src/features/employees/` + `src/features/services/` + `src/features/schedules/` + `src/features/appointments/`
 - **Validation** : `zod@4.4.3` — Server Actions
 - **Seed DEV** : `owner@test.local / Test1234!` (Organisation "Salon Test" + Salon "Salon Test").
 - **Schéma Prisma** : 21 modèles + 13 enums + 4 migrations appliquées.
 - **Dépendances Sprint 8** : `date-fns-tz@3.2.0` (conversion timezone ↔ UTC).
+- **Dépendances Sprint 9** : `date-fns@4.4.0` (requis par `date-fns-tz`).
+- **Agenda Sprint 9** :
+  - `src/features/agenda/types.ts` — AgendaView, GridConfig, AgendaBlock, AgendaColumn, AgendaDayData, AgendaWeekData, SLOT_HEIGHT_REM
+  - `src/features/agenda/agenda.service.ts` — `getAgendaDay()`, `getAgendaWeek()`, `computeWeekStart()` (5 requêtes Prisma parallèles chacun)
+  - 8 composants : `agenda-closed-day-banner`, `agenda-time-ruler`, `agenda-appointment-block`, `agenda-employee-column`, `agenda-day-view`, `agenda-week-view`, `agenda-now-indicator` (Client), `agenda-nav` (Server), `agenda-employee-filter` (Client)
+  - Positionnement CSS absolu (top/height en rem) + overlap detection (greedy interval grouping)
+  - Indicateur "maintenant" : `Intl.DateTimeFormat` + `setInterval(60_000)` côté client
+  - Grille : enveloppe `min(salon.start, allEmp.start)` / `max(salon.end, allEmp.end)` (aucun employé tronqué)
 - **Horaires Sprint 7** :
   - `SalonSchedule` — grille 7 jours (saveMany en `$transaction`)
   - `EmployeeSchedule` — grille 7 jours (cross-validé vs salon)
@@ -84,6 +95,7 @@
 Tests logique métier Sprint 6 : 45/45 ✅
 Sprint 7 : `pnpm typecheck` ✅ · `pnpm lint` ✅ · `pnpm build` ✅ · `pnpm db:seed` ✅
 Sprint 8 : `pnpm typecheck` ✅ · `pnpm lint` ✅ · `pnpm build` ✅ · `pnpm db:seed` ✅ · 24/24 tests manuels ✅
+Sprint 9 : `pnpm typecheck` ✅ · `pnpm lint` ✅ · `pnpm build` ✅ (20 routes) · 20/20 tests manuels ✅ · `pnpm db:seed` : prérequis environnement (Docker + `.env` requis, non fonctionnel hors environnement local configuré)
 
 ## Migrations appliquées
 
@@ -97,9 +109,9 @@ Sprint 8 : `pnpm typecheck` ✅ · `pnpm lint` ✅ · `pnpm build` ✅ · `pnpm 
 ## Git / Release
 
 - `main` = seule branche stable active.
-- Tags : `v0.1.0-foundations` · `v0.2.0-bootstrap` · `v0.3.0-prisma-schema` · `v0.4.0-db-migration` · `v0.5.0-auth` · `v0.6.0-org-salon` · `v0.7.0-employees-services` · `v0.8.0-schedules` · **`v0.9.0-appointments`**.
-- PR **#15** (`feature/sprint8-appointments`) **mergée** dans `main` (merge commit `43f37eb`).
-- Branche `feature/sprint8-appointments` **supprimée** (locale + distante).
+- Tags : `v0.1.0-foundations` · `v0.2.0-bootstrap` · `v0.3.0-prisma-schema` · `v0.4.0-db-migration` · `v0.5.0-auth` · `v0.6.0-org-salon` · `v0.7.0-employees-services` · `v0.8.0-schedules` · `v0.9.0-appointments` · **`v1.0.0-agenda`**.
+- PR **#17** (`feature/sprint9-agenda`) **mergée** dans `main` (merge commit `36156b1`).
+- Branche `feature/sprint9-agenda` **supprimée** (locale + distante).
 
 ## Base de données
 
@@ -109,8 +121,8 @@ Sprint 8 : `pnpm typecheck` ✅ · `pnpm lint` ✅ · `pnpm build` ✅ · `pnpm 
 
 ## Prochaine étape
 
-Sprint 9 : à définir avec ChatGPT (Calendrier view, notifications, paiements, etc.)
+Sprint 10 : à définir avec ChatGPT (notifications, réservation en ligne, rapports, etc.)
 
 ---
 
-_Dernière mise à jour : 2026-06-23 — PR #15 mergée, tag v0.9.0-appointments. Sprint 8 TERMINÉ._
+_Dernière mise à jour : 2026-06-23 — PR #17 mergée, tag v1.0.0-agenda. Sprint 9 TERMINÉ._

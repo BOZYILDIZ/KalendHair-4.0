@@ -4,6 +4,46 @@
 
 ---
 
+## 2026-06-23 — Session 21 : clôture Sprint 9 — merge PR #17 + tag v1.0.0-agenda
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : 9 (clôture).
+- **Actions** :
+  - Correction bug test 7 : prop `showEmployee` ajoutée à `AgendaAppointmentBlock` ; vue semaine passe `showEmployee={true}` → affiche `employeeFirstName` au lieu de `clientName`.
+  - `typecheck` ✅ · `lint` ✅ · `build` ✅ (20 routes, Turbopack) · 20/20 tests manuels ✅.
+  - Commit fix : `e331c46` · Push `feature/sprint9-agenda`.
+  - Validation ChatGPT reçue pour PR #17.
+  - PR **#17** (`feature/sprint9-agenda`) **mergée** dans `main` (merge commit `36156b1`).
+  - Branche `feature/sprint9-agenda` **supprimée** (locale + distante).
+  - Tag annoté **`v1.0.0-agenda`** créé et poussé.
+  - Branche `docs/sprint9-closure` créée.
+  - Mise à jour : `PROJECT_STATE.md`, `CURRENT_SPRINT.md`, `SESSION_LOG.md`, `README.md`.
+- **Code métier** : correction mineure uniquement (prop `showEmployee`). Clôture documentaire.
+- **Note environnement** : `pnpm db:seed` non exécutable sur ce poste (`.env` absent, Docker non démarré). Prérequis documenté — pas un échec fonctionnel.
+- **État de sortie** : commit + push + PR documentaire ouverte. **Aucun merge.** En attente de validation.
+
+---
+
+## 2026-06-23 — Session 20 : Sprint 9 — Agenda visuel Jour & Semaine
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : 9 (implémentation).
+- **Branche** : `feature/sprint9-agenda`.
+- **Actions** :
+  - Installation `date-fns@4.4.0` (requis par `date-fns-tz@3.2.0`).
+  - Implémentation complète Sprint 9 : types, service agenda (5 requêtes parallèles), 8 composants UI, 1 route + hub mis à jour.
+  - `computeGridConfig` — enveloppe max (aucun employé tronqué).
+  - Overlap detection — greedy interval grouping pour blocs actifs, pleine largeur pour inactifs.
+  - `AgendaNowIndicator` — Client Component, `Intl.DateTimeFormat` + `setInterval(60_000)`.
+  - `AgendaNav` — Server Component pur (`<Link>`, zéro `useSearchParams`).
+  - `AgendaEmployeeFilter` — Client Component, `useRouter` (pas `useSearchParams`).
+  - CANCELLED : `bg-gray-100` + `line-through opacity-70`. NO_SHOW : `bg-red-50` + `italic` + "Absent".
+  - `typecheck` ✅ · `lint` ✅ · `build` ✅ (20 routes).
+  - Commit + push + PR #17 créée (en attente validation).
+- **Fichiers créés** : 15 fichiers (voir PR #17).
+
+---
+
 ## 2026-06-23 — Session 19 : clôture Sprint 8 — merge PR #15 + tag v0.9.0-appointments
 
 - **Auteur** : Claude Code (exécutant technique).

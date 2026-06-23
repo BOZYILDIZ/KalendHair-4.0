@@ -82,7 +82,7 @@ Voir `docs/ARCHITECTURE.md` et `docs/DATABASE.md`.
 
 ## État actuel
 
-**Sprint 8 — Rendez-vous** — TERMINÉ ✅
+**Sprint 9 — Agenda visuel Jour & Semaine** — TERMINÉ ✅
 
 | Sprint | Description | Tag |
 |---|---|---|
@@ -95,3 +95,4 @@ Voir `docs/ARCHITECTURE.md` et `docs/DATABASE.md`.
 | Sprint 6 | Employés + Services + Associations | `v0.7.0-employees-services` |
 | Sprint 7 | Horaires salon + employé + jours fermeture + disponibilité | `v0.8.0-schedules` |
 | Sprint 8 | Rendez-vous CRUD + slots disponibles + historique | `v0.9.0-appointments` |
+| Sprint 9 | Agenda visuel Jour & Semaine + navigation + filtre employé | `v1.0.0-agenda` |
