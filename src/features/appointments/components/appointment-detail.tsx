@@ -30,6 +30,7 @@ type Props = {
     prevState: CancelFormState,
     formData: FormData,
   ) => Promise<CancelFormState>;
+  convertGuestAction?: (formData: FormData) => Promise<void>;
 };
 
 function formatDatetime(date: Date, timezone: string): string {
@@ -63,6 +64,7 @@ export function AppointmentDetail({
   salonTimezone,
   updateStatusAction,
   cancelAction,
+  convertGuestAction,
 }: Props) {
   const [statusState, statusFormAction, statusPending] = useActionState(
     updateStatusAction,
@@ -121,6 +123,17 @@ export function AppointmentDetail({
               )}
               {appointment.guestPhone && (
                 <div className="text-xs text-gray-500">{appointment.guestPhone}</div>
+              )}
+              {appointment.clientId === null && appointment.guestEmail && convertGuestAction && (
+                <form action={convertGuestAction} className="mt-2">
+                  <input type="hidden" name="appointmentId" value={appointment.id} />
+                  <button
+                    type="submit"
+                    className="rounded border border-indigo-300 px-2 py-1 text-xs text-indigo-600 hover:bg-indigo-50"
+                  >
+                    Lier ce client au CRM →
+                  </button>
+                </form>
               )}
             </dd>
           </div>

@@ -232,7 +232,7 @@ export async function createAppointment(
   // Load service to get duration
   const service = await prisma.service.findFirst({
     where: { id: data.serviceId, organizationId, isActive: true },
-    select: { id: true, durationMinutes: true },
+    select: { id: true, durationMinutes: true, priceCents: true },
   });
   if (!service) return { ok: false, error: "Service introuvable" };
 
@@ -277,7 +277,8 @@ export async function createAppointment(
         guestFirstName: data.guestFirstName,
         guestLastName:  data.guestLastName,
         guestEmail:     normalizeEmail(data.guestEmail) ?? null,
-        guestPhone:     data.guestPhone ?? null,
+        guestPhone:          data.guestPhone ?? null,
+        priceCentsSnapshot:  service.priceCents,
         startAt,
         endAt,
         notes: data.notes ?? null,
