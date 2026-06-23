@@ -4,6 +4,22 @@
 
 ---
 
+## 2026-06-23 — Session 19 : clôture Sprint 8 — merge PR #15 + tag v0.9.0-appointments
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : 8 (clôture).
+- **Actions** :
+  - Validation ChatGPT reçue pour PR #15 (24/24 tests manuels OK).
+  - PR **#15** (`feature/sprint8-appointments`) **mergée** dans `main` (merge commit `43f37eb`).
+  - Branche `feature/sprint8-appointments` **supprimée** (locale + distante via `--delete-branch`).
+  - Tag annoté **`v0.9.0-appointments`** créé et poussé.
+  - Branche `docs/sprint8-closure` créée.
+  - Mise à jour : `PROJECT_STATE.md`, `CURRENT_SPRINT.md`, `SESSION_LOG.md`, `README.md`.
+- **Code métier** : aucun. Clôture documentaire uniquement.
+- **État de sortie** : commit + push + PR documentaire ouverte. **Aucun merge.** En attente de validation.
+
+---
+
 ## 2026-06-18 — Session 18 : Sprint 8 — Rendez-vous (Appointments)
 
 - **Auteur** : Claude Code (exécutant technique).

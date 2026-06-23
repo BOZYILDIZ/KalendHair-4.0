@@ -20,7 +20,7 @@
 
 **Sprint 7 — Horaires & Disponibilités : TERMINÉ et mergé** ✅
 
-**Sprint 8 — Rendez-vous : EN COURS (PR #15 en attente de validation)** 🔄
+**Sprint 8 — Rendez-vous : TERMINÉ et mergé** ✅
 
 ## État du code
 
@@ -83,6 +83,7 @@
 `pnpm prisma validate` · `pnpm typecheck` · `pnpm lint` · `pnpm build` · `pnpm db:seed` → **OK**.
 Tests logique métier Sprint 6 : 45/45 ✅
 Sprint 7 : `pnpm typecheck` ✅ · `pnpm lint` ✅ · `pnpm build` ✅ · `pnpm db:seed` ✅
+Sprint 8 : `pnpm typecheck` ✅ · `pnpm lint` ✅ · `pnpm build` ✅ · `pnpm db:seed` ✅ · 24/24 tests manuels ✅
 
 ## Migrations appliquées
 
@@ -96,10 +97,9 @@ Sprint 7 : `pnpm typecheck` ✅ · `pnpm lint` ✅ · `pnpm build` ✅ · `pnpm 
 ## Git / Release
 
 - `main` = seule branche stable active.
-- Tags : `v0.1.0-foundations` · `v0.2.0-bootstrap` · `v0.3.0-prisma-schema` · `v0.4.0-db-migration` · `v0.5.0-auth` · `v0.6.0-org-salon` · `v0.7.0-employees-services` · **`v0.8.0-schedules`**.
-- PR **#13** (`feature/sprint7-schedules`) **mergée** dans `main` (merge commit `ddda498`).
-- Branche `feature/sprint7-schedules` **supprimée** (locale + distante).
-- Branche **`feature/sprint8-appointments`** en cours — PR #15 en attente de validation.
+- Tags : `v0.1.0-foundations` · `v0.2.0-bootstrap` · `v0.3.0-prisma-schema` · `v0.4.0-db-migration` · `v0.5.0-auth` · `v0.6.0-org-salon` · `v0.7.0-employees-services` · `v0.8.0-schedules` · **`v0.9.0-appointments`**.
+- PR **#15** (`feature/sprint8-appointments`) **mergée** dans `main` (merge commit `43f37eb`).
+- Branche `feature/sprint8-appointments` **supprimée** (locale + distante).
 
 ## Base de données
 
@@ -109,8 +109,8 @@ Sprint 7 : `pnpm typecheck` ✅ · `pnpm lint` ✅ · `pnpm build` ✅ · `pnpm 
 
 ## Prochaine étape
 
-Sprint 9 : à définir (Calendrier view, notifications, paiements, etc.)
+Sprint 9 : à définir avec ChatGPT (Calendrier view, notifications, paiements, etc.)
 
 ---
 
-_Dernière mise à jour : 2026-06-18 — Sprint 8 implémenté (24/24 tests). PR #15 en attente de validation ChatGPT._
+_Dernière mise à jour : 2026-06-23 — PR #15 mergée, tag v0.9.0-appointments. Sprint 8 TERMINÉ._
