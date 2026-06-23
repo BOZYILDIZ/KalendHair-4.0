@@ -239,9 +239,10 @@ model Salon {
   salonSchedules SalonSchedule[]
   closedDays     ClosedDay[]
   salonClients   SalonClient[]
-  notifications  Notification[]
-  integrations   IntegrationConnection[]
-  payments       Payment[]
+  notifications    Notification[]
+  integrations     IntegrationConnection[]
+  payments         Payment[]
+  receiptCounters  SalonReceiptCounter[]
 
   @@unique([organizationId])
   @@index([organizationId])
@@ -645,4 +646,18 @@ model PaymentLine {
 
   @@index([paymentId])
   @@map("payment_lines")
+}
+
+// Compteur de numérotation des reçus — 1 ligne par (salon, année)
+// Incrémenté atomiquement dans la $transaction de création de paiement
+model SalonReceiptCounter {
+  id      String @id @default(cuid())
+  salonId String
+  year    Int
+  lastSeq Int    @default(0)
+
+  salon Salon @relation(fields: [salonId], references: [id], onDelete: Cascade)
+
+  @@unique([salonId, year])
+  @@map("salon_receipt_counters")
 }

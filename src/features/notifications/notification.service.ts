@@ -2,9 +2,13 @@ import { prisma } from "@/lib/db/prisma";
 import { sendEmail } from "@/lib/email/send-email";
 import { renderConfirmationEmail } from "./templates/appointment-confirmation.template";
 import { renderCancellationEmail } from "./templates/appointment-cancellation.template";
+import { renderReminderEmail } from "./templates/appointment-reminder.template";
 import type { NotificationContext } from "./types";
 
-type NotificationType   = "APPOINTMENT_CONFIRMATION" | "APPOINTMENT_CANCELLED";
+type NotificationType =
+  | "APPOINTMENT_CONFIRMATION"
+  | "APPOINTMENT_REMINDER"
+  | "APPOINTMENT_CANCELLED";
 type NotificationStatus = "SENT" | "FAILED" | "SKIPPED";
 
 // ─── DB log ──────────────────────────────────────────────────────────────────
@@ -172,8 +176,12 @@ export async function sendAppointmentNotification(
 
   if (type === "APPOINTMENT_CONFIRMATION") {
     ({ subject, html } = renderConfirmationEmail(ctx));
-  } else {
+  } else if (type === "APPOINTMENT_REMINDER") {
+    ({ subject, html } = renderReminderEmail(ctx));
+  } else if (type === "APPOINTMENT_CANCELLED") {
     ({ subject, html } = renderCancellationEmail(ctx));
+  } else {
+    throw new Error(`[notification] Type non géré : ${String(type)}`);
   }
 
   // 4. Send
