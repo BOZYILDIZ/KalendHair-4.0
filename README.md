@@ -82,7 +82,7 @@ Voir `docs/ARCHITECTURE.md` et `docs/DATABASE.md`.
 
 ## État actuel
 
-**Sprint 10 — CRM Clients** — TERMINÉ ✅
+**Sprint 11 — Réservation Publique** — TERMINÉ ✅
 
 | Sprint | Description | Tag |
 |---|---|---|
@@ -97,3 +97,4 @@ Voir `docs/ARCHITECTURE.md` et `docs/DATABASE.md`.
 | Sprint 8 | Rendez-vous CRUD + slots disponibles + historique | `v0.9.0-appointments` |
 | Sprint 9 | Agenda visuel Jour & Semaine + navigation + filtre employé | `v1.0.0-agenda` |
 | Sprint 10 | CRM Clients : liste, recherche, fiche, stats, historique, notes internes | `v1.1.0-crm-clients` |
+| Sprint 11 | Réservation publique /book/[slug] : wizard URL, slots timezone-aware, isolation tenant | `v1.2.0-public-booking` |
