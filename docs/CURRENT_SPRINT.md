@@ -6,6 +6,8 @@
 
 ## Sprint actuel
 
+**Sprint 12 — Notifications Email** — TERMINÉ ✅
+
 **Sprint 11 — Réservation Publique** — TERMINÉ ✅
 
 **Sprint 10 — CRM Clients** — TERMINÉ ✅
@@ -17,6 +19,43 @@
 **Sprint 7 — Horaires & Disponibilités** — TERMINÉ ✅
 
 **Sprint 6 — Employees & Services** — TERMINÉ ✅
+
+---
+
+## Objectifs Sprint 12
+
+- [x] `src/lib/email/email.types.ts` — EmailPayload, SendEmailResult (Codex).
+- [x] `src/lib/email/resend.client.ts` — singleton Resend, null si RESEND_API_KEY absent (Claude).
+- [x] `src/lib/email/send-email.ts` — wrapper sendEmail(), from/replyTo, gestion erreurs (Claude).
+- [x] `src/features/notifications/types.ts` — NotificationContext (Codex).
+- [x] `src/features/notifications/notification.service.ts` — sendAppointmentNotification(), buildNotificationContext(), logNotification(), isNotificationEnabled() (Claude).
+- [x] `src/features/notifications/templates/appointment-confirmation.template.ts` — renderConfirmationEmail(), escapeHtml(), formatEuros(), formatDate(), header indigo (Codex).
+- [x] `src/features/notifications/templates/appointment-cancellation.template.ts` — renderCancellationEmail(), header rouge (Codex).
+- [x] `src/features/notifications/templates/appointment-reminder.template.ts` — squelette pour Sprint 13 (Codex).
+- [x] `src/features/appointments/appointment.service.ts` modifié — fire-and-forget CONFIRMATION dans createAppointment() + CANCELLED dans cancelAppointment() (Claude).
+- [x] `.env.example` modifié — RESEND_API_KEY, RESEND_FROM_EMAIL, RESEND_FROM_NAME (Claude).
+- [x] Aucune migration Prisma (tables notifications/notification_preferences créées en Sprint 2).
+- [x] Dépendance `resend@6.14.0` installée via `pnpm`.
+- [x] `typecheck` ✅ · `lint` ✅ · `build` ✅ (25 routes) · 20/20 tests manuels ✅.
+- [x] Contributeurs : Claude Sonnet 4.6 (architecture, client Resend, service notification, intégration) + OpenAI Codex (types, templates email).
+
+## Décisions techniques Sprint 12
+
+| Décision | Valeur |
+|---|---|
+| Fire-and-forget | `.catch()` dans createAppointment/cancelAppointment — email n'affecte jamais la réponse |
+| RESEND_API_KEY absent | `getResendClient()` retourne null → SKIPPED silencieux dans sendAppointmentNotification |
+| Journalisation | Table `notifications` — SENT / FAILED / SKIPPED pour chaque tentative |
+| Préférence notification | Opt-in implicite : pas de record = envoi activé (vrai aussi pour les invités) |
+| priceCentsSnapshot | `priceCentsSnapshot ?? servicePriceCents` dans le template — jamais prix actuel seul |
+| escapeHtml | Appliqué sur toutes les données dynamiques injectées dans le HTML |
+| singleton Resend | Module-level `let _client` — une seule instance par processus |
+| organizationId | Toujours depuis JWT/services — jamais depuis l'email ou les params |
+
+## Condition de sortie du sprint
+
+> ✅ PR `feature/sprint12-email-notifications` validée par ChatGPT et Hasan (20/20 tests manuels), mergée dans `main` (squash commit `b92611a`), tag `v1.3.0-email-notifications`.
+> **Sprint 12 TERMINÉ.**
 
 ---
 
@@ -331,4 +370,4 @@
 
 ---
 
-_Dernière mise à jour : 2026-06-23 — Sprint 11 Réservation Publique TERMINÉ, tag v1.2.0-public-booking._
+_Dernière mise à jour : 2026-06-23 — Sprint 12 Notifications Email TERMINÉ, tag v1.3.0-email-notifications._

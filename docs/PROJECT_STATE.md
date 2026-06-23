@@ -28,6 +28,8 @@
 
 **Sprint 11 — Réservation Publique : TERMINÉ et mergé** ✅
 
+**Sprint 12 — Notifications Email : TERMINÉ et mergé** ✅
+
 ## État du code
 
 - **Auth custom** : `jose` (JWT HS256, 24h) + `bcryptjs` + cookie `HttpOnly`.
@@ -80,6 +82,18 @@
   - `organizationId` résolu depuis le slug, jamais transmis par le client
   - `priceCentsSnapshot` capturé automatiquement via `createAppointment()`
   - `proxy.ts` matcher `/dashboard/:path*` inchangé — `/book/*` public sans auth
+- **Notifications email Sprint 12** :
+  - `src/lib/email/resend.client.ts` — singleton Resend, null si RESEND_API_KEY absent
+  - `src/lib/email/send-email.ts` — wrapper sendEmail(), gestion erreurs, from/replyTo
+  - `src/lib/email/email.types.ts` — EmailPayload, SendEmailResult
+  - `src/features/notifications/types.ts` — NotificationContext
+  - `src/features/notifications/notification.service.ts` — sendAppointmentNotification(), buildNotificationContext(), logNotification(), isNotificationEnabled()
+  - 3 templates : confirmation (indigo), annulation (rouge), reminder (squelette Sprint 13)
+  - Hooks fire-and-forget dans `createAppointment()` (CONFIRMATION) et `cancelAppointment()` (CANCELLED)
+  - Journalisation DB : table `notifications` — SENT | FAILED | SKIPPED pour chaque tentative
+  - `RESEND_API_KEY` absent → SKIPPED silencieux — booking/annulation non affectés
+  - Aucune migration Prisma (tables `notifications/*` créées par Sprint 2)
+  - Dépendance : `resend@6.14.0`
 - **⚠️ Migration en attente** : `prisma/migrations/20260624000001_crm_snapshot_and_indexes/migration.sql` — à appliquer via `pnpm db:migrate` dès que Docker + `.env` disponibles (non destructive : colonne nullable + 2 index).
 - **Agenda Sprint 9** :
   - `src/features/agenda/types.ts` — AgendaView, GridConfig, AgendaBlock, AgendaColumn, AgendaDayData, AgendaWeekData, SLOT_HEIGHT_REM
@@ -116,6 +130,7 @@
 | zod | 4.4.3 |
 | Gestionnaire | pnpm 11.5 |
 | Node (cible) | 22 LTS (`.nvmrc`) |
+| resend | 6.14.0 |
 
 ## Vérifications (toutes ✅)
 
@@ -126,6 +141,7 @@ Sprint 8 : `pnpm typecheck` ✅ · `pnpm lint` ✅ · `pnpm build` ✅ · `pnpm 
 Sprint 9 : `pnpm typecheck` ✅ · `pnpm lint` ✅ · `pnpm build` ✅ (20 routes) · 20/20 tests manuels ✅ · `pnpm db:seed` : prérequis environnement (Docker + `.env` requis, non fonctionnel hors environnement local configuré)
 Sprint 10 : `pnpm typecheck` ✅ · `pnpm lint` ✅ · `pnpm build` ✅ (22 routes) · 22/22 tests manuels ✅ · `pnpm db:migrate` / `pnpm db:seed` : ⚠️ en attente Docker + `.env` (migration non destructive prête)
 Sprint 11 : `typecheck` ✅ · `lint` ✅ · `build` ✅ (25 routes) · 23/23 tests manuels ✅
+Sprint 12 : `typecheck` ✅ · `lint` ✅ · `build` ✅ (25 routes) · 20/20 tests manuels ✅
 
 ## Migrations appliquées
 
@@ -140,14 +156,15 @@ Sprint 11 : `typecheck` ✅ · `lint` ✅ · `build` ✅ (25 routes) · 23/23 te
 ## Git / Release
 
 - `main` = seule branche stable active.
-- Tags : `v0.1.0-foundations` · `v0.2.0-bootstrap` · `v0.3.0-prisma-schema` · `v0.4.0-db-migration` · `v0.5.0-auth` · `v0.6.0-org-salon` · `v0.7.0-employees-services` · `v0.8.0-schedules` · `v0.9.0-appointments` · `v1.0.0-agenda` · `v1.1.0-crm-clients` · **`v1.2.0-public-booking`**.
+- Tags : `v0.1.0-foundations` · `v0.2.0-bootstrap` · `v0.3.0-prisma-schema` · `v0.4.0-db-migration` · `v0.5.0-auth` · `v0.6.0-org-salon` · `v0.7.0-employees-services` · `v0.8.0-schedules` · `v0.9.0-appointments` · `v1.0.0-agenda` · `v1.1.0-crm-clients` · `v1.2.0-public-booking` · **`v1.3.0-email-notifications`**.
 - PR **#17** (`feature/sprint9-agenda`) **mergée** dans `main` (merge commit `36156b1`).
 - PR **#18** (`docs/sprint9-closure`) **mergée** dans `main` (commit `7976531`).
 - PR **#19** (`feature/sprint10-crm-clients`) **mergée** dans `main` (merge commit `361155b`).
 - PR **#21** (`feature/sprint11-public-booking`) **mergée** dans `main` (squash commit `2146c45`).
 - PR **#22** (`docs/codex-guidelines`) **mergée** dans `main` (squash commit `2dbf910`).
 - PR **#23** (`docs/codex-coauthor-rule`) **mergée** dans `main` (squash commit `86716e8`).
-- Branches feature/sprint9-agenda, docs/sprint9-closure, feature/sprint10-crm-clients, feature/sprint11-public-booking, docs/codex-guidelines, docs/codex-coauthor-rule **supprimées** (locale + distante).
+- PR **#25** (`feature/sprint12-email-notifications`) **mergée** dans `main` (squash commit `b92611a`).
+- Branches feature/sprint9-agenda, docs/sprint9-closure, feature/sprint10-crm-clients, feature/sprint11-public-booking, docs/codex-guidelines, docs/codex-coauthor-rule, feature/sprint12-email-notifications **supprimées** (locale + distante).
 
 ## Base de données
 
@@ -157,10 +174,10 @@ Sprint 11 : `typecheck` ✅ · `lint` ✅ · `build` ✅ (25 routes) · 23/23 te
 
 ## Prochaine étape
 
-Sprint 12 : à définir avec ChatGPT (notifications, rapports, tableau de bord analytics, gestion multi-salons, etc.)
+Sprint 13 : à définir avec ChatGPT (rappels email planifiés, tableau de bord analytics, gestion multi-salons, etc.)
 
 ⚠️ **Prérequis persistant** : appliquer la migration `20260624000001_crm_snapshot_and_indexes` via `pnpm db:migrate` dès que Docker + `.env` disponibles.
 
 ---
 
-_Dernière mise à jour : 2026-06-23 — PR #21 mergée, tag v1.2.0-public-booking. Sprint 11 Réservation Publique TERMINÉ._
+_Dernière mise à jour : 2026-06-23 — PR #25 mergée, tag v1.3.0-email-notifications. Sprint 12 Notifications Email TERMINÉ._

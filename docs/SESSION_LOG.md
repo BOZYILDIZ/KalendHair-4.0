@@ -4,6 +4,46 @@
 
 ---
 
+## 2026-06-23 — Session 27 : clôture Sprint 12 — docs/sprint12-closure + PR #26
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : 12 (clôture).
+- **Actions** :
+  - Branche `docs/sprint12-closure` créée.
+  - Mise à jour `docs/PROJECT_STATE.md` : phase Sprint 12 ajoutée, section notifications email (10 points), stack `resend@6.14.0`, vérifications Sprint 12, Git/Release section (PR #25 + tag v1.3.0), Prochaine étape → Sprint 13, _Dernière mise à jour_.
+  - Mise à jour `docs/CURRENT_SPRINT.md` : objectifs Sprint 12 (14 ✅), décisions techniques, condition de sortie.
+  - Mise à jour `docs/SESSION_LOG.md` : sessions 26 et 27.
+  - Mise à jour `README.md` : état actuel → Sprint 12, ligne Sprint 12 dans tableau.
+- **Code métier** : aucun. Clôture documentaire uniquement.
+- **État de sortie** : commit + push + PR documentaire ouverte. **Aucun merge.** En attente de validation.
+
+---
+
+## 2026-06-23 — Session 26 : Sprint 12 — Notifications Email
+
+- **Auteur** : Claude Code + OpenAI Codex (contributeur encadré).
+- **Phase** : 12 (implémentation).
+- **Branche** : `feature/sprint12-email-notifications`.
+- **Actions** :
+  - Installation `resend@6.14.0` via `pnpm` (résolution via corepack pnpm@11.9.0 — `npm install` avait échoué sur lockfile pnpm).
+  - `src/lib/email/email.types.ts` — EmailPayload + SendEmailResult (Codex).
+  - `src/lib/email/resend.client.ts` — singleton Resend, null si RESEND_API_KEY absent (Claude).
+  - `src/lib/email/send-email.ts` — wrapper sendEmail(), from configurable, replyTo optionnel (Claude).
+  - `src/features/notifications/types.ts` — NotificationContext (13 champs) (Codex).
+  - `src/features/notifications/notification.service.ts` — sendAppointmentNotification(), buildNotificationContext(), logNotification(), isNotificationEnabled() (Claude).
+  - 3 templates email (Codex) : confirmation (indigo #4F46E5), annulation (rouge #dc2626), reminder (squelette Sprint 13).
+  - `appointment.service.ts` modifié : fire-and-forget CONFIRMATION dans createAppointment() + CANCELLED dans cancelAppointment() (Claude).
+  - `.env.example` modifié : RESEND_API_KEY, RESEND_FROM_EMAIL, RESEND_FROM_NAME.
+  - Aucune migration Prisma (tables présentes depuis Sprint 2 / migration init).
+  - `typecheck` ✅ · `lint` ✅ · `build` ✅ (25 routes) · 20/20 tests manuels ✅.
+  - PR #25 créée, validée par ChatGPT, mergée dans `main` (squash commit `b92611a`).
+  - Branche `feature/sprint12-email-notifications` supprimée (locale + distante).
+  - Tag annoté `v1.3.0-email-notifications` créé et poussé.
+- **Fichiers créés** : 8. **Fichiers modifiés** : 3 (`appointment.service.ts`, `.env.example`, 1 doc).
+- **Co-authors** : `Co-authored-by: OpenAI Codex <noreply@openai.com>` + `Co-authored-by: Claude Sonnet 4.6 <noreply@anthropic.com>`.
+
+---
+
 ## 2026-06-23 — Session 25 : clôture Sprint 11 — merge PR #21 + tag v1.2.0-public-booking
 
 - **Auteur** : Claude Code (exécutant technique).
