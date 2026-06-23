@@ -4,6 +4,42 @@
 
 ---
 
+## 2026-06-23 — Session 29 : clôture Sprint 13 — docs/sprint13-closure + PR #28
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : 13 (clôture).
+- **Actions** :
+  - Validation ChatGPT reçue pour PR #27 (20/20 tests manuels OK).
+  - PR **#27** (`feature/sprint13-dashboard-kpi`) **mergée** dans `main` (merge commit `91669cf`).
+  - Branche `feature/sprint13-dashboard-kpi` **supprimée** (locale + distante via `--delete-branch`).
+  - Tag **`v1.4.0-dashboard-kpi`** créé et poussé sur `91669cf`.
+  - Branche `docs/sprint13-closure` créée.
+  - Mise à jour : `PROJECT_STATE.md`, `CURRENT_SPRINT.md`, `SESSION_LOG.md`, `README.md`.
+- **Code métier** : aucun. Clôture documentaire uniquement.
+- **État de sortie** : commit + push + PR documentaire ouverte. **Aucun merge.** En attente de validation.
+
+---
+
+## 2026-06-23 — Session 28 : Sprint 13 — Dashboard & KPI
+
+- **Auteur** : Claude Code + OpenAI Codex (contributeur encadré).
+- **Phase** : 13 (implémentation).
+- **Branche** : `feature/sprint13-dashboard-kpi`.
+- **Actions** :
+  - `src/features/dashboard/types.ts` — 7 types exports (Codex).
+  - `src/features/dashboard/dashboard.service.ts` — getDashboardKpi() + 7 agrégats, helpers timezone (Claude).
+  - 8 composants UI (Codex) : kpi-card, kpi-period-selector (seul "use client"), kpi-revenue-card, kpi-appointments-card, kpi-clients-card, kpi-fill-rate-card, kpi-top-services-card, kpi-top-employees-card.
+  - `src/app/(dashboard)/dashboard/kpi/page.tsx` — Server Component, searchParams async, isValidPeriod() (Claude).
+  - `src/app/(dashboard)/dashboard/page.tsx` modifié — 11ème lien "KPI & Tableau de bord" (Claude).
+  - 4 ajustements ChatGPT intégrés : CA = COMPLETED, récurrents 12 mois ≥2, fill rate plafonné 100 %, top employés RDV+CA+%CA.
+  - Correction `.next/types/` stale (artefacts " 2" dupliqués) : `rm -rf .next` → typecheck propre.
+  - `typecheck` ✅ · `lint` ✅ · `build` ✅ (26 routes) · 20/20 tests manuels ✅.
+  - PR #27 créée (en attente validation).
+- **Fichiers créés** : 11. **Fichiers modifiés** : 1 (`dashboard/page.tsx`).
+- **Co-authors** : `Co-authored-by: OpenAI Codex <noreply@openai.com>` + `Co-authored-by: Claude Sonnet 4.6 <noreply@anthropic.com>`.
+
+---
+
 ## 2026-06-23 — Session 27 : clôture Sprint 12 — docs/sprint12-closure + PR #26
 
 - **Auteur** : Claude Code (exécutant technique).

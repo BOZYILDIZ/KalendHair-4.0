@@ -82,7 +82,7 @@ Voir `docs/ARCHITECTURE.md` et `docs/DATABASE.md`.
 
 ## État actuel
 
-**Sprint 12 — Notifications Email** — TERMINÉ ✅
+**Sprint 13 — Dashboard & KPI** — TERMINÉ ✅
 
 | Sprint | Description | Tag |
 |---|---|---|
@@ -99,3 +99,4 @@ Voir `docs/ARCHITECTURE.md` et `docs/DATABASE.md`.
 | Sprint 10 | CRM Clients : liste, recherche, fiche, stats, historique, notes internes | `v1.1.0-crm-clients` |
 | Sprint 11 | Réservation publique /book/[slug] : wizard URL, slots timezone-aware, isolation tenant | `v1.2.0-public-booking` |
 | Sprint 12 | Notifications email : confirmation + annulation, fire-and-forget, journalisation DB | `v1.3.0-email-notifications` |
+| Sprint 13 | Dashboard KPI : CA, RDV, clients, taux remplissage, top services, top employés, sélecteur période | `v1.4.0-dashboard-kpi` |

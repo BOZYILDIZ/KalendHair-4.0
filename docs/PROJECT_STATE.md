@@ -30,13 +30,15 @@
 
 **Sprint 12 — Notifications Email : TERMINÉ et mergé** ✅
 
+**Sprint 13 — Dashboard & KPI : TERMINÉ et mergé** ✅
+
 ## État du code
 
 - **Auth custom** : `jose` (JWT HS256, 24h) + `bcryptjs` + cookie `HttpOnly`.
 - **Proxy Next.js 16** (`src/proxy.ts`) : protection `/dashboard/:path*`.
 - **Pages** :
   - `/login` — formulaire ProUser OWNER
-  - `/dashboard` — hub (10 liens : Organisation, Salon, Employés, Services, Horaires du salon, Jours de fermeture, Rendez-vous, Agenda, **Clients**)
+  - `/dashboard` — hub (11 liens : Organisation, Salon, Employés, Services, Horaires du salon, Jours de fermeture, Rendez-vous, Agenda, Clients, **KPI & Tableau de bord**)
   - `/dashboard/organization` — lecture + modification Organisation
   - `/dashboard/salon` — lecture + modification Salon
   - `/dashboard/salon/schedule` — grille 7 jours horaires du salon (**Sprint 7**)
@@ -54,11 +56,12 @@
   - `/dashboard/agenda` — agenda visuel Jour & Semaine + nav + filtre employé (**Sprint 9**)
   - `/dashboard/clients` — liste CRM paginée + recherche (**Sprint 10**)
   - `/dashboard/clients/[id]` — fiche client : stats + historique RDV + notes internes (**Sprint 10**)
+  - `/dashboard/kpi` — tableau de bord KPI : CA, RDV, clients, taux remplissage, top services, top employés (**Sprint 13**)
   - `/book/[slug]` — wizard public réservation : étape 1 (services) (**Sprint 11**)
   - `/book/[slug]/confirm` — récapitulatif + formulaire coordonnées (**Sprint 11**)
   - `/book/[slug]/success` — confirmation réservation (**Sprint 11**)
 - **Permissions** : `src/lib/permissions/` — `tenant.ts` + `organization.permissions.ts` + `salon.permissions.ts` + `employee.permissions.ts` + `service.permissions.ts` + `schedule.permissions.ts` + `appointment.permissions.ts` + `client.permissions.ts`
-- **Services métier** : `src/features/organizations/` + `src/features/salons/` + `src/features/employees/` + `src/features/services/` + `src/features/schedules/` + `src/features/appointments/` + `src/features/clients/`
+- **Services métier** : `src/features/organizations/` + `src/features/salons/` + `src/features/employees/` + `src/features/services/` + `src/features/schedules/` + `src/features/appointments/` + `src/features/clients/` + `src/features/dashboard/`
 - **Validation** : `zod@4.4.3` — Server Actions
 - **Seed DEV** : `owner@test.local / Test1234!` (Organisation "Salon Test" + Salon "Salon Test").
 - **Schéma Prisma** : 21 modèles + 13 enums + 5 migrations (4 appliquées + 1 en attente Docker).
@@ -82,6 +85,12 @@
   - `organizationId` résolu depuis le slug, jamais transmis par le client
   - `priceCentsSnapshot` capturé automatiquement via `createAppointment()`
   - `proxy.ts` matcher `/dashboard/:path*` inchangé — `/book/*` public sans auth
+- **Dashboard KPI Sprint 13** :
+  - `src/features/dashboard/types.ts` — Period, VALID_PERIODS, AppointmentCounts, TopServiceRow, TopEmployeeRow, FillRateResult, DashboardKpi
+  - `src/features/dashboard/dashboard.service.ts` — getDashboardKpi(), 7 agrégats parallèles (Promise.all) : fetchRevenue, fetchAppointmentCounts, fetchNewClients, fetchRecurringClients, fetchTopServices, fetchTopEmployees, fetchFillRate
+  - 8 composants Server/Client (1 seul "use client" : KpiPeriodSelector) : kpi-card, kpi-period-selector, kpi-revenue-card, kpi-appointments-card, kpi-clients-card, kpi-fill-rate-card, kpi-top-services-card, kpi-top-employees-card
+  - CA = COMPLETED uniquement · clients récurrents = ≥2 COMPLETED sur 12 mois · taux remplissage plafonné 100 % · top employés : RDV + CA + % CA total
+  - Aucune migration Prisma · aucune dépendance externe ajoutée
 - **Notifications email Sprint 12** :
   - `src/lib/email/resend.client.ts` — singleton Resend, null si RESEND_API_KEY absent
   - `src/lib/email/send-email.ts` — wrapper sendEmail(), gestion erreurs, from/replyTo
@@ -142,6 +151,7 @@ Sprint 9 : `pnpm typecheck` ✅ · `pnpm lint` ✅ · `pnpm build` ✅ (20 route
 Sprint 10 : `pnpm typecheck` ✅ · `pnpm lint` ✅ · `pnpm build` ✅ (22 routes) · 22/22 tests manuels ✅ · `pnpm db:migrate` / `pnpm db:seed` : ⚠️ en attente Docker + `.env` (migration non destructive prête)
 Sprint 11 : `typecheck` ✅ · `lint` ✅ · `build` ✅ (25 routes) · 23/23 tests manuels ✅
 Sprint 12 : `typecheck` ✅ · `lint` ✅ · `build` ✅ (25 routes) · 20/20 tests manuels ✅
+Sprint 13 : `typecheck` ✅ · `lint` ✅ · `build` ✅ (26 routes) · 20/20 tests manuels ✅
 
 ## Migrations appliquées
 
@@ -156,7 +166,7 @@ Sprint 12 : `typecheck` ✅ · `lint` ✅ · `build` ✅ (25 routes) · 20/20 te
 ## Git / Release
 
 - `main` = seule branche stable active.
-- Tags : `v0.1.0-foundations` · `v0.2.0-bootstrap` · `v0.3.0-prisma-schema` · `v0.4.0-db-migration` · `v0.5.0-auth` · `v0.6.0-org-salon` · `v0.7.0-employees-services` · `v0.8.0-schedules` · `v0.9.0-appointments` · `v1.0.0-agenda` · `v1.1.0-crm-clients` · `v1.2.0-public-booking` · **`v1.3.0-email-notifications`**.
+- Tags : `v0.1.0-foundations` · `v0.2.0-bootstrap` · `v0.3.0-prisma-schema` · `v0.4.0-db-migration` · `v0.5.0-auth` · `v0.6.0-org-salon` · `v0.7.0-employees-services` · `v0.8.0-schedules` · `v0.9.0-appointments` · `v1.0.0-agenda` · `v1.1.0-crm-clients` · `v1.2.0-public-booking` · `v1.3.0-email-notifications` · **`v1.4.0-dashboard-kpi`**.
 - PR **#17** (`feature/sprint9-agenda`) **mergée** dans `main` (merge commit `36156b1`).
 - PR **#18** (`docs/sprint9-closure`) **mergée** dans `main` (commit `7976531`).
 - PR **#19** (`feature/sprint10-crm-clients`) **mergée** dans `main` (merge commit `361155b`).
@@ -164,7 +174,8 @@ Sprint 12 : `typecheck` ✅ · `lint` ✅ · `build` ✅ (25 routes) · 20/20 te
 - PR **#22** (`docs/codex-guidelines`) **mergée** dans `main` (squash commit `2dbf910`).
 - PR **#23** (`docs/codex-coauthor-rule`) **mergée** dans `main` (squash commit `86716e8`).
 - PR **#25** (`feature/sprint12-email-notifications`) **mergée** dans `main` (squash commit `b92611a`).
-- Branches feature/sprint9-agenda, docs/sprint9-closure, feature/sprint10-crm-clients, feature/sprint11-public-booking, docs/codex-guidelines, docs/codex-coauthor-rule, feature/sprint12-email-notifications **supprimées** (locale + distante).
+- PR **#27** (`feature/sprint13-dashboard-kpi`) **mergée** dans `main` (merge commit `91669cf`).
+- Branches feature/sprint9-agenda, docs/sprint9-closure, feature/sprint10-crm-clients, feature/sprint11-public-booking, docs/codex-guidelines, docs/codex-coauthor-rule, feature/sprint12-email-notifications, feature/sprint13-dashboard-kpi **supprimées** (locale + distante).
 
 ## Base de données
 
@@ -174,10 +185,10 @@ Sprint 12 : `typecheck` ✅ · `lint` ✅ · `build` ✅ (25 routes) · 20/20 te
 
 ## Prochaine étape
 
-Sprint 13 : à définir avec ChatGPT (rappels email planifiés, tableau de bord analytics, gestion multi-salons, etc.)
+Sprint 14 : à définir avec ChatGPT (rappels email planifiés, gestion multi-salons, paiements Stripe, etc.)
 
 ⚠️ **Prérequis persistant** : appliquer la migration `20260624000001_crm_snapshot_and_indexes` via `pnpm db:migrate` dès que Docker + `.env` disponibles.
 
 ---
 
-_Dernière mise à jour : 2026-06-23 — PR #25 mergée, tag v1.3.0-email-notifications. Sprint 12 Notifications Email TERMINÉ._
+_Dernière mise à jour : 2026-06-23 — PR #27 mergée, tag v1.4.0-dashboard-kpi. Sprint 13 Dashboard & KPI TERMINÉ._
