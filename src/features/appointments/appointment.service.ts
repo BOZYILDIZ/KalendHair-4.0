@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db/prisma";
 import type { Prisma } from "@prisma/client";
 import { isEmployeeAvailable } from "@/features/schedules/availability.service";
 import { logModification } from "./appointment-modification.service";
+import { sendAppointmentNotification } from "@/features/notifications/notification.service";
 import {
   ALLOWED_TRANSITIONS,
   type AppointmentListView,
@@ -294,6 +295,11 @@ export async function createAppointment(
     return appt.id;
   });
 
+  // Fire-and-forget — email failure must never block the booking
+  sendAppointmentNotification(result, organizationId, "APPOINTMENT_CONFIRMATION").catch(
+    (err: unknown) => console.error("[notification] confirmation:", err),
+  );
+
   return { ok: true, appointmentId: result };
 }
 
@@ -424,6 +430,11 @@ export async function cancelAppointment(
       note:           reason ?? null,
     });
   });
+
+  // Fire-and-forget — email failure must never block the cancellation
+  sendAppointmentNotification(id, organizationId, "APPOINTMENT_CANCELLED").catch(
+    (err: unknown) => console.error("[notification] cancellation:", err),
+  );
 
   return { ok: true };
 }
