@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db/prisma";
+import { getNextReceiptNumber } from "./receipt.service";
 import type {
   PaymentView,
   PaymentLineView,
@@ -171,8 +172,11 @@ export async function createPaymentForAppointment(
   const totalCents     = unitPriceCents * quantity; // toujours calculé côté service
 
   const paidAt = new Date(input.paidAt);
+  const year   = paidAt.getUTCFullYear();
 
   const payment = await prisma.$transaction(async (tx) => {
+    const receiptNumber = await getNextReceiptNumber(tx, salonId, year);
+
     const created = await tx.payment.create({
       data: {
         organizationId,
@@ -183,6 +187,7 @@ export async function createPaymentForAppointment(
         status:             "COMPLETED" as never,
         amountCents:        input.amountCents,
         paidAt,
+        receiptNumber,
         notes:              input.notes ?? null,
         createdByProUserId: proUserId,
       },
@@ -222,8 +227,11 @@ export async function createFreePayment(
   const { line } = input;
   const totalCents = line.unitPriceCents * line.quantity; // toujours calculé côté service
   const paidAt     = new Date(input.paidAt);
+  const year       = paidAt.getUTCFullYear();
 
   const payment = await prisma.$transaction(async (tx) => {
+    const receiptNumber = await getNextReceiptNumber(tx, salonId, year);
+
     const created = await tx.payment.create({
       data: {
         organizationId,
@@ -234,6 +242,7 @@ export async function createFreePayment(
         status:             "COMPLETED" as never,
         amountCents:        input.amountCents,
         paidAt,
+        receiptNumber,
         notes:              input.notes ?? null,
         createdByProUserId: proUserId,
       },

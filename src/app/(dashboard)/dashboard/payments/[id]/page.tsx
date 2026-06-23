@@ -70,6 +70,14 @@ export default async function PaymentDetailPage({ params }: Props) {
             <div className="flex flex-col items-end gap-2">
               <PaymentMethodBadge method={payment.method} />
               <PaymentTransactionBadge status={payment.status} />
+              {payment.receiptNumber && (
+                <Link
+                  href={`/dashboard/payments/${id}/receipt`}
+                  className="text-sm text-indigo-600 hover:underline"
+                >
+                  Imprimer le reçu →
+                </Link>
+              )}
             </div>
           </div>
 
