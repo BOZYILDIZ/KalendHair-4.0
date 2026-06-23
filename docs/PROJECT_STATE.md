@@ -20,13 +20,15 @@
 
 **Sprint 7 — Horaires & Disponibilités : TERMINÉ et mergé** ✅
 
+**Sprint 8 — Rendez-vous : EN COURS (PR #15 en attente de validation)** 🔄
+
 ## État du code
 
 - **Auth custom** : `jose` (JWT HS256, 24h) + `bcryptjs` + cookie `HttpOnly`.
 - **Proxy Next.js 16** (`src/proxy.ts`) : protection `/dashboard/:path*`.
 - **Pages** :
   - `/login` — formulaire ProUser OWNER
-  - `/dashboard` — hub (6 liens : Organisation, Salon, Employés, Services, Horaires du salon, Jours de fermeture)
+  - `/dashboard` — hub (7 liens : Organisation, Salon, Employés, Services, Horaires du salon, Jours de fermeture, **Rendez-vous**)
   - `/dashboard/organization` — lecture + modification Organisation
   - `/dashboard/salon` — lecture + modification Salon
   - `/dashboard/salon/schedule` — grille 7 jours horaires du salon (**Sprint 7**)
@@ -38,16 +40,26 @@
   - `/dashboard/services/new` — création service
   - `/dashboard/services/[id]` — édition + statut
   - `/dashboard/closed-days` — gestion jours fermeture exceptionnels (**Sprint 7**)
-- **Permissions** : `src/lib/permissions/` — `tenant.ts` + `organization.permissions.ts` + `salon.permissions.ts` + `employee.permissions.ts` + `service.permissions.ts` + `schedule.permissions.ts`
-- **Services métier** : `src/features/organizations/` + `src/features/salons/` + `src/features/employees/` + `src/features/services/` + `src/features/schedules/`
+  - `/dashboard/appointments` — liste RDV avec filtres (date, employé, statut) (**Sprint 8**)
+  - `/dashboard/appointments/new` — création RDV (service → employé → date/heure → client) (**Sprint 8**)
+  - `/dashboard/appointments/[id]` — détail RDV + actions statut + annulation + historique (**Sprint 8**)
+- **Permissions** : `src/lib/permissions/` — `tenant.ts` + `organization.permissions.ts` + `salon.permissions.ts` + `employee.permissions.ts` + `service.permissions.ts` + `schedule.permissions.ts` + `appointment.permissions.ts`
+- **Services métier** : `src/features/organizations/` + `src/features/salons/` + `src/features/employees/` + `src/features/services/` + `src/features/schedules/` + `src/features/appointments/`
 - **Validation** : `zod@4.4.3` — Server Actions
 - **Seed DEV** : `owner@test.local / Test1234!` (Organisation "Salon Test" + Salon "Salon Test").
-- **Schéma Prisma** : 21 modèles + 13 enums + 3 migrations appliquées.
+- **Schéma Prisma** : 21 modèles + 13 enums + 4 migrations appliquées.
+- **Dépendances Sprint 8** : `date-fns-tz@3.2.0` (conversion timezone ↔ UTC).
 - **Horaires Sprint 7** :
   - `SalonSchedule` — grille 7 jours (saveMany en `$transaction`)
   - `EmployeeSchedule` — grille 7 jours (cross-validé vs salon)
   - `ClosedDay` — fermetures exceptionnelles (date UTC, motif optionnel)
-  - `isEmployeeAvailable()` — vérifie salon ouvert + pas ClosedDay + employé actif + horaires employé
+  - `isEmployeeAvailable()` — vérifie salon ouvert + pas ClosedDay + employé actif + horaires employé + conflits RDV (Sprint 8, `options.startAtUTC`)
+- **Rendez-vous Sprint 8** :
+  - `createAppointment` — timezone-aware (`date-fns-tz`), email normalisé, résolution Client, conflit via `isEmployeeAvailable`
+  - `updateAppointment` — reschedule + update notes, `excludeAppointmentId` pour ignorer le RDV courant
+  - `cancelAppointment` / `updateAppointmentStatus` — transitions validées via `ALLOWED_TRANSITIONS`
+  - `getAvailableSlots` — slots 15 min (`SLOT_INTERVAL_MINUTES`), sans N+1 (requêtes parallèles + filtrage en mémoire)
+  - `AppointmentModification` — log automatique : CREATED / RESCHEDULED / CANCELLED / STATUS_CHANGED / NOTE_UPDATED
 - **PostgreSQL local** : container `kalendhair_postgres` (Docker Compose, port 5432).
 
 ## Stack & versions installées
@@ -79,6 +91,7 @@ Sprint 7 : `pnpm typecheck` ✅ · `pnpm lint` ✅ · `pnpm build` ✅ · `pnpm 
 | `20260617014217_init` | Schéma initial (21 tables + 13 enums) |
 | `20260618000001_salon_org_unique` | Contrainte unique `Salon.organizationId` (1 salon/org MVP) |
 | `20260618000002_employee_photo_url` | `photoUrl TEXT` nullable sur `employees` (préparation Sprint 7+) |
+| `20260618120356_appointment_conflict_index` | Index composite `@@index([employeeId, startAt, endAt])` sur `appointments` (**Sprint 8**) |
 
 ## Git / Release
 
@@ -86,6 +99,7 @@ Sprint 7 : `pnpm typecheck` ✅ · `pnpm lint` ✅ · `pnpm build` ✅ · `pnpm 
 - Tags : `v0.1.0-foundations` · `v0.2.0-bootstrap` · `v0.3.0-prisma-schema` · `v0.4.0-db-migration` · `v0.5.0-auth` · `v0.6.0-org-salon` · `v0.7.0-employees-services` · **`v0.8.0-schedules`**.
 - PR **#13** (`feature/sprint7-schedules`) **mergée** dans `main` (merge commit `ddda498`).
 - Branche `feature/sprint7-schedules` **supprimée** (locale + distante).
+- Branche **`feature/sprint8-appointments`** en cours — PR #15 en attente de validation.
 
 ## Base de données
 
@@ -95,8 +109,8 @@ Sprint 7 : `pnpm typecheck` ✅ · `pnpm lint` ✅ · `pnpm build` ✅ · `pnpm 
 
 ## Prochaine étape
 
-Sprint 8 : Rendez-vous (Appointments) + `getAvailableSlots()`.
+Sprint 9 : à définir (Calendrier view, notifications, paiements, etc.)
 
 ---
 
-_Dernière mise à jour : 2026-06-18 — PR #13 mergée, tag v0.8.0-schedules. Sprint 7 TERMINÉ._
+_Dernière mise à jour : 2026-06-18 — Sprint 8 implémenté (24/24 tests). PR #15 en attente de validation ChatGPT._

@@ -4,6 +4,24 @@
 
 ---
 
+## 2026-06-18 — Session 18 : Sprint 8 — Rendez-vous (Appointments)
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : 8 (implémentation).
+- **Branche** : `feature/sprint8-appointments`.
+- **Actions** :
+  - Reset base DEV (migration checksum drift) + ajout migration `appointment_conflict_index`.
+  - Installation `date-fns-tz@3.2.0`.
+  - Implémentation complète Sprint 8 : permissions, types, schema Zod, services (appointment + slots + modification), composants UI (4), routes (3 pages + 2 actions), hub mis à jour.
+  - `isEmployeeAvailable` — Step 8 rempli + `options.startAtUTC` pour timezone correcte.
+  - 3 ajustements ChatGPT intégrés : email normalisé, `modifiedById` confirmé, `SLOT_INTERVAL_MINUTES = 15`.
+  - `typecheck` ✅ · `lint` ✅ · `build` ✅ · `db:seed` ✅.
+  - 24/24 tests manuels ✅.
+  - Commit + push + PR #15 créée (en attente validation).
+- **Fichiers modifiés** : 22 fichiers créés/modifiés (voir PR #15).
+
+---
+
 ## 2026-06-18 — Session 17 : clôture Sprint 7 — merge PR #13 + tag v0.8.0-schedules
 
 - **Auteur** : Claude Code (exécutant technique).

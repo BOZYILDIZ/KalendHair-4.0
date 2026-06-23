@@ -7,6 +7,10 @@ export async function isEmployeeAvailable(
   date: Date,
   startMinute: number,
   durationMinutes: number,
+  options?: {
+    excludeAppointmentId?: string;
+    startAtUTC?: Date;
+  },
 ): Promise<AvailabilityResult> {
   // Step 1 — Load employee, verify tenant
   const employee = await prisma.employee.findFirst({
@@ -61,8 +65,22 @@ export async function isEmployeeAvailable(
     return { available: false, reason: "Hors des horaires de l'employé" };
   }
 
-  // Step 8 — Appointment conflicts (placeholder — Sprint 8)
-  // TODO Sprint 8: check overlapping appointments
+  // Step 8 — Appointment conflicts (Sprint 8)
+  // startAtUTC: actual UTC start (required for correct conflict check in non-UTC timezones)
+  const conflictStart = options?.startAtUTC ?? new Date(date.getTime() + startMinute * 60_000);
+  const conflictEnd   = new Date(conflictStart.getTime() + durationMinutes * 60_000);
+
+  const conflict = await prisma.appointment.findFirst({
+    where: {
+      employeeId,
+      status:  { not: "CANCELLED" as never },
+      startAt: { lt: conflictEnd },
+      endAt:   { gt: conflictStart },
+      ...(options?.excludeAppointmentId ? { id: { not: options.excludeAppointmentId } } : {}),
+    },
+    select: { id: true },
+  });
+  if (conflict) return { available: false, reason: "Créneau déjà réservé" };
 
   return { available: true };
 }
