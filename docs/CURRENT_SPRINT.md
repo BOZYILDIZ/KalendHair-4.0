@@ -6,11 +6,54 @@
 
 ## Sprint actuel
 
+**Sprint 9 — Agenda visuel Jour & Semaine** — TERMINÉ ✅
+
 **Sprint 8 — Rendez-vous** — TERMINÉ ✅
 
 **Sprint 7 — Horaires & Disponibilités** — TERMINÉ ✅
 
 **Sprint 6 — Employees & Services** — TERMINÉ ✅
+
+---
+
+## Objectifs Sprint 9
+
+- [x] Dépendance : `date-fns@4.4.0` installée.
+- [x] `src/features/agenda/types.ts` — AgendaView, GridConfig, AgendaBlock, AgendaColumn, AgendaDayData, AgendaWeekData, SLOT_HEIGHT_REM.
+- [x] `src/features/agenda/agenda.service.ts` — `getAgendaDay()`, `getAgendaWeek()`, `computeWeekStart()` (5 requêtes parallèles chacun, sans limite `take`).
+- [x] `src/features/agenda/components/agenda-closed-day-banner.tsx` — bannière ClosedDay / salon fermé.
+- [x] `src/features/agenda/components/agenda-time-ruler.tsx` — règle horaire (labels toutes les heures).
+- [x] `src/features/agenda/components/agenda-appointment-block.tsx` — bloc RDV (tous statuts, `showEmployee` prop pour vue semaine, CANCELLED barré, NO_SHOW italique + "Absent").
+- [x] `src/features/agenda/components/agenda-employee-column.tsx` — colonne employé + overlap detection (greedy) + zones hors-horaires hachurées + overlay "Repos".
+- [x] `src/features/agenda/components/agenda-day-view.tsx` — vue jour (en-tête employés + couleurs, légende 5 statuts, NowIndicator si today).
+- [x] `src/features/agenda/components/agenda-week-view.tsx` — vue semaine (7 colonnes, today surligné, lien vers vue jour, légende employés).
+- [x] `src/features/agenda/components/agenda-now-indicator.tsx` — indicateur heure actuelle (Client Component, `Intl.DateTimeFormat` + `setInterval`).
+- [x] `src/features/agenda/components/agenda-nav.tsx` — navigation ←/→/Aujourd'hui + toggle Jour/Semaine (Server Component, zéro `useSearchParams`).
+- [x] `src/features/agenda/components/agenda-employee-filter.tsx` — filtre employé (Client Component, `useRouter`, zéro `useSearchParams`).
+- [x] `src/app/(dashboard)/dashboard/agenda/page.tsx` — route `/dashboard/agenda` (searchParams : view, date, employeeId).
+- [x] `src/app/(dashboard)/dashboard/page.tsx` — lien "Agenda" ajouté (9 liens total).
+- [x] `typecheck` ✅ · `lint` ✅ · `build` ✅ (20 routes) · 20/20 tests manuels ✅.
+
+## Décisions techniques Sprint 9
+
+| Décision | Valeur |
+|---|---|
+| Positionnement blocs | CSS absolu (`top`/`height` en rem) calculé depuis `startMinute` et `gridConfig` |
+| Overlap detection | Greedy interval grouping — blocs actifs subdivisés, inactifs pleine largeur |
+| GridConfig enveloppe | `min(salon.start, allEmp.start)` / `max(salon.end, allEmp.end)` — aucun employé tronqué |
+| Timezone serveur | `Intl.DateTimeFormat("fr-CA", { timeZone })` pour date string, `toZonedTime` pour minutes |
+| NowIndicator | Client Component — `Intl.DateTimeFormat` avec prop `timezone`, `setInterval(60_000)` |
+| AgendaNav | Server Component — `<Link>` purs, zéro `useSearchParams`, zéro Suspense boundary |
+| AgendaEmployeeFilter | Client Component — `useRouter` (pas `useSearchParams`), zéro Suspense boundary |
+| organizationId | JWT uniquement — jamais depuis searchParams |
+| Requêtes Prisma | 5 `Promise.all` parallèles par appel service (employees, schedules, closedDays, salonSchedules, appointments) |
+| showEmployee | Prop `boolean` sur `AgendaAppointmentBlock` — vue semaine affiche `employeeFirstName`, vue jour affiche `clientName` |
+| CANCELLED / NO_SHOW | Visibles dans l'agenda — CANCELLED : gris + barré ; NO_SHOW : rouge + italique + label "Absent" |
+
+## Condition de sortie du sprint
+
+> ✅ PR `feature/sprint9-agenda` validée par ChatGPT et Hasan (20/20 tests manuels), mergée dans `main` (merge commit `36156b1`), tag `v1.0.0-agenda`.
+> **Sprint 9 TERMINÉ.**
 
 ---
 
