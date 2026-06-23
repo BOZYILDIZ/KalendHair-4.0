@@ -4,6 +4,49 @@
 
 ---
 
+## 2026-06-24 — Session 31 : clôture Sprint 14 — docs/sprint14-closure + PR #30
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : 14 (clôture).
+- **Actions** :
+  - Validation ChatGPT reçue pour PR #29 (20/20 tests manuels OK, 4 ajustements confirmés).
+  - PR **#29** (`feature/sprint14-payments-pos`) **mergée** dans `main` (merge commit `4b7bdfa`).
+  - Branche `feature/sprint14-payments-pos` **supprimée** (distante via `--delete-branch` de `gh pr merge`, locale absente car déjà sur `main`).
+  - Tag **`v1.5.0-payments-pos`** créé et poussé sur `4b7bdfa`.
+  - Branche `docs/sprint14-closure` créée.
+  - Mise à jour : `PROJECT_STATE.md`, `CURRENT_SPRINT.md`, `SESSION_LOG.md`, `README.md`.
+- **Code métier** : aucun. Clôture documentaire uniquement.
+- **État de sortie** : commit + push + PR documentaire ouverte (#30). **Aucun merge.** En attente de validation.
+
+---
+
+## 2026-06-24 — Session 30 : Sprint 14 — Module Caisse POS (Payments)
+
+- **Auteur** : Claude Code + OpenAI Codex (contributeur encadré).
+- **Phase** : 14 (implémentation).
+- **Branche** : `feature/sprint14-payments-pos`.
+- **Actions** :
+  - `prisma/schema.prisma` modifié — enums PaymentMethod + PaymentStatus, modèles Payment + PaymentLine, back-relations sur Salon/ProUser/Appointment/Client/Service, 6 index (Claude).
+  - `prisma/migrations/20260624000002_payments/migration.sql` — migration additive SQL complète (Claude).
+  - `prisma generate` — client Prisma régénéré (Payment + PaymentLine).
+  - `src/features/payments/types.ts` — 14 exports TypeScript (Codex).
+  - `src/features/payments/payment.schema.ts` — 4 schémas Zod, totalCents absent, OTHER absent du formulaire (Codex).
+  - `src/lib/permissions/payment.permissions.ts` — canManagePayment (Claude).
+  - `src/features/payments/payment.service.ts` — 9 fonctions, $transaction, PAYABLE_STATUSES, computePaymentState 4 états, Promise.all 3 requêtes (Claude).
+  - 6 composants UI (Codex) : payment-method-badge, payment-status-badge (AppointmentPaymentStateBadge + PaymentTransactionBadge), payment-summary-card, payment-history-table, payment-form (AppointmentPaymentForm + FreePaymentForm), cancel-payment-panel.
+  - 4 pages + 4 actions (Claude) : /dashboard/payments, /dashboard/payments/new, /dashboard/payments/[id], /dashboard/appointments/[id]/pay.
+  - `/dashboard/page.tsx` modifié — 12ème lien "Caisse" (Claude).
+  - Correction ESLint : `Date.now()` → `new Date().getTime()` dans payments/page.tsx.
+  - Correction TypeScript : spread `Record<string, never>` pour clause where aggregate.
+  - 4 ajustements ChatGPT intégrés : totalCents côté service, overpaid complet, Zod min(1), filtre OTHER.
+  - `prisma validate` ✅ · `typecheck` ✅ · `lint` ✅ · `build` ✅ (30 routes).
+  - Rapport 20/20 tests manuels produit (analyse statique exhaustive).
+  - Commit `6ae00da` + push + PR #29 créée.
+- **Fichiers créés** : 19. **Fichiers modifiés** : 1 (`dashboard/page.tsx`).
+- **Co-authors** : `Co-authored-by: OpenAI Codex <noreply@openai.com>` + `Co-authored-by: Claude Sonnet 4.6 <noreply@anthropic.com>`.
+
+---
+
 ## 2026-06-23 — Session 29 : clôture Sprint 13 — docs/sprint13-closure + PR #28
 
 - **Auteur** : Claude Code (exécutant technique).

@@ -82,7 +82,7 @@ Voir `docs/ARCHITECTURE.md` et `docs/DATABASE.md`.
 
 ## État actuel
 
-**Sprint 13 — Dashboard & KPI** — TERMINÉ ✅
+**Sprint 14 — Module Caisse POS (Payments)** — TERMINÉ ✅
 
 | Sprint | Description | Tag |
 |---|---|---|
@@ -100,3 +100,4 @@ Voir `docs/ARCHITECTURE.md` et `docs/DATABASE.md`.
 | Sprint 11 | Réservation publique /book/[slug] : wizard URL, slots timezone-aware, isolation tenant | `v1.2.0-public-booking` |
 | Sprint 12 | Notifications email : confirmation + annulation, fire-and-forget, journalisation DB | `v1.3.0-email-notifications` |
 | Sprint 13 | Dashboard KPI : CA, RDV, clients, taux remplissage, top services, top employés, sélecteur période | `v1.4.0-dashboard-kpi` |
+| Sprint 14 | Module Caisse POS : encaissement RDV, paiement libre, historique filtré, annulation, CA réel | `v1.5.0-payments-pos` |
