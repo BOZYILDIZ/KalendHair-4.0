@@ -64,7 +64,7 @@ Hasan
   ↓
 ChatGPT prépare la mission
   ↓
-Claude Code exécute
+Claude Code exécute  ←→  Codex (tâches mécaniques encadrées, voir CODEX.md)
   ↓
 Commit + Push
   ↓
@@ -74,6 +74,11 @@ Validation
   ↓
 Merge vers main
 ```
+
+> **Codex** peut être utilisé comme contributeur encadré pour les tâches mécaniques
+> (types, composants UI, schémas Zod, vérifications documentaires).
+> **Claude reste responsable de l'architecture, de la sécurité et de la review finale.**
+> Voir `CODEX.md` pour le cadre complet.
 
 > Le merge vers `main` n'est jamais fait par Claude automatiquement : il intervient
 > **uniquement après validation**. Voir `docs/WORKFLOW.md`.
