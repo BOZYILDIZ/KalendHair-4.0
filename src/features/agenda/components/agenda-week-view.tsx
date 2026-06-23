@@ -123,6 +123,7 @@ export function AgendaWeekView({ data, employeeId }: Props) {
                     gridConfig={gridConfig}
                     leftPct={block.leftPct}
                     widthPct={block.widthPct}
+                    showEmployee
                   />
                 ))}
               </div>

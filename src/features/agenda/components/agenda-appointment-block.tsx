@@ -12,6 +12,7 @@ type Props = {
   gridConfig: GridConfig;
   leftPct: number;
   widthPct: number;
+  showEmployee?: boolean;
 };
 
 const STATUS_BG: Record<string, string> = {
@@ -35,6 +36,7 @@ export function AgendaAppointmentBlock({
   gridConfig,
   leftPct,
   widthPct,
+  showEmployee = false,
 }: Props) {
   const { startMinute, endMinute, durationMinutes, status, employeeColor } = block;
 
@@ -77,7 +79,9 @@ export function AgendaAppointmentBlock({
     >
       <div className="truncate font-medium">{formatMinute(startMinute)}</div>
       {durationMinutes >= 30 && (
-        <div className="truncate">{block.clientName}</div>
+        <div className="truncate">
+          {showEmployee ? block.employeeFirstName : block.clientName}
+        </div>
       )}
       {durationMinutes >= 45 && (
         <div className="truncate text-gray-500">{block.serviceName}</div>
