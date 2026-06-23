@@ -6,7 +6,7 @@
 
 ## Sprint actuel
 
-**Sprint 8 — Rendez-vous** — EN COURS 🔄 (PR #15 en attente de validation)
+**Sprint 8 — Rendez-vous** — TERMINÉ ✅
 
 **Sprint 7 — Horaires & Disponibilités** — TERMINÉ ✅
 
@@ -49,7 +49,8 @@
 
 ## Condition de sortie du sprint
 
-> PR `feature/sprint8-appointments` en attente de validation ChatGPT + Hasan (24/24 tests).
+> ✅ PR `feature/sprint8-appointments` validée par ChatGPT et Hasan (24/24 tests), mergée dans `main` (commit `43f37eb`), tag `v0.9.0-appointments`.
+> **Sprint 8 TERMINÉ.**
 
 ---
 
