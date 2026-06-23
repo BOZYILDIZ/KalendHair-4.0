@@ -6,6 +6,8 @@
 
 ## Sprint actuel
 
+**Sprint 13 — Dashboard & KPI** — TERMINÉ ✅
+
 **Sprint 12 — Notifications Email** — TERMINÉ ✅
 
 **Sprint 11 — Réservation Publique** — TERMINÉ ✅
@@ -19,6 +21,47 @@
 **Sprint 7 — Horaires & Disponibilités** — TERMINÉ ✅
 
 **Sprint 6 — Employees & Services** — TERMINÉ ✅
+
+---
+
+## Objectifs Sprint 13
+
+- [x] `src/features/dashboard/types.ts` — Period, VALID_PERIODS, AppointmentCounts, TopServiceRow, TopEmployeeRow, FillRateResult, DashboardKpi (Codex).
+- [x] `src/features/dashboard/dashboard.service.ts` — getDashboardKpi() + 7 agrégats internes (Claude) : fetchRevenue (COMPLETED), fetchAppointmentCounts (groupBy statut), fetchNewClients (salonClient.count), fetchRecurringClients (12 mois, ≥2, COMPLETED), fetchTopServices (top 5 par RDV), fetchTopEmployees (top 5 par RDV + CA + % CA), fetchFillRate (horaires employés × jours ouverts - jours fermeture, plafonné 100 %).
+- [x] `src/features/dashboard/components/kpi-card.tsx` — composant générique titre/valeur/sous-titre/badge (Codex).
+- [x] `src/features/dashboard/components/kpi-period-selector.tsx` — sélecteur Aujourd'hui/Semaine/Mois, seul "use client" du module (Codex).
+- [x] `src/features/dashboard/components/kpi-revenue-card.tsx` — CA en euros fr-FR, badge "Réalisé", sous-titre "RDV terminés uniquement" (Codex).
+- [x] `src/features/dashboard/components/kpi-appointments-card.tsx` — barre proportionnelle 4 couleurs, taux annulation + no-show (Codex).
+- [x] `src/features/dashboard/components/kpi-clients-card.tsx` — Nouveaux (période) + Récurrents (12 mois, indigo) (Codex).
+- [x] `src/features/dashboard/components/kpi-fill-rate-card.tsx` — affiche "—" si null, barre indigo, fmtMin() h/min (Codex).
+- [x] `src/features/dashboard/components/kpi-top-services-card.tsx` — table #/Service/RDV/CA, empty state (Codex).
+- [x] `src/features/dashboard/components/kpi-top-employees-card.tsx` — table #/Employé/RDV/CA/% CA, point couleur (Codex).
+- [x] `src/app/(dashboard)/dashboard/kpi/page.tsx` — Server Component, searchParams async, isValidPeriod(), getDashboardKpi() (Claude).
+- [x] `src/app/(dashboard)/dashboard/page.tsx` modifié — 11ème lien "KPI & Tableau de bord" (Claude).
+- [x] Aucune migration Prisma · aucune dépendance externe ajoutée.
+- [x] `typecheck` ✅ · `lint` ✅ · `build` ✅ (26 routes) · 20/20 tests manuels ✅.
+- [x] Contributeurs : Claude Sonnet 4.6 (architecture, service, page, intégration) + OpenAI Codex (types, 8 composants UI).
+
+## Décisions techniques Sprint 13
+
+| Décision | Valeur |
+|---|---|
+| CA | COMPLETED uniquement — `status: "COMPLETED" as never` dans fetchRevenue, fetchTopServices, fetchTopEmployees |
+| Clients récurrents | ≥2 RDV COMPLETED ce salon sur 12 mois glissants — JS `.filter()` (évite `having` sur nullable) |
+| Taux remplissage | `Math.min(100, Math.round(...))` — plafonné 100 % |
+| Top employés | RDV + CA + `revenueSharePercent = Math.round(empRevenue / totalRevenue * 100)` |
+| "use client" | KpiPeriodSelector uniquement (useRouter) — toutes les autres cartes sont Server Components |
+| Promise.all | Un seul `await Promise.all([...7 fonctions...])` dans getDashboardKpi |
+| Period fallback | `isValidPeriod()` local dans page.tsx — fallback "week" pour valeur invalide |
+| Timezone | `todayInTz` = `Intl.DateTimeFormat("fr-CA", { timeZone })` · bornes UTC via `fromZonedTime` |
+| noUncheckedIndexedAccess | `parts[0] ?? "2000"` sur tous les `.split("-")`, `Map.get()` avec fallback |
+| FillRate null | employees.length === 0 OU availableMinutes === 0 → `ratePercent: null` → "—" |
+| FillRate appointments | `status: { not: "CANCELLED" }` — PENDING + CONFIRMED + COMPLETED + NO_SHOW comptés |
+
+## Condition de sortie du sprint
+
+> ✅ PR `feature/sprint13-dashboard-kpi` validée par ChatGPT et Hasan (20/20 tests manuels), mergée dans `main` (merge commit `91669cf`), tag `v1.4.0-dashboard-kpi`.
+> **Sprint 13 TERMINÉ.**
 
 ---
 
@@ -370,4 +413,4 @@
 
 ---
 
-_Dernière mise à jour : 2026-06-23 — Sprint 12 Notifications Email TERMINÉ, tag v1.3.0-email-notifications._
+_Dernière mise à jour : 2026-06-23 — Sprint 13 Dashboard & KPI TERMINÉ, tag v1.4.0-dashboard-kpi._
