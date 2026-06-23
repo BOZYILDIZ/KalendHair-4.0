@@ -6,6 +6,8 @@
 
 ## Sprint actuel
 
+**Sprint 14 — Module Caisse POS (Payments)** — TERMINÉ ✅
+
 **Sprint 13 — Dashboard & KPI** — TERMINÉ ✅
 
 **Sprint 12 — Notifications Email** — TERMINÉ ✅
@@ -21,6 +23,54 @@
 **Sprint 7 — Horaires & Disponibilités** — TERMINÉ ✅
 
 **Sprint 6 — Employees & Services** — TERMINÉ ✅
+
+---
+
+## Objectifs Sprint 14
+
+- [x] Migration `20260624000002_payments` — enums `PaymentMethod` (CASH, CARD, TRANSFER, OTHER) + `PaymentStatus` (COMPLETED, CANCELLED), tables `payments` + `payment_lines`, 6 index, FK Restrict/SetNull/Cascade. Additive — zéro ALTER TABLE existant.
+- [x] `src/features/payments/types.ts` — 14 types : PaymentMethod, PaymentStatus, AppointmentPaymentState, PaymentLineView, PaymentView, PaymentSummary, PaymentListItem, PaymentsPage, PaymentFilters, CreatePaymentLineInput, CreateAppointmentPaymentInput, CreateFreePaymentInput, PaymentFormState + constantes PAYMENT_METHOD_LABELS, FORM_PAYMENT_METHODS (Codex).
+- [x] `src/features/payments/payment.schema.ts` — CreatePaymentLineSchema (unitPriceCents ≥ 1, quantity ≥ 1), CreateAppointmentPaymentSchema (amountCents ≥ 1, paidAt non-futur, CASH|CARD|TRANSFER), CreateFreePaymentSchema, CancelPaymentSchema (Codex).
+- [x] `src/lib/permissions/payment.permissions.ts` — `canManagePayment()` → `canAccessTenant()` (Claude).
+- [x] `src/features/payments/payment.service.ts` — 9 fonctions exportées : createPaymentForAppointment ($transaction, PAYABLE_STATUSES, totalCents serveur), createFreePayment ($transaction, totalCents serveur), cancelPayment (isActive false), getPayments (PAGE_SIZE=20, filtres, Promise.all 3 requêtes), getPayment, getPaymentsForAppointment, getPaymentSummaryForAppointment (computePaymentState 4 états), getRevenueSummary (Claude).
+- [x] `src/features/payments/components/payment-method-badge.tsx` — 4 méthodes dont OTHER (Codex).
+- [x] `src/features/payments/components/payment-status-badge.tsx` — AppointmentPaymentStateBadge (unpaid/partial/paid/overpaid) + PaymentTransactionBadge (COMPLETED/CANCELLED) (Codex).
+- [x] `src/features/payments/components/payment-summary-card.tsx` — carte résumé RDV avec lien /pay (Codex).
+- [x] `src/features/payments/components/payment-history-table.tsx` — tableau paginé avec lien RDV et total période (Codex).
+- [x] `src/features/payments/components/payment-form.tsx` — AppointmentPaymentForm + FreePaymentForm, useActionState, OTHER absent du formulaire (Codex).
+- [x] `src/features/payments/components/cancel-payment-panel.tsx` — confirm() + useActionState (Codex).
+- [x] `src/app/(dashboard)/dashboard/payments/page.tsx` — liste filtrée (30j par défaut), CA encaissé, pagination, 5 filtres méthode (Claude).
+- [x] `src/app/(dashboard)/dashboard/payments/new/page.tsx` + `actions.ts` — paiement libre, euros→cents côté action (Claude).
+- [x] `src/app/(dashboard)/dashboard/payments/[id]/page.tsx` + `actions.ts` — détail + lignes + annulation (Claude).
+- [x] `src/app/(dashboard)/dashboard/appointments/[id]/pay/page.tsx` + `actions.ts` — encaissement RDV, redirect NO_SHOW/CANCELLED (Claude).
+- [x] `src/app/(dashboard)/dashboard/page.tsx` modifié — 12ème lien "Caisse" (Claude).
+- [x] 4 ajustements ChatGPT intégrés : totalCents côté service uniquement, état overpaid complet, Zod min(1) sur 3 champs, filtre ALL|CASH|CARD|TRANSFER|OTHER.
+- [x] `prisma validate` ✅ · `typecheck` ✅ · `lint` ✅ · `build` ✅ (30 routes) · 20/20 tests manuels ✅.
+- [x] Contributeurs : Claude Sonnet 4.6 (architecture, service, permissions, pages, actions, intégration) + OpenAI Codex (types, schema Zod, 6 composants UI).
+
+## Décisions techniques Sprint 14
+
+| Décision | Valeur |
+|---|---|
+| `totalCents` | Toujours `unitPriceCents × quantity` côté service — jamais accepté depuis le client |
+| `createdByProUserId` | Toujours depuis JWT/session (`session.id`) — jamais depuis FormData |
+| Statuts encaissables | `PAYABLE_STATUSES = new Set(["CONFIRMED", "COMPLETED"])` — NO_SHOW non encaissable |
+| Double protection NO_SHOW | Redirect UI (page) + throw service — deux gardes indépendantes |
+| `PaymentMethod.OTHER` | Enum + filtre + badge uniquement — absent de `FormPaymentMethodSchema` |
+| `AppointmentPaymentState` | 4 états : unpaid (0), partial (<expected), paid (===expected), overpaid (>expected) |
+| euros → cents | Conversion dans les actions (`Math.round(euros * 100)`) — le formulaire travaille en euros |
+| `priceCentsSnapshot` | Utilisé dans `createPaymentForAppointment` — fallback `service.priceCents` |
+| Isolation | `salonId + organizationId` dans chaque clause `where` du service |
+| `$transaction` | createPaymentForAppointment + createFreePayment — atomicité Payment + PaymentLine |
+| `onDelete: Restrict` | Salon → Payment — protection données financières |
+| `onDelete: Cascade` | PaymentLine → Payment — intégrité référentielle |
+| `receiptNumber` | `String?` nullable — préparé pour Sprint 15 (numérotation reçus) |
+| Migration | Strictement additive — zéro `ALTER TABLE` sur tables existantes |
+
+## Condition de sortie du sprint
+
+> ✅ PR `feature/sprint14-payments-pos` (#29) validée par ChatGPT et Hasan (20/20 tests manuels), mergée dans `main` (merge commit `4b7bdfa`), tag `v1.5.0-payments-pos`.
+> **Sprint 14 TERMINÉ.**
 
 ---
 
@@ -413,4 +463,4 @@
 
 ---
 
-_Dernière mise à jour : 2026-06-23 — Sprint 13 Dashboard & KPI TERMINÉ, tag v1.4.0-dashboard-kpi._
+_Dernière mise à jour : 2026-06-24 — Sprint 14 Module Caisse POS TERMINÉ, tag v1.5.0-payments-pos._
