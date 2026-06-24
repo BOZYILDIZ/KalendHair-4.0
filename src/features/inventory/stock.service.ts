@@ -90,22 +90,22 @@ async function assertSufficientStock(
 
 // ─── Internal: apply movement atomically ─────────────────────────────────────
 
-async function applyStockMovement(
+export async function applyStockMovement(
   tx: Prisma.TransactionClient,
   opts: {
-    salonId:            string;
-    organizationId:     string;
-    productId:          string;
-    type:               "ENTRY" | "SALE" | "USAGE" | "ADJUSTMENT";
-    quantityDelta:      number;
-    quantityBefore:     number;
-    costPriceCents?:    number;
-    notes?:             string;
-    referenceId?:       string;
-    referenceType?:     string;
+    salonId:             string;
+    organizationId:      string;
+    productId:           string;
+    type:                "ENTRY" | "SALE" | "USAGE" | "ADJUSTMENT" | "PURCHASE_RECEIPT";
+    quantityDelta:       number;
+    quantityBefore:      number;
+    costPriceCents?:     number;
+    notes?:              string;
+    referenceId?:        string;
+    referenceType?:      string;
     createdByProUserId?: string;
   },
-): Promise<void> {
+): Promise<{ id: string }> {
   const quantityAfter = opts.quantityBefore + opts.quantityDelta;
 
   await tx.productStock.upsert({
@@ -118,7 +118,7 @@ async function applyStockMovement(
     update: { quantity: { increment: opts.quantityDelta } },
   });
 
-  await tx.stockMovement.create({
+  const movement = await tx.stockMovement.create({
     data: {
       salonId:            opts.salonId,
       organizationId:     opts.organizationId,
@@ -133,7 +133,10 @@ async function applyStockMovement(
       referenceType:      opts.referenceType ?? null,
       createdByProUserId: opts.createdByProUserId ?? null,
     },
+    select: { id: true },
   });
+
+  return movement;
 }
 
 // ─── Public: entrée stock ─────────────────────────────────────────────────────

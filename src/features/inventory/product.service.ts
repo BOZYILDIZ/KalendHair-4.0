@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db/prisma";
 import type {
   ProductView,
+  ProductSummary,
   ProductCategoryView,
   ProductsPage,
 } from "./types";
@@ -181,6 +182,32 @@ export async function deactivateProduct(
     where: { id },
     data:  { isActive: false },
   });
+}
+
+export async function getProductSummaries(
+  salonId: string,
+  organizationId: string,
+): Promise<ProductSummary[]> {
+  const products = await prisma.product.findMany({
+    where:   { salonId, organizationId, isActive: true },
+    orderBy: { name: "asc" },
+    select: {
+      id:           true,
+      name:         true,
+      unit:         true,
+      priceCents:   true,
+      isActive:     true,
+      stock:        { select: { quantity: true } },
+    },
+  });
+  return products.map((p) => ({
+    id:           p.id,
+    name:         p.name,
+    unit:         p.unit,
+    priceCents:   p.priceCents,
+    isActive:     p.isActive,
+    currentStock: p.stock?.quantity ?? null,
+  }));
 }
 
 export async function getProducts(

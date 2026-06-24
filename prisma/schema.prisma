@@ -154,9 +154,20 @@ enum StockMovementType {
   ENTRY      // réapprovisionnement manuel
   SALE       // vente via caisse POS (lié à un Payment)
   USAGE      // utilisation lors d'une prestation
-  ADJUSTMENT // correction d'inventaire (différence constatée)
+  ADJUSTMENT       // correction d'inventaire (différence constatée)
+  PURCHASE_RECEIPT // réception d'un bon de commande fournisseur
 
   @@map("stock_movement_type")
+}
+
+enum PurchaseOrderStatus {
+  DRAFT              // brouillon éditable
+  SENT               // transmis au fournisseur
+  PARTIALLY_RECEIVED // au moins une réception, reste à recevoir
+  RECEIVED           // toutes les lignes reçues intégralement
+  CANCELLED          // annulé (uniquement depuis DRAFT ou SENT)
+
+  @@map("purchase_order_status")
 }
 
 // ---------------------------------------------------------------------------
@@ -197,8 +208,10 @@ model ProUser {
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   employees       Employee[]
   auditLogs       AuditLog[]     @relation("AuditLogActor")
-  createdPayments Payment[]
-  stockMovements  StockMovement[]
+  createdPayments       Payment[]
+  stockMovements        StockMovement[]
+  purchaseOrders        PurchaseOrder[]
+  purchaseOrderReceipts PurchaseOrderReceipt[]
 
   @@index([organizationId])
   @@map("pro_users")
@@ -253,10 +266,13 @@ model Salon {
   integrations     IntegrationConnection[]
   payments          Payment[]
   receiptCounters   SalonReceiptCounter[]
-  productCategories ProductCategory[]
-  products          Product[]
-  productStocks     ProductStock[]
-  stockMovements    StockMovement[]
+  productCategories     ProductCategory[]
+  products              Product[]
+  productStocks         ProductStock[]
+  stockMovements        StockMovement[]
+  suppliers             Supplier[]
+  purchaseOrders        PurchaseOrder[]
+  purchaseOrderReceipts PurchaseOrderReceipt[]
 
   @@unique([organizationId])
   @@index([organizationId])
@@ -698,10 +714,12 @@ model Product {
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
-  salon     Salon            @relation(fields: [salonId], references: [id], onDelete: Restrict)
-  category  ProductCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-  stock     ProductStock?
-  movements StockMovement[]
+  salon                     Salon            @relation(fields: [salonId], references: [id], onDelete: Restrict)
+  category                  ProductCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  stock                     ProductStock?
+  movements                 StockMovement[]
+  purchaseOrderLines        PurchaseOrderLine[]
+  purchaseOrderReceiptLines PurchaseOrderReceiptLine[]
 
   @@index([salonId])
   @@index([organizationId])
@@ -738,9 +756,10 @@ model StockMovement {
   createdByProUserId String?
   createdAt          DateTime          @default(now())
 
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Restrict)
-  salon     Salon    @relation(fields: [salonId], references: [id], onDelete: Restrict)
-  createdBy ProUser? @relation(fields: [createdByProUserId], references: [id], onDelete: SetNull)
+  product     Product                   @relation(fields: [productId], references: [id], onDelete: Restrict)
+  salon       Salon                     @relation(fields: [salonId], references: [id], onDelete: Restrict)
+  createdBy   ProUser?                  @relation(fields: [createdByProUserId], references: [id], onDelete: SetNull)
+  receiptLine PurchaseOrderReceiptLine?
 
   @@index([salonId, createdAt])
   @@index([productId, createdAt])
@@ -764,4 +783,120 @@ model SalonReceiptCounter {
 
   @@unique([salonId, year])
   @@map("salon_receipt_counters")
+}
+
+// ---------------------------------------------------------------------------
+// FOURNISSEURS & BONS DE COMMANDE — Sprint 17
+// ---------------------------------------------------------------------------
+
+model Supplier {
+  id             String   @id @default(cuid())
+  salonId        String
+  organizationId String
+  name           String
+  contactName    String?
+  email          String?
+  phone          String?
+  address        String?
+  notes          String?
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  salon          Salon           @relation(fields: [salonId], references: [id], onDelete: Restrict)
+  purchaseOrders PurchaseOrder[]
+
+  @@unique([salonId, name])
+  @@index([salonId])
+  @@index([organizationId])
+  @@map("suppliers")
+}
+
+model PurchaseOrder {
+  id                 String              @id @default(cuid())
+  salonId            String
+  organizationId     String
+  supplierId         String
+  status             PurchaseOrderStatus @default(DRAFT)
+  reference          String?
+  expectedAt         DateTime?
+  notes              String?
+  createdByProUserId String?
+  isActive           Boolean             @default(true)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+
+  salon     Salon                  @relation(fields: [salonId], references: [id], onDelete: Restrict)
+  supplier  Supplier               @relation(fields: [supplierId], references: [id], onDelete: Restrict)
+  createdBy ProUser?               @relation(fields: [createdByProUserId], references: [id], onDelete: SetNull)
+  lines     PurchaseOrderLine[]
+  receipts  PurchaseOrderReceipt[]
+
+  @@index([salonId])
+  @@index([organizationId])
+  @@index([supplierId])
+  @@map("purchase_orders")
+}
+
+model PurchaseOrderLine {
+  id              String   @id @default(cuid())
+  salonId         String
+  organizationId  String
+  purchaseOrderId String
+  productId       String
+  quantityOrdered Int
+  unitCostCents   Int
+  notes           String?
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  purchaseOrder PurchaseOrder              @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+  product       Product                    @relation(fields: [productId], references: [id], onDelete: Restrict)
+  receiptLines  PurchaseOrderReceiptLine[]
+
+  @@index([purchaseOrderId])
+  @@index([productId])
+  @@map("purchase_order_lines")
+}
+
+model PurchaseOrderReceipt {
+  id                 String   @id @default(cuid())
+  salonId            String
+  organizationId     String
+  purchaseOrderId    String
+  receivedAt         DateTime @default(now())
+  notes              String?
+  createdByProUserId String?
+  createdAt          DateTime @default(now())
+
+  salon         Salon                    @relation(fields: [salonId], references: [id], onDelete: Restrict)
+  purchaseOrder PurchaseOrder            @relation(fields: [purchaseOrderId], references: [id], onDelete: Restrict)
+  createdBy     ProUser?                 @relation(fields: [createdByProUserId], references: [id], onDelete: SetNull)
+  lines         PurchaseOrderReceiptLine[]
+
+  @@index([salonId])
+  @@index([purchaseOrderId])
+  @@map("purchase_order_receipts")
+}
+
+model PurchaseOrderReceiptLine {
+  id                  String   @id @default(cuid())
+  receiptId           String
+  purchaseOrderLineId String
+  productId           String
+  quantityReceived    Int
+  unitCostCents       Int
+  totalCostCents      Int
+  stockMovementId     String   @unique
+  createdAt           DateTime @default(now())
+
+  receipt           PurchaseOrderReceipt @relation(fields: [receiptId], references: [id], onDelete: Cascade)
+  purchaseOrderLine PurchaseOrderLine    @relation(fields: [purchaseOrderLineId], references: [id], onDelete: Restrict)
+  product           Product              @relation(fields: [productId], references: [id], onDelete: Restrict)
+  stockMovement     StockMovement        @relation(fields: [stockMovementId], references: [id], onDelete: Restrict)
+
+  @@index([receiptId])
+  @@index([purchaseOrderLineId])
+  @@map("purchase_order_receipt_lines")
 }

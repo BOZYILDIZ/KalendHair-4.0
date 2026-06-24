@@ -1,10 +1,11 @@
 import type { StockMovementView } from "../types";
 
 const TYPE_LABELS: Record<string, string> = {
-  ENTRY:      "Entrée",
-  SALE:       "Vente",
-  USAGE:      "Utilisation",
-  ADJUSTMENT: "Ajustement",
+  ENTRY:            "Entrée",
+  SALE:             "Vente",
+  USAGE:            "Utilisation",
+  ADJUSTMENT:       "Ajustement",
+  PURCHASE_RECEIPT: "Réception commande",
 };
 
 type Props = {
