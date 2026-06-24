@@ -41,6 +41,49 @@ async function main() {
     },
   });
 
+  // Plans de facturation — Sprint 18
+  await prisma.billingPlan.upsert({
+    where:  { code: "ESSENTIAL" },
+    update: {},
+    create: {
+      code:              "ESSENTIAL",
+      name:              "Essential",
+      description:       "Pour les indépendants et petits salons",
+      monthlyPriceCents: 2900,
+      yearlyPriceCents:  29000,
+      maxSalons:         1,
+      maxEmployees:      2,
+    },
+  });
+
+  await prisma.billingPlan.upsert({
+    where:  { code: "PRO" },
+    update: {},
+    create: {
+      code:              "PRO",
+      name:              "Pro",
+      description:       "Pour les salons en croissance",
+      monthlyPriceCents: 5900,
+      yearlyPriceCents:  59000,
+      maxSalons:         3,
+      maxEmployees:      10,
+    },
+  });
+
+  await prisma.billingPlan.upsert({
+    where:  { code: "BUSINESS" },
+    update: {},
+    create: {
+      code:              "BUSINESS",
+      name:              "Business",
+      description:       "Pour les groupes et franchises",
+      monthlyPriceCents: 9900,
+      yearlyPriceCents:  99000,
+      maxSalons:         null,
+      maxEmployees:      null,
+    },
+  });
+
   console.log("✅  Seed terminé : owner@test.local / Test1234!");
 }
 

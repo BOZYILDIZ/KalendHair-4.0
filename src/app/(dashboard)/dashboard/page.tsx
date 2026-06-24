@@ -119,6 +119,20 @@ export default async function DashboardPage() {
           <span className="font-medium">Commandes</span>
           <span className="text-gray-400">→</span>
         </Link>
+        <Link
+          href="/dashboard/billing"
+          className="flex items-center justify-between rounded border px-4 py-3 text-sm hover:bg-gray-50"
+        >
+          <span className="font-medium">Mon abonnement</span>
+          <span className="text-gray-400">→</span>
+        </Link>
+        <Link
+          href="/dashboard/plans"
+          className="flex items-center justify-between rounded border px-4 py-3 text-sm hover:bg-gray-50"
+        >
+          <span className="font-medium">Plans</span>
+          <span className="text-gray-400">→</span>
+        </Link>
       </nav>
 
       <form action="/api/auth/logout" method="POST">

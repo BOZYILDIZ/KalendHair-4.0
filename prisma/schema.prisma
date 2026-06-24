@@ -170,6 +170,32 @@ enum PurchaseOrderStatus {
   @@map("purchase_order_status")
 }
 
+// Sprint 18 — Billing Core
+enum SubscriptionPlanCode {
+  ESSENTIAL
+  PRO
+  BUSINESS
+
+  @@map("subscription_plan_code")
+}
+
+enum BillingCycle {
+  MONTHLY
+  YEARLY
+
+  @@map("billing_cycle")
+}
+
+// OrgSubscriptionStatus : distinct de l'enum legacy SubscriptionStatus (Stripe placeholders Sprint 2)
+enum OrgSubscriptionStatus {
+  TRIAL
+  ACTIVE
+  PAST_DUE
+  CANCELED
+
+  @@map("org_subscription_status")
+}
+
 // ---------------------------------------------------------------------------
 // TENANT & COMPTES
 // ---------------------------------------------------------------------------
@@ -182,13 +208,14 @@ model Organization {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  proUsers     ProUser[]
-  salons       Salon[]
-  employees    Employee[]
-  subscription Subscription?
-  integrations IntegrationConnection[]
-  auditLogs    AuditLog[]
-  featureFlags FeatureFlag[]
+  proUsers        ProUser[]
+  salons          Salon[]
+  employees       Employee[]
+  subscription    Subscription?
+  orgSubscription OrganizationSubscription?
+  integrations    IntegrationConnection[]
+  auditLogs       AuditLog[]
+  featureFlags    FeatureFlag[]
 
   @@map("organizations")
 }
@@ -899,4 +926,48 @@ model PurchaseOrderReceiptLine {
   @@index([receiptId])
   @@index([purchaseOrderLineId])
   @@map("purchase_order_receipt_lines")
+}
+
+// ---------------------------------------------------------------------------
+// ABONNEMENTS SAAS — Sprint 18
+// ---------------------------------------------------------------------------
+
+// Catalogue des plans — 1 ligne par plan commercial (ESSENTIAL/PRO/BUSINESS)
+model BillingPlan {
+  id                String               @id @default(cuid())
+  code              SubscriptionPlanCode @unique
+  name              String
+  description       String?
+  monthlyPriceCents Int
+  yearlyPriceCents  Int
+  maxSalons         Int?  // null = illimité
+  maxEmployees      Int?  // null = illimité
+  isActive          Boolean              @default(true)
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+
+  subscriptions OrganizationSubscription[]
+
+  @@map("billing_plans")
+}
+
+// Abonnement actif d'une organisation — 1 ligne par org
+model OrganizationSubscription {
+  id                 String                @id @default(cuid())
+  organizationId     String                @unique
+  planId             String
+  billingCycle       BillingCycle          @default(MONTHLY)
+  status             OrgSubscriptionStatus @default(TRIAL)
+  trialEndsAt        DateTime?
+  currentPeriodStart DateTime              @default(now())
+  currentPeriodEnd   DateTime
+  canceledAt         DateTime?
+  createdAt          DateTime              @default(now())
+  updatedAt          DateTime              @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  plan         BillingPlan  @relation(fields: [planId], references: [id])
+
+  @@index([planId])
+  @@map("organization_subscriptions")
 }

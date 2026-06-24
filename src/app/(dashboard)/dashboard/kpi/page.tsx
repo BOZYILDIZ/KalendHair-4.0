@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { requireSession } from "@/lib/auth/session";
 import { getSalon } from "@/features/salons/salon.service";
+import { canUseDashboard } from "@/lib/permissions/billing.permissions";
 import { getDashboardKpi } from "@/features/dashboard/dashboard.service";
 import { KpiPeriodSelector } from "@/features/dashboard/components/kpi-period-selector";
 import { KpiRevenueCard } from "@/features/dashboard/components/kpi-revenue-card";
@@ -21,8 +22,12 @@ function isValidPeriod(p: string | undefined): p is Period {
 
 export default async function KpiPage({ searchParams }: Props) {
   const session = await requireSession();
-  const salon   = await getSalon(session.organizationId);
+  const [salon, allowed] = await Promise.all([
+    getSalon(session.organizationId),
+    canUseDashboard(session.organizationId),
+  ]);
   if (!salon) redirect("/dashboard");
+  if (!allowed) redirect("/dashboard/billing");
 
   const sp     = await searchParams;
   const period: Period = isValidPeriod(sp.period) ? sp.period : "week";
