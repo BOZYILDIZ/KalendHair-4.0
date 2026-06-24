@@ -137,6 +137,21 @@ export async function deactivateSupplier(
   });
   if (!supplier) throw new Error("Fournisseur introuvable.");
 
+  const openOrders = await prisma.purchaseOrder.count({
+    where: {
+      supplierId:     id,
+      salonId,
+      organizationId,
+      isActive:       true,
+      status:         { in: ["DRAFT", "SENT"] },
+    },
+  });
+  if (openOrders > 0) {
+    throw new Error(
+      `Impossible de désactiver : ${openOrders} bon(s) de commande ouvert(s).`,
+    );
+  }
+
   await prisma.supplier.update({
     where: { id },
     data:  { isActive: false },

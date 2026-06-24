@@ -63,14 +63,17 @@ export async function receiveStock(
       select: { id: true },
     });
 
-    // 5. Process each line
+    // 5. Process each line — productId is always taken from the server-loaded lineMap,
+    //    never from incoming (FormData) to prevent cross-tenant writes.
     for (const incoming of data.lines) {
       const line = lineMap.get(incoming.purchaseOrderLineId);
       if (!line) continue;
 
+      const verifiedProductId = line.productId;
+
       // Get current stock level
       const stock = await tx.productStock.findUnique({
-        where:  { productId: incoming.productId },
+        where:  { productId: verifiedProductId },
         select: { quantity: true },
       });
       const quantityBefore = stock?.quantity ?? 0;
@@ -79,7 +82,7 @@ export async function receiveStock(
       const movement = await applyStockMovement(tx, {
         salonId:            data.salonId,
         organizationId:     data.organizationId,
-        productId:          incoming.productId,
+        productId:          verifiedProductId,
         type:               "PURCHASE_RECEIPT",
         quantityDelta:      incoming.quantityReceived,
         quantityBefore,
@@ -91,7 +94,7 @@ export async function receiveStock(
 
       // Update product cost price to the latest purchase price
       await tx.product.update({
-        where: { id: incoming.productId },
+        where: { id: verifiedProductId },
         data:  { costPriceCents: incoming.unitCostCents },
       });
 
@@ -100,7 +103,7 @@ export async function receiveStock(
         data: {
           receiptId:           receipt.id,
           purchaseOrderLineId: incoming.purchaseOrderLineId,
-          productId:           incoming.productId,
+          productId:           verifiedProductId,
           quantityReceived:    incoming.quantityReceived,
           unitCostCents:       incoming.unitCostCents,
           totalCostCents:      incoming.quantityReceived * incoming.unitCostCents,
