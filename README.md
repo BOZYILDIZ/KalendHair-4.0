@@ -82,7 +82,7 @@ Voir `docs/ARCHITECTURE.md` et `docs/DATABASE.md`.
 
 ## État actuel
 
-**Sprint 15 — Professionnalisation (Rappels email + Numérotation reçus)** — TERMINÉ ✅
+**Sprint 16 — Gestion des Stocks & Produits** — TERMINÉ ✅
 
 | Sprint | Description | Tag |
 |---|---|---|
@@ -102,3 +102,4 @@ Voir `docs/ARCHITECTURE.md` et `docs/DATABASE.md`.
 | Sprint 13 | Dashboard KPI : CA, RDV, clients, taux remplissage, top services, top employés, sélecteur période | `v1.4.0-dashboard-kpi` |
 | Sprint 14 | Module Caisse POS : encaissement RDV, paiement libre, historique filtré, annulation, CA réel | `v1.5.0-payments-pos` |
 | Sprint 15 | Rappels email 24h (Vercel CRON + Resend) · Numérotation DGFIP des reçus · Reçu imprimable | `v1.6.0-reminders-receipts` |
+| Sprint 16 | Stocks & Produits : catégories, CRUD produits, entrées/sorties, vente avec encaissement, alertes rupture | `v1.7.0-inventory` |

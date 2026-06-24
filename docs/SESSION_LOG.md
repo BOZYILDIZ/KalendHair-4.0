@@ -4,6 +4,47 @@
 
 ---
 
+## 2026-06-24 — Session 35 : clôture Sprint 16 — docs/sprint16-closure + PR #34
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : 16 (clôture).
+- **Actions** :
+  - Review finale ChatGPT reçue pour PR #33 (6 corrections appliquées, 0 FAIL résiduel).
+  - PR **#33** (`feature/sprint16-inventory`) **mergée** dans `main` (merge commit `600882e`).
+  - Branche `feature/sprint16-inventory` **supprimée** (locale + distante via `gh pr merge --delete-branch`).
+  - Tag **`v1.7.0-inventory`** créé et poussé sur `600882e`.
+  - Branche `docs/sprint16-closure` créée.
+  - Mise à jour : `PROJECT_STATE.md`, `CURRENT_SPRINT.md`, `SESSION_LOG.md`, `README.md`.
+- **Code métier** : aucun. Clôture documentaire uniquement.
+- **État de sortie** : commit + push + PR documentaire ouverte (#34). **Aucun merge.** En attente de validation.
+
+---
+
+## 2026-06-24 — Session 34 : Sprint 16 — Gestion des Stocks & Produits
+
+- **Auteur** : Claude Sonnet 4.6 (architecture complète).
+- **Phase** : 16 (implémentation + corrections post-review).
+- **Branche** : `feature/sprint16-inventory`.
+- **Actions** :
+  - `prisma/schema.prisma` modifié — enum `StockMovementType` (ENTRY, SALE, USAGE, ADJUSTMENT), 4 nouveaux modèles (ProductCategory, Product, ProductStock, StockMovement), back-relations sur Salon et ProUser.
+  - `prisma/migrations/20260624000004_inventory_stock/migration.sql` — migration additive complète : 4 tables, 1 enum, 6 index, FK Restrict/SetNull/Cascade. Zéro ALTER TABLE.
+  - `src/lib/permissions/inventory.permissions.ts` — canManageInventory (OWNER), canAdjustStock (OWNER + MANAGER).
+  - `src/features/inventory/types.ts` — 8 types export.
+  - `src/features/inventory/product.schema.ts` — 6 schémas Zod.
+  - `src/features/inventory/product.service.ts` — 7 fonctions CRUD produits + catégories.
+  - `src/features/inventory/stock.service.ts` — architecture transactionnelle : assertSufficientStock + applyStockMovement (internes), 7 fonctions publiques.
+  - 10 composants UI : StockBadge, LowStockAlert, InventoryStatsCard, ProductList, ProductForm, StockMovementForm, SellProductForm, StockHistoryTable, DeactivateProductButton, CategoryForm.
+  - 10 routes + actions dashboard inventory (hub, products, entry, sell, movements, categories).
+  - `src/app/(dashboard)/dashboard/page.tsx` modifié — 13ème lien "Stocks & Produits".
+  - Rapport statique exhaustif T01–T21 + 8 checks transversaux : 14 PASS / 1 PARTIAL / 6 FAIL.
+  - 6 corrections post-review ChatGPT : T04 (DeactivateProductButton), T05 (garde stock > 0), T06 (flux catégories complet), T07 (P2002 → message utilisateur), T11 (notes obligatoires ADJUSTMENT), T14 (suppression CHECK).
+  - `prisma validate` ✅ · `typecheck` ✅ · `lint` ✅ · `build` ✅ (42 routes) · 0 régression Sprint 14/15.
+  - Commit `1dab693` (corrections) + push + PR #33 créée.
+- **Fichiers créés** : 31. **Fichiers modifiés** : 2 (`prisma/schema.prisma`, `dashboard/page.tsx`).
+- **Co-authors** : `Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>`.
+
+---
+
 ## 2026-06-24 — Session 33 : clôture Sprint 15 — docs/sprint15-closure + PR #32
 
 - **Auteur** : Claude Code (exécutant technique).
