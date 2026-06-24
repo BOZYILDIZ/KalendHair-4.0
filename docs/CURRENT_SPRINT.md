@@ -6,6 +6,8 @@
 
 ## Sprint actuel
 
+**Sprint 17 — Fournisseurs & Bons de Commande** — TERMINÉ ✅
+
 **Sprint 16 — Gestion des Stocks & Produits** — TERMINÉ ✅
 
 **Sprint 15 — Professionnalisation (Rappels email + Numérotation reçus)** — TERMINÉ ✅
@@ -477,6 +479,54 @@
 
 ---
 
+## Objectifs Sprint 17 (TERMINÉ ✅)
+
+- [x] Migration `20260624000005_suppliers_purchase_orders` — `ALTER TYPE stock_movement_type ADD VALUE IF NOT EXISTS 'PURCHASE_RECEIPT'` + enum `purchase_order_status` (DRAFT/SENT/PARTIALLY_RECEIVED/RECEIVED/CANCELLED) + 5 tables (suppliers, purchase_orders, purchase_order_lines, purchase_order_receipts, purchase_order_receipt_lines). Additive — zéro ALTER TABLE.
+- [x] `src/lib/permissions/supplier.permissions.ts` — `canManageSuppliers()` → `canAccessTenant` (Claude).
+- [x] `src/lib/permissions/purchase-order.permissions.ts` — `canManagePurchaseOrders()` (OWNER + MANAGER) (Claude).
+- [x] `src/features/suppliers/types.ts` — SupplierView, SupplierSummary, SuppliersPage, SupplierFormState (Codex).
+- [x] `src/features/suppliers/supplier.schema.ts` — CreateSupplierSchema, UpdateSupplierSchema (Zod v4) (Codex).
+- [x] `src/features/suppliers/supplier.service.ts` — getSuppliers, getSupplierSummaries, getSupplier, createSupplier (unicité nom), updateSupplier, deactivateSupplier (**CR-01 : garde DRAFT/SENT ouverts**) (Claude).
+- [x] `src/features/purchase-orders/types.ts` — 8 types (Codex).
+- [x] `src/features/purchase-orders/purchase-order.schema.ts` — CreatePurchaseOrderSchema, AddPurchaseOrderLineSchema, ReceiveStockSchema (Zod v4) (Codex).
+- [x] `src/features/purchase-orders/purchase-order.service.ts` — 7 fonctions : getPurchaseOrders (filtre status/supplierId/search), getPurchaseOrder, createPurchaseOrder, addOrderLine, removeOrderLine, sendPurchaseOrder, cancelPurchaseOrder (Claude).
+- [x] `src/features/purchase-orders/receipt.service.ts` — `receiveStock` : `prisma.$transaction` complet — validation, receipt, applyStockMovement PURCHASE_RECEIPT, product.costPriceCents, receiptLine, status RECEIVED/PARTIALLY_RECEIVED. **CR-02 : `verifiedProductId = line.productId`** (Claude).
+- [x] `src/features/inventory/stock.service.ts` modifié — `applyStockMovement` exporté, `PURCHASE_RECEIPT` dans le type union, retourne `Promise<{ id: string }>` (non-breaking) (Claude).
+- [x] `src/features/inventory/product.service.ts` modifié — ajout `getProductSummaries` (Claude).
+- [x] `src/features/inventory/components/stock-history-table.tsx` modifié — `TYPE_LABELS.PURCHASE_RECEIPT = "Réception commande"` (Claude).
+- [x] `eslint.config.mjs` modifié — `argsIgnorePattern: "^_"` (Claude).
+- [x] `src/app/(dashboard)/dashboard/page.tsx` modifié — 2 liens Fournisseurs + Commandes (Claude).
+- [x] 3 composants fournisseurs (Codex) : supplier-list, supplier-form ("use client"), supplier-detail ("use client").
+- [x] 7 composants bons de commande (Codex) : purchase-order-list, purchase-order-form, purchase-order-lines-form, purchase-order-detail, purchase-order-status-badge, purchase-order-receive-form, receipt-history-table.
+- [x] 4 routes + actions fournisseurs : `/dashboard/suppliers`, `/suppliers/new`, `/suppliers/[id]`, `/suppliers/[id]/edit` (Claude).
+- [x] 5 routes + actions bons de commande : `/dashboard/purchase-orders`, `/new`, `/[id]`, `/[id]/lines`, `/[id]/receive` (Claude).
+- [x] **CR-03** : filtre statut `<select>` dans la page liste — transmission `searchParams.status` à `getPurchaseOrders` (Claude).
+- [x] 3 corrections post-review : CR-01 (T05), CR-02 (sécurité multi-tenant), CR-03 (T22).
+- [x] `prisma validate` ✅ · `typecheck` ✅ · `lint` ✅ · `build` ✅ (51 routes) · 23/23 tests PASS · 0 régression Sprint 14/15/16.
+- [x] Contributeurs : Claude Sonnet 4.6 (architecture, services, migration, permissions, pages, actions, corrections) + OpenAI Codex (types, schémas Zod, 10 composants UI).
+
+## Décisions techniques Sprint 17
+
+| Décision | Valeur |
+|---|---|
+| `PurchaseOrderStatus` | Machine à états stricte — transitions validées côté service ET page (double protection) |
+| `applyStockMovement` | Exporté, `PURCHASE_RECEIPT` ajouté, retourne `{ id: string }` — non-breaking pour les 4 appelants existants |
+| `verifiedProductId` | Toujours `line.productId` depuis le `lineMap` chargé server-side — jamais `incoming.productId` du client |
+| `$transaction` réception | Validation complète avant toute écriture — rollback atomique si une ligne échoue |
+| `referenceId / referenceType` | `purchaseOrderReceiptId` / `"PURCHASE_ORDER_RECEIPT"` dans `StockMovement` — sans migration `stock_movements` |
+| Filtre statut UI | `VALID_STATUSES.includes(status as PurchaseOrderStatus)` — validation avant transmission au service |
+| `deactivateSupplier` | `prisma.purchaseOrder.count({ status: { in: ["DRAFT","SENT"] } })` avant `isActive = false` |
+| Migration | `ALTER TYPE ... ADD VALUE IF NOT EXISTS` — idempotente et additive |
+| Montants | Toujours en centimes — conversion euros→centimes dans les Server Actions (`Math.round(parseFloat(x) * 100)`) |
+| `bind` pattern | `removeOrderLineAction.bind(null, lineId, orderId, null) as unknown as (fd) => Promise<void>` — compatibilité TypeScript form action |
+
+## Condition de sortie du sprint
+
+> ✅ PR `feature/sprint17-suppliers-purchase-orders` (#35) validée par ChatGPT (après 3 corrections post-review CR-01/CR-02/CR-03), mergée dans `main` (merge commit `cfda0aa`), tag `v1.8.0-suppliers-purchase-orders`.
+> **Sprint 17 TERMINÉ.**
+
+---
+
 ## Objectifs Sprint 16 (TERMINÉ ✅)
 
 - [x] Migration `20260624000004_inventory_stock` — enum `stock_movement_type` (ENTRY, SALE, USAGE, ADJUSTMENT), tables `product_categories` + `products` + `product_stocks` + `stock_movements`, 6 index, FK Restrict/SetNull/Cascade. Additive — zéro ALTER TABLE.
@@ -535,4 +585,4 @@
 
 ---
 
-_Dernière mise à jour : 2026-06-24 — Sprint 16 Gestion des Stocks & Produits TERMINÉ, tag v1.7.0-inventory._
+_Dernière mise à jour : 2026-06-24 — Sprint 17 Fournisseurs & Bons de Commande TERMINÉ, tag v1.8.0-suppliers-purchase-orders._

@@ -4,6 +4,55 @@
 
 ---
 
+## 2026-06-24 — Session 37 : clôture Sprint 17 — docs/sprint17-closure + PR #36
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : 17 (clôture).
+- **Actions** :
+  - 3 corrections post-review ChatGPT appliquées (CR-01/CR-02/CR-03) sur `feature/sprint17-suppliers-purchase-orders` — commit `93d05e5`.
+  - PR **#35** (`feature/sprint17-suppliers-purchase-orders`) **mergée** dans `main` (merge commit `cfda0aa`).
+  - Branche `feature/sprint17-suppliers-purchase-orders` **supprimée** (locale + distante via `gh pr merge --delete-branch`).
+  - Tag **`v1.8.0-suppliers-purchase-orders`** créé et poussé sur `cfda0aa`.
+  - Branche `docs/sprint17-closure` créée.
+  - Mise à jour : `PROJECT_STATE.md`, `CURRENT_SPRINT.md`, `SESSION_LOG.md`, `README.md`.
+- **Code métier** : aucun. Clôture documentaire uniquement.
+- **État de sortie** : commit + push + PR documentaire ouverte (#36). **Aucun merge.** En attente de validation.
+
+---
+
+## 2026-06-24 — Session 36 : Sprint 17 — Fournisseurs & Bons de Commande
+
+- **Auteur** : Claude Sonnet 4.6 (architecture complète) + OpenAI Codex (contributeur encadré).
+- **Phase** : 17 (implémentation + corrections post-review).
+- **Branche** : `feature/sprint17-suppliers-purchase-orders`.
+- **Actions** :
+  - `prisma/schema.prisma` modifié — 7 modifications : enum `PurchaseOrderStatus`, valeur `PURCHASE_RECEIPT` dans `StockMovementType`, 5 nouveaux modèles (Supplier, PurchaseOrder, PurchaseOrderLine, PurchaseOrderReceipt, PurchaseOrderReceiptLine), back-relations sur ProUser/Salon/Product/StockMovement.
+  - `prisma/migrations/20260624000005_suppliers_purchase_orders/migration.sql` — migration additive complète : `ADD VALUE IF NOT EXISTS`, `CREATE TYPE`, 5 `CREATE TABLE`, FK Restrict/Cascade, zéro ALTER TABLE existant.
+  - `src/lib/permissions/supplier.permissions.ts` — `canManageSuppliers()`.
+  - `src/lib/permissions/purchase-order.permissions.ts` — `canManagePurchaseOrders()` (OWNER + MANAGER).
+  - `src/features/suppliers/types.ts`, `supplier.schema.ts` (Codex) — 4 types + 2 schémas Zod.
+  - `src/features/suppliers/supplier.service.ts` — 6 fonctions CRUD fournisseurs.
+  - `src/features/purchase-orders/types.ts`, `purchase-order.schema.ts` (Codex) — 8 types + 3 schémas Zod.
+  - `src/features/purchase-orders/purchase-order.service.ts` — 7 fonctions CRUD bons de commande.
+  - `src/features/purchase-orders/receipt.service.ts` — `receiveStock` transaction atomique complète.
+  - `src/features/inventory/stock.service.ts` modifié — export + PURCHASE_RECEIPT + `{ id: string }`.
+  - `src/features/inventory/product.service.ts` modifié — `getProductSummaries`.
+  - `src/features/inventory/components/stock-history-table.tsx` modifié — label PURCHASE_RECEIPT.
+  - `eslint.config.mjs` modifié — `argsIgnorePattern: "^_"`.
+  - `src/app/(dashboard)/dashboard/page.tsx` modifié — liens Fournisseurs + Commandes.
+  - 10 composants UI (Codex) : 3 suppliers + 7 purchase-orders.
+  - 15 routes + actions (Claude) : 4 suppliers + 11 purchase-orders (new, [id], lines, receive).
+  - Rapport statique exhaustif T01–T23 + 6 sections transversales : 21/23 PASS + T05 FAIL + T22 PARTIAL.
+  - **CR-01** : `deactivateSupplier` — garde commandes DRAFT/SENT (T05 → PASS).
+  - **CR-02** : `verifiedProductId = line.productId` dans `receiveStock` (isolation multi-tenant renforcée).
+  - **CR-03** : filtre statut dans page liste (T22 → PASS).
+  - `prisma validate` ✅ · `typecheck` ✅ · `lint` ✅ · `build` ✅ (51 routes) · 23/23 tests PASS · 0 régression.
+  - Commit `48e4e07` (implémentation initiale) + commit `93d05e5` (corrections CR-01/CR-02/CR-03) + push + PR #35 créée.
+- **Fichiers créés** : 38. **Fichiers modifiés** : 6.
+- **Co-authors** : `Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>` + `Co-authored-by: Codex <codex@openai.com>`.
+
+---
+
 ## 2026-06-24 — Session 35 : clôture Sprint 16 — docs/sprint16-closure + PR #34
 
 - **Auteur** : Claude Code (exécutant technique).
