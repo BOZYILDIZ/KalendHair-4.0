@@ -82,7 +82,7 @@ Voir `docs/ARCHITECTURE.md` et `docs/DATABASE.md`.
 
 ## État actuel
 
-**Sprint 17 — Fournisseurs & Bons de Commande** — TERMINÉ ✅
+**Sprint 18 — Abonnements SaaS & Facturation (Core sans Stripe)** — TERMINÉ ✅
 
 | Sprint | Description | Tag |
 |---|---|---|
@@ -104,3 +104,4 @@ Voir `docs/ARCHITECTURE.md` et `docs/DATABASE.md`.
 | Sprint 15 | Rappels email 24h (Vercel CRON + Resend) · Numérotation DGFIP des reçus · Reçu imprimable | `v1.6.0-reminders-receipts` |
 | Sprint 16 | Stocks & Produits : catégories, CRUD produits, entrées/sorties, vente avec encaissement, alertes rupture | `v1.7.0-inventory` |
 | Sprint 17 | Fournisseurs & Bons de Commande : CRUD fournisseurs, machine à états commandes, réception partielle/complète, StockMovement PURCHASE_RECEIPT | `v1.8.0-suppliers-purchase-orders` |
+| Sprint 18 | Abonnements SaaS Core : plans ESSENTIAL/PRO/BUSINESS, feature gates, quotas, simulation sans Stripe | `v1.9.0-billing-core` |

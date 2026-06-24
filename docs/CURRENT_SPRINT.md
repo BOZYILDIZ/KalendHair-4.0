@@ -6,7 +6,7 @@
 
 ## Sprint actuel
 
-**Sprint 18 — Abonnements SaaS & Facturation (Core sans Stripe)** — EN COURS 🔄 (PR #37 ouverte, en attente review ChatGPT)
+**Sprint 18 — Abonnements SaaS & Facturation (Core sans Stripe)** — TERMINÉ ✅
 
 ---
 
@@ -47,8 +47,8 @@
 
 ## Condition de sortie du sprint
 
-> En attente review ChatGPT et validation Hasan.
-> Après validation : merge PR #37 → `main`, tag `v1.9.0-billing-core`.
+> ✅ PR `feature/sprint18-billing-core` (#37) validée par ChatGPT et Hasan (27/27 tests PASS), mergée dans `main` (merge commit `1688938`), tag `v1.9.0-billing-core`.
+> **Sprint 18 TERMINÉ.**
 
 ---
 
