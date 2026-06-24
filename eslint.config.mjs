@@ -18,6 +18,15 @@ const eslintConfig = defineConfig([
     // Généré par Prisma.
     "src/generated/**",
   ]),
+  // Paramètres intentionnellement non utilisés : convention _prefixe.
+  {
+    rules: {
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+      ],
+    },
+  },
 ]);
 
 export default eslintConfig;
