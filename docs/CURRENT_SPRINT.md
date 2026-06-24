@@ -6,6 +6,8 @@
 
 ## Sprint actuel
 
+**Sprint 16 — Gestion des Stocks & Produits** — TERMINÉ ✅
+
 **Sprint 15 — Professionnalisation (Rappels email + Numérotation reçus)** — TERMINÉ ✅
 
 **Sprint 14 — Module Caisse POS (Payments)** — TERMINÉ ✅
@@ -475,6 +477,48 @@
 
 ---
 
+## Objectifs Sprint 16 (TERMINÉ ✅)
+
+- [x] Migration `20260624000004_inventory_stock` — enum `stock_movement_type` (ENTRY, SALE, USAGE, ADJUSTMENT), tables `product_categories` + `products` + `product_stocks` + `stock_movements`, 6 index, FK Restrict/SetNull/Cascade. Additive — zéro ALTER TABLE.
+- [x] `src/lib/permissions/inventory.permissions.ts` — `canManageInventory()` (OWNER via `canAccessTenant`), `canAdjustStock()` (OWNER + MANAGER).
+- [x] `src/features/inventory/types.ts` — 8 types : ProductCategoryView, ProductView, ProductSummary, StockMovementView, LowStockProduct, InventoryDashboard, ProductsPage, StockMovementsPage.
+- [x] `src/features/inventory/product.schema.ts` — 6 schémas Zod : CreateProductCategorySchema, CreateProductSchema, UpdateProductSchema, RecordEntrySchema, RecordUsageSchema, AdjustStockSchema (notes `min(1)` obligatoires), SellProductSchema (CASH|CARD|TRANSFER|OTHER — sans CHECK).
+- [x] `src/features/inventory/product.service.ts` — 7 fonctions : createProductCategory, getProductCategories, createProduct, getProduct, updateProduct, deactivateProduct (garde `quantity > 0` T05), getProducts.
+- [x] `src/features/inventory/stock.service.ts` — `assertSufficientStock` (interne, dans `$transaction`), `applyStockMovement` (interne, `TransactionClient`), `recordEntry`, `deductStockForSale` (prend `TransactionClient`), `createProductSalePayment` (`$transaction` : getNextReceiptNumber → payment → paymentLine → deductStockForSale), `recordUsage`, `adjustStock`, `getLowStockProducts`, `getStockMovements`, `getInventoryDashboard`.
+- [x] 10 composants UI : StockBadge (4 états), LowStockAlert, InventoryStatsCard, ProductList, ProductForm, StockMovementForm (notes `required` si mode=adjust T11), SellProductForm (sans CHECK T14), StockHistoryTable, DeactivateProductButton (`useActionState` T04), CategoryForm (T06).
+- [x] 10 routes + actions : `/dashboard/inventory`, `/dashboard/inventory/products`, `/dashboard/inventory/products/new`, `/dashboard/inventory/products/[id]` (section désactivation T04), `/dashboard/inventory/products/[id]/edit`, `/dashboard/inventory/entry`, `/dashboard/inventory/sell`, `/dashboard/inventory/movements`, `/dashboard/inventory/categories` (T06), `/dashboard/inventory/categories/new` (P2002 T07).
+- [x] `src/app/(dashboard)/dashboard/page.tsx` modifié — 13ème lien "Stocks & Produits".
+- [x] `prisma/schema.prisma` modifié — 4 nouveaux modèles + 1 enum + back-relations sur Salon et ProUser.
+- [x] 6 corrections post-review ChatGPT : T04 (DeactivateProductButton), T05 (garde stock > 0), T06 (flux catégories complet), T07 (P2002 → message utilisateur), T11 (notes obligatoires en ADJUSTMENT), T14 (suppression CHECK).
+- [x] `prisma validate` ✅ · `typecheck` ✅ · `lint` ✅ · `build` ✅ (42 routes) · 0 régression Sprint 14/15.
+- [x] Contributeurs : Claude Sonnet 4.6 (architecture complète — permissions, services, migrations, pages, actions, composants, corrections).
+
+## Décisions techniques Sprint 16
+
+| Décision | Valeur |
+|---|---|
+| `ProductStock` | Source de vérité atomique — jamais dérivé depuis SUM(StockMovement) ; upsert dans `$transaction` |
+| `StockMovement` | Audit trail immuable — `onDelete: Restrict` sur product + salon FKs |
+| `assertSufficientStock` | Interne, appelé dans `$transaction` avant SALE et USAGE — throw si `current < quantity` |
+| `applyStockMovement` | Interne, prend `TransactionClient` — upsert ProductStock + create StockMovement atomiques |
+| `createProductSalePayment` | `$transaction` : getNextReceiptNumber → payment.create → paymentLine.create → deductStockForSale |
+| `canManageInventory` | OWNER uniquement (via `canAccessTenant`) |
+| `canAdjustStock` | OWNER + MANAGER (via `isSameTenant` + role check) |
+| `AdjustStockSchema.notes` | `z.string().min(1, "...")` — obligatoire pour tout ajustement |
+| `SellProductSchema.method` | `z.enum(["CASH", "CARD", "TRANSFER", "OTHER"])` — sans CHECK (cohérent Sprint 14) |
+| Désactivation produit | Garde `quantity > 0` avant `isActive = false` — message explicite à l'utilisateur |
+| P2002 catégorie | `Prisma.PrismaClientKnownRequestError + err.code === "P2002"` → message utilisateur |
+| Multi-tenant | `salonId + organizationId` dans chaque clause `where` — injectés server-side depuis JWT |
+| Migration | Strictement additive — zéro `ALTER TABLE` sur tables existantes |
+| Dette Sprint 17 | Pas d'inversion automatique de stock lors de l'annulation d'un paiement (MVP documenté) |
+
+## Condition de sortie du sprint
+
+> ✅ PR `feature/sprint16-inventory` (#33) validée par ChatGPT (après 6 corrections post-review), mergée dans `main` (merge commit `600882e`), tag `v1.7.0-inventory`.
+> **Sprint 16 TERMINÉ.**
+
+---
+
 ## Objectifs Sprint 15 (TERMINÉ ✅)
 
 - [x] Vercel CRON `"0 * * * *"` → `/api/cron/reminders` sécurisé `CRON_SECRET`.
@@ -491,4 +535,4 @@
 
 ---
 
-_Dernière mise à jour : 2026-06-24 — Sprint 15 Professionnalisation TERMINÉ, tag v1.6.0-reminders-receipts._
+_Dernière mise à jour : 2026-06-24 — Sprint 16 Gestion des Stocks & Produits TERMINÉ, tag v1.7.0-inventory._
