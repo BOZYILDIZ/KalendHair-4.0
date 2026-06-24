@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db/prisma";
 import type { Prisma } from "@prisma/client";
 import { getNextReceiptNumber } from "@/features/payments/receipt.service";
+import { calculateAndRecordCommissions } from "@/features/commissions/commission-calculator.service";
 import type {
   StockMovementView,
   LowStockProduct,
@@ -230,7 +231,7 @@ export async function createProductSalePayment(
       select: { id: true },
     });
 
-    await tx.paymentLine.create({
+    const paymentLine = await tx.paymentLine.create({
       data: {
         paymentId:      payment.id,
         label:          product.name,
@@ -238,6 +239,7 @@ export async function createProductSalePayment(
         quantity:       data.quantity,
         totalCents,
       },
+      select: { id: true },
     });
 
     await deductStockForSale(tx, {
@@ -248,6 +250,29 @@ export async function createProductSalePayment(
       paymentId:          payment.id,
       createdByProUserId: proUserId,
     });
+
+    // Identifier l'employé vendeur via proUserId (peut être null si non lié)
+    const sellerEmployee = await tx.employee.findFirst({
+      where:  { proUserId, salonId: data.salonId, isActive: true },
+      select: { id: true },
+    });
+
+    if (sellerEmployee) {
+      await calculateAndRecordCommissions(tx, {
+        organizationId: data.organizationId,
+        salonId:        data.salonId,
+        paymentId:      payment.id,
+        lines: [{
+          paymentLineId: paymentLine.id,
+          employeeId:    sellerEmployee.id,
+          serviceId:     null,
+          productId:     data.productId,
+          unitPriceCents: product.priceCents,
+          quantity:       data.quantity,
+          appointmentId:  null,
+        }],
+      });
+    }
 
     return payment;
   });

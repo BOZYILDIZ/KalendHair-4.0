@@ -7,6 +7,8 @@ import type {
   TopEmployeeRow,
   FillRateResult,
   DashboardKpi,
+  TopCommissionEmployee,
+  CommissionKpi,
 } from "./types";
 
 // ─── Date helpers ─────────────────────────────────────────────────────────────
@@ -386,6 +388,66 @@ async function fetchFillRate(
   };
 }
 
+// ─── Commission KPI ───────────────────────────────────────────────────────────
+
+async function fetchCommissionTotals(
+  salonId: string,
+  organizationId: string,
+  start: Date,
+  end: Date,
+): Promise<number> {
+  const agg = await prisma.commissionEntry.aggregate({
+    where: {
+      salonId,
+      organizationId,
+      status:    { not: "CANCELLED" as never },
+      createdAt: { gte: start, lte: end },
+    },
+    _sum: { commissionCents: true },
+  });
+  return agg._sum.commissionCents ?? 0;
+}
+
+async function fetchTopCommissionEmployees(
+  salonId: string,
+  organizationId: string,
+  start: Date,
+  end: Date,
+): Promise<TopCommissionEmployee[]> {
+  const rows = await prisma.commissionEntry.groupBy({
+    by:      ["employeeId"],
+    _sum:    { commissionCents: true },
+    where: {
+      salonId,
+      organizationId,
+      status:    { not: "CANCELLED" as never },
+      createdAt: { gte: start, lte: end },
+    },
+    orderBy: { _sum: { commissionCents: "desc" } },
+    take:    5,
+  });
+
+  if (rows.length === 0) return [];
+
+  const employeeIds = rows.map((r) => r.employeeId);
+  const employees   = await prisma.employee.findMany({
+    where:  { id: { in: employeeIds } },
+    select: { id: true, firstName: true, lastName: true, color: true },
+  });
+  const empMap = new Map(employees.map((e) => [e.id, e]));
+
+  return rows.map((r) => {
+    const emp = empMap.get(r.employeeId);
+    return {
+      employeeId:      r.employeeId,
+      firstName:       emp?.firstName ?? "—",
+      lastName:        emp?.lastName  ?? "",
+      color:           emp?.color     ?? null,
+      commissionCents: r._sum.commissionCents ?? 0,
+    };
+  });
+}
+
 // ─── Main export ──────────────────────────────────────────────────────────────
 
 export async function getDashboardKpi(
@@ -396,16 +458,29 @@ export async function getDashboardKpi(
 ): Promise<DashboardKpi> {
   const { start, end } = buildPeriodRange(period, timezone);
 
-  const [revenueCents, counts, newClients, recurringClients, topServices, topEmployees, fillRate] =
-    await Promise.all([
-      fetchRevenue(salonId, organizationId, start, end),
-      fetchAppointmentCounts(salonId, organizationId, start, end),
-      fetchNewClients(salonId, start, end),
-      fetchRecurringClients(salonId, organizationId),
-      fetchTopServices(salonId, organizationId, start, end),
-      fetchTopEmployees(salonId, organizationId, start, end),
-      fetchFillRate(salonId, start, end, timezone),
-    ]);
+  const [
+    revenueCents, counts, newClients, recurringClients,
+    topServices, topEmployees, fillRate,
+    commissionTotalCents, topCommissionEmployees,
+  ] = await Promise.all([
+    fetchRevenue(salonId, organizationId, start, end),
+    fetchAppointmentCounts(salonId, organizationId, start, end),
+    fetchNewClients(salonId, start, end),
+    fetchRecurringClients(salonId, organizationId),
+    fetchTopServices(salonId, organizationId, start, end),
+    fetchTopEmployees(salonId, organizationId, start, end),
+    fetchFillRate(salonId, start, end, timezone),
+    fetchCommissionTotals(salonId, organizationId, start, end),
+    fetchTopCommissionEmployees(salonId, organizationId, start, end),
+  ]);
 
-  return { period, revenueCents, counts, newClients, recurringClients, topServices, topEmployees, fillRate };
+  const commissions: CommissionKpi = {
+    totalCents:   commissionTotalCents,
+    topEmployees: topCommissionEmployees,
+  };
+
+  return {
+    period, revenueCents, counts, newClients, recurringClients,
+    topServices, topEmployees, fillRate, commissions,
+  };
 }

@@ -10,6 +10,7 @@ import { KpiClientsCard } from "@/features/dashboard/components/kpi-clients-card
 import { KpiFillRateCard } from "@/features/dashboard/components/kpi-fill-rate-card";
 import { KpiTopServicesCard } from "@/features/dashboard/components/kpi-top-services-card";
 import { KpiTopEmployeesCard } from "@/features/dashboard/components/kpi-top-employees-card";
+import { KpiCommissionCard } from "@/features/dashboard/components/kpi-commission-card";
 import type { Period } from "@/features/dashboard/types";
 
 type Props = {
@@ -57,6 +58,7 @@ export default async function KpiPage({ searchParams }: Props) {
       <div className="grid grid-cols-1 gap-4">
         <KpiTopServicesCard  services={kpi.topServices} />
         <KpiTopEmployeesCard employees={kpi.topEmployees} />
+        <KpiCommissionCard   commissions={kpi.commissions} />
       </div>
     </main>
   );

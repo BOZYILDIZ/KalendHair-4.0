@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db/prisma";
 import { getNextReceiptNumber } from "./receipt.service";
+import { calculateAndRecordCommissions } from "@/features/commissions/commission-calculator.service";
 import type {
   PaymentView,
   PaymentLineView,
@@ -154,6 +155,7 @@ export async function createPaymentForAppointment(
       guestFirstName:      true,
       guestLastName:       true,
       priceCentsSnapshot:  true,
+      employeeId:          true,
       service: { select: { name: true, priceCents: true, id: true } },
     },
   });
@@ -194,7 +196,7 @@ export async function createPaymentForAppointment(
       select: { id: true },
     });
 
-    await tx.paymentLine.create({
+    const paymentLine = await tx.paymentLine.create({
       data: {
         paymentId:      created.id,
         label:          appt.service.name,
@@ -203,6 +205,22 @@ export async function createPaymentForAppointment(
         totalCents,
         serviceId:      appt.service.id,
       },
+      select: { id: true },
+    });
+
+    await calculateAndRecordCommissions(tx, {
+      organizationId,
+      salonId,
+      paymentId: created.id,
+      lines: [{
+        paymentLineId: paymentLine.id,
+        employeeId:    appt.employeeId,
+        serviceId:     appt.service.id,
+        productId:     null,
+        unitPriceCents,
+        quantity,
+        appointmentId,
+      }],
     });
 
     return created;
@@ -284,9 +302,16 @@ export async function cancelPayment(
   });
   if (!existing) throw new Error("Paiement introuvable.");
 
-  await prisma.payment.update({
-    where: { id: paymentId },
-    data:  { status: "CANCELLED" as never, isActive: false },
+  await prisma.$transaction(async (tx) => {
+    await tx.payment.update({
+      where: { id: paymentId },
+      data:  { status: "CANCELLED" as never, isActive: false },
+    });
+    // Annuler atomiquement toutes les commissions liées
+    await tx.commissionEntry.updateMany({
+      where: { paymentId, status: { not: "CANCELLED" as never } },
+      data:  { status: "CANCELLED" as never },
+    });
   });
 }
 
