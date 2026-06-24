@@ -84,7 +84,19 @@ async function main() {
     },
   });
 
-  console.log("✅  Seed terminé : owner@test.local / Test1234!");
+  // Super Admin DEV — Sprint 19
+  const adminPasswordHash = await bcrypt.hash("AdminDev123!", 12);
+  await prisma.adminUser.upsert({
+    where:  { email: "admin@kalend.dev" },
+    update: {},
+    create: {
+      email:        "admin@kalend.dev",
+      passwordHash: adminPasswordHash,
+      name:         "Super Admin Dev",
+    },
+  });
+
+  console.log("✅  Seed terminé : owner@test.local / Test1234! | admin@kalend.dev / AdminDev123!");
 }
 
 main()
