@@ -4,6 +4,21 @@
 
 ---
 
+## 2026-06-24 — Session 39 : clôture Sprint 18 — docs/sprint18-closure
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : 18 (clôture).
+- **Actions** :
+  - PR **#37** (`feature/sprint18-billing-core`) **mergée** dans `main` (merge commit `1688938`).
+  - Branche `feature/sprint18-billing-core` **supprimée** (distante via `gh pr merge --delete-branch`, ref locale via `git fetch --prune`).
+  - Tag **`v1.9.0-billing-core`** créé et poussé sur `1688938`.
+  - Branche `docs/sprint18-closure` créée.
+  - Mise à jour : `PROJECT_STATE.md`, `CURRENT_SPRINT.md`, `SESSION_LOG.md`, `README.md`.
+- **Code métier** : aucun. Clôture documentaire uniquement.
+- **État de sortie** : commit + push + PR documentaire ouverte (#38). **Aucun merge.** En attente de validation.
+
+---
+
 ## 2026-06-24 — Session 38 : Sprint 18 — Abonnements SaaS & Facturation (Core sans Stripe)
 
 - **Auteur** : Claude Sonnet 4.6 (architecture complète) + OpenAI Codex (contributeur encadré).
