@@ -14,7 +14,6 @@ const METHODS = [
   { value: "CASH",     label: "Espèces" },
   { value: "CARD",     label: "Carte bancaire" },
   { value: "TRANSFER", label: "Virement" },
-  { value: "CHECK",    label: "Chèque" },
   { value: "OTHER",    label: "Autre" },
 ];
 

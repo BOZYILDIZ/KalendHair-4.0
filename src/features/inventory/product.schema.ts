@@ -56,7 +56,7 @@ export const AdjustStockSchema = z.object({
   salonId:        z.string().min(1),
   organizationId: z.string().min(1),
   newQuantity:    z.number().int().min(0),
-  notes:          z.string().max(500).optional(),
+  notes:          z.string().min(1, "Une justification est requise pour un ajustement de stock").max(500),
 });
 export type AdjustStockData = z.infer<typeof AdjustStockSchema>;
 
@@ -65,7 +65,7 @@ export const SellProductSchema = z.object({
   salonId:        z.string().min(1),
   organizationId: z.string().min(1),
   quantity:       z.number().int().min(1),
-  method:         z.enum(["CASH", "CARD", "TRANSFER", "CHECK", "OTHER"]),
+  method:         z.enum(["CASH", "CARD", "TRANSFER", "OTHER"]),
   notes:          z.string().max(500).optional(),
   clientId:       z.string().optional(),
   guestName:      z.string().max(200).optional(),

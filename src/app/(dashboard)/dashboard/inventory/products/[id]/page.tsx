@@ -7,6 +7,8 @@ import { getProduct } from "@/features/inventory/product.service";
 import { getStockMovements } from "@/features/inventory/stock.service";
 import { StockBadge } from "@/features/inventory/components/stock-badge";
 import { StockHistoryTable } from "@/features/inventory/components/stock-history-table";
+import { DeactivateProductButton } from "@/features/inventory/components/deactivate-product-button";
+import { deactivateProductAction } from "./actions";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -118,6 +120,17 @@ export default async function ProductDetailPage({ params }: Props) {
         )}
       </div>
       <StockHistoryTable movements={movementsPage.movements} />
+
+      {product.isActive && (
+        <div className="mt-6 rounded-md border border-red-200 bg-red-50 p-4">
+          <h3 className="mb-1 text-sm font-semibold text-red-700">Désactiver ce produit</h3>
+          <p className="mb-3 text-xs text-red-600">
+            Le produit n&apos;apparaîtra plus dans la liste active ni dans le formulaire de vente.
+            Le stock doit être à zéro avant de procéder.
+          </p>
+          <DeactivateProductButton action={deactivateProductAction.bind(null, id)} />
+        </div>
+      )}
 
       <div className="mt-4 border-t pt-4">
         <Link href="/dashboard/inventory/products" className="text-sm text-gray-500 hover:underline">

@@ -78,6 +78,9 @@ export default async function InventoryPage() {
         <Link href="/dashboard/inventory/products" className="text-indigo-600 hover:underline">
           Liste des produits →
         </Link>
+        <Link href="/dashboard/inventory/categories" className="text-indigo-600 hover:underline">
+          Catégories →
+        </Link>
         <Link href="/dashboard/inventory/movements" className="text-indigo-600 hover:underline">
           Historique complet →
         </Link>

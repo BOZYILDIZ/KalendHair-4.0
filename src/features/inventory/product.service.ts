@@ -167,6 +167,16 @@ export async function deactivateProduct(
   });
   if (!existing) throw new Error("Produit introuvable.");
 
+  const stock = await prisma.productStock.findUnique({
+    where:  { productId: id },
+    select: { quantity: true },
+  });
+  if (stock && stock.quantity > 0) {
+    throw new Error(
+      `Ce produit a encore ${stock.quantity} unité(s) en stock. Remettez le stock à 0 avant de le désactiver.`,
+    );
+  }
+
   await prisma.product.update({
     where: { id },
     data:  { isActive: false },

@@ -67,12 +67,20 @@ export function StockMovementForm({ productId, productName, currentStock, action
       )}
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-gray-700">Notes</label>
+        <label className="mb-1 block text-sm font-medium text-gray-700">
+          Notes {mode === "adjust" && <span className="text-red-500">*</span>}
+        </label>
         <textarea
           name="notes"
           rows={2}
+          required={mode === "adjust"}
           className="w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
         />
+        {mode === "adjust" && (
+          <p className="mt-1 text-xs text-gray-500">
+            Justification obligatoire pour tout ajustement d&apos;inventaire.
+          </p>
+        )}
       </div>
 
       <div className="pt-2">
