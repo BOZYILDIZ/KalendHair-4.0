@@ -4,6 +4,42 @@
 
 ---
 
+## 2026-06-24 — Session 41 : clôture Sprint 19 — docs/sprint19-closure
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : 19 (clôture).
+- **Actions** :
+  - PR **#39** (`feature/sprint19-super-admin`) **mergée** dans `main` (merge commit `4b501a2`).
+  - Branche `feature/sprint19-super-admin` **supprimée** (locale + distante, confirmé via `git fetch --prune`).
+  - Tag **`v2.0.0-super-admin`** créé et poussé sur `4b501a2`.
+  - Branche `docs/sprint19-closure` créée.
+  - Mise à jour : `PROJECT_STATE.md`, `CURRENT_SPRINT.md`, `SESSION_LOG.md`, `README.md`.
+- **Code métier** : aucun. Clôture documentaire uniquement.
+- **État de sortie** : commit + push + PR documentaire ouverte. **Aucun merge.** En attente de validation ChatGPT.
+
+---
+
+## 2026-06-24 — Session 40 : Sprint 19 correctif T38/T40/T41 — PR #39 finalisée
+
+- **Auteur** : Claude Sonnet 4.6 (architecture + correctif).
+- **Phase** : 19 (correctif post-review + finalisation PR).
+- **Branche** : `feature/sprint19-super-admin`.
+- **Commit correctif** : 7 fichiers modifiés/créés.
+- **PR** : #39 — score final **62/62 PASS**.
+- **Actions** :
+  - `prisma/schema.prisma` modifié — ADD_NOTE, UPDATE_NOTE, DELETE_NOTE ajoutés à l'enum `AdminAction`.
+  - `prisma/migrations/20260624000008_admin_note_audit/migration.sql` créé — `ALTER TYPE "admin_action" ADD VALUE IF NOT EXISTS` (3 valeurs). Additive.
+  - `src/features/admin/admin.service.ts` modifié — `addOrganizationNote` mis en transaction+audit, `updateOrganizationNote` implémenté (cross-org guard + `$transaction` + `logAdminAction` UPDATE_NOTE), `deleteOrganizationNote` implémenté (cross-org guard + `$transaction` + `logAdminAction` DELETE_NOTE, raison min 10 chars).
+  - `src/features/admin/admin.schema.ts` modifié — `UpdateNoteSchema` + `DeleteNoteSchema` ajoutés.
+  - `src/app/(admin)/admin/organizations/[id]/actions.ts` modifié — `updateNoteAction` + `deleteNoteAction` ajoutés, imports mis à jour.
+  - `src/features/admin/components/note-item.tsx` créé — Client Component (useState mode view/edit/delete + useActionState edit + useActionState delete).
+  - `src/app/(admin)/admin/organizations/[id]/page.tsx` modifié — intègre `NoteItem` + `updateNoteAction` + `deleteNoteAction`.
+- **Corrections** : T38 WARN→PASS (`addOrganizationNote` transactionnel+audité), T40 FAIL→PASS (`updateOrganizationNote` implémenté), T41 FAIL→PASS (`deleteOrganizationNote` implémenté).
+- **Vérifications** : `prisma validate` ✅ · `prisma generate` ✅ · `npm run lint` ✅ · `npm run typecheck` ✅ · `npm run build` ✅.
+- **État de sortie** : commit + push + PR #39 prête. **Aucun merge.** Score 62/62 PASS.
+
+---
+
 ## 2026-06-24 — Session 39 : clôture Sprint 18 — docs/sprint18-closure
 
 - **Auteur** : Claude Code (exécutant technique).

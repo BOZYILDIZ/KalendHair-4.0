@@ -6,11 +6,65 @@
 
 ## Sprint actuel
 
+**Sprint 19 — Super Admin SaaS** — TERMINÉ ✅ (PR #39 mergée, tag v2.0.0-super-admin)
+
 **Sprint 18 — Abonnements SaaS & Facturation (Core sans Stripe)** — TERMINÉ ✅
 
 ---
 
-## Objectifs Sprint 18 (EN COURS)
+## Sprint 20 — À définir
+
+> En attente de validation ChatGPT pour la PR documentaire de clôture Sprint 19. Aucune tâche Sprint 20 en cours.
+
+---
+
+## Objectifs Sprint 19 — Super Admin SaaS (TERMINÉ ✅)
+
+- [x] Migration `20260624000007_super_admin` — enum `admin_action` (11 valeurs initiales) + 6 tables : `admin_users`, `admin_audit_logs`, `admin_impersonation_logs`, `organization_admin_notes`, `billing_discounts`, `billing_change_cycles`. Additive — zéro DROP/ALTER TABLE (Claude).
+- [x] Migration `20260624000008_admin_note_audit` — `ALTER TYPE "admin_action" ADD VALUE IF NOT EXISTS` pour ADD_NOTE, UPDATE_NOTE, DELETE_NOTE. Additive (Claude).
+- [x] `prisma/schema.prisma` modifié — AdminUser, AdminAuditLog, AdminImpersonationLog, OrganizationAdminNote, BillingDiscount + 14 valeurs d'enum AdminAction (Claude).
+- [x] `src/features/admin/types.ts` — 12 types (OrgListItem, OrgAdminView, AdminAuditLogEntry, etc.) (Claude).
+- [x] `src/features/admin/admin.schema.ts` — 10 schémas Zod : ChangePlanSchema, GrantFreePlanSchema, RevokeFreePlanSchema, CreateDiscountSchema, DeactivateDiscountSchema, SuspendSchema, ReactivateSchema, ExtendTrialSchema, AddNoteSchema, UpdateNoteSchema, DeleteNoteSchema, AdminLoginSchema (Claude).
+- [x] `src/features/admin/admin.service.ts` — 13 fonctions exportées : getAllOrganizations, getOrganizationById, getAdminAuditLogs, changeOrganizationPlan, grantFreePlan, revokeFreePlan, createDiscount, deactivateDiscount, suspendOrganization, reactivateOrganization, extendTrial, addOrganizationNote, updateOrganizationNote, deleteOrganizationNote, startImpersonation, endImpersonation. Toutes les mutations dans `$transaction` avec `logAdminAction` (Claude).
+- [x] `src/features/admin/admin-audit.service.ts` — `logAdminAction()` prend `TransactionClient` (Claude).
+- [x] `src/features/admin/auth.service.ts` — `verifyAdminCredentials`, `getAdminSession` (JWT `admin_session` cookie séparé) (Claude).
+- [x] `src/features/admin/components/note-item.tsx` — Client Component avec useState (view/edit/delete) + useActionState pour updateAction et deleteAction (Claude).
+- [x] `src/app/(admin)/admin/login/page.tsx` + `actions.ts` — `adminLoginAction` (Claude).
+- [x] `src/app/(admin)/admin/organizations/page.tsx` — liste toutes les organisations (Claude).
+- [x] `src/app/(admin)/admin/organizations/[id]/page.tsx` — détail org + NoteItem (Claude).
+- [x] `src/app/(admin)/admin/organizations/[id]/actions.ts` — 9 Server Actions dont updateNoteAction, deleteNoteAction (Claude).
+- [x] `src/app/(admin)/admin/audit/page.tsx` — log d'audit global (Claude).
+- [x] `src/app/(admin)/admin/impersonate/start/route.ts` + `end/route.ts` — Route Handlers impersonation (Claude).
+- [x] `src/features/dashboard/components/impersonation-banner.tsx` — Client Component `useSyncExternalStore` (Claude).
+- [x] `src/app/(dashboard)/dashboard/suspended/page.tsx` — page suspension (Claude).
+- [x] `middleware.ts` — remplacement de `proxy.ts` : dual JWT check, impersonation, suspension, x-pathname header (Claude).
+- [x] `prisma/seed.ts` modifié — upsert `admin@kalend.dev` / `AdminDev123!` (Claude).
+- [x] `prisma validate` ✅ · `prisma generate` ✅ · `npm run lint` ✅ · `npm run typecheck` ✅ · `npm run build` ✅ (Claude).
+- [x] Score final : **62/62 PASS** — T01→T62 + sections Impersonation, JWT, AdminUser, Migration, Risques.
+
+## Décisions techniques Sprint 19
+
+| Décision | Valeur |
+|---|---|
+| Dual JWT | `session` (tenant, HS256, `JWT_SECRET`) vs `admin_session` (admin, HS256, `admin:${JWT_SECRET}`) — zéro croisement |
+| AdminUser | Credentials séparés, pas de ProRole, pas d'organizationId dans le payload |
+| logAdminAction | Toujours dans `$transaction(tx)` — mutation et audit atomiques |
+| AdminAction enum | 14 valeurs — ADD_NOTE/UPDATE_NOTE/DELETE_NOTE ajoutées par migration additive |
+| Cross-org guard notes | `note.organizationId !== orgId` → throw avant toute écriture |
+| DELETE_NOTE reason | Minimum 10 caractères — validé Zod + champ `minLength` UI |
+| NoteItem | useState mode + useActionState — un seul composant Client pour edit/delete |
+| ImpersonationBanner | `useSyncExternalStore` pour lecture cookie côté client (ESLint compliant) |
+| middleware.ts | Remplace proxy.ts — `x-pathname` header forwarding pour éviter /dashboard/suspended redirect infini |
+| Migration enum | `ALTER TYPE ... ADD VALUE IF NOT EXISTS` — idempotente, additive, zéro DROP |
+
+## Condition de sortie du sprint
+
+> ✅ PR `feature/sprint19-super-admin` (#39) validée par ChatGPT (62/62 PASS), mergée dans `main` (merge commit `4b501a2`), tag `v2.0.0-super-admin`.
+> **Sprint 19 TERMINÉ.**
+
+---
+
+## Objectifs Sprint 18 (TERMINÉ ✅)
 
 - [x] Migration `20260624000006_billing_core` — 3 enums (`subscription_plan_code`, `billing_cycle`, `org_subscription_status`) + 2 tables (`billing_plans`, `organization_subscriptions`). Additive — zéro DROP/ALTER TABLE existant (Claude).
 - [x] `prisma/seed.ts` modifié — upsert 3 billing plans : ESSENTIAL (29€/290€, 1 salon, 2 employés), PRO (59€/590€, 3 salons, 10 employés), BUSINESS (99€/990€, illimités) (Claude).
