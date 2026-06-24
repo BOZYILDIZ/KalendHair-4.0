@@ -8,6 +8,8 @@ import { PaymentMethodBadge } from "@/features/payments/components/payment-metho
 import { PaymentTransactionBadge } from "@/features/payments/components/payment-status-badge";
 import { CancelPaymentPanel } from "@/features/payments/components/cancel-payment-panel";
 import { cancelPaymentAction } from "./actions";
+import { getCommissionEntriesForPayment } from "@/features/commissions/commission-entry.service";
+import { CommissionEntryTable } from "@/features/commissions/components/commission-entry-table";
 import type { PaymentFormState } from "@/features/payments/types";
 
 type Props = {
@@ -35,7 +37,10 @@ export default async function PaymentDetailPage({ params }: Props) {
     redirect("/dashboard");
   }
 
-  const payment = await getPayment(salon.id, session.organizationId, id);
+  const [payment, commissionEntries] = await Promise.all([
+    getPayment(salon.id, session.organizationId, id),
+    getCommissionEntriesForPayment(salon.id, session.organizationId, id),
+  ]);
   if (!payment) notFound();
 
   const boundCancelAction = async (
@@ -139,6 +144,14 @@ export default async function PaymentDetailPage({ params }: Props) {
                 </div>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* Commissions */}
+        {commissionEntries.length > 0 && (
+          <div className="rounded-lg border border-gray-200 bg-white p-5">
+            <h2 className="mb-3 text-sm font-semibold text-gray-700">Commissions générées</h2>
+            <CommissionEntryTable entries={commissionEntries} showEmployee />
           </div>
         )}
 

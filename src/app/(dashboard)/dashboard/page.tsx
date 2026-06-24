@@ -120,6 +120,13 @@ export default async function DashboardPage() {
           <span className="text-gray-400">→</span>
         </Link>
         <Link
+          href="/dashboard/commissions"
+          className="flex items-center justify-between rounded border px-4 py-3 text-sm hover:bg-gray-50"
+        >
+          <span className="font-medium">Commissions</span>
+          <span className="text-gray-400">→</span>
+        </Link>
+        <Link
           href="/dashboard/billing"
           className="flex items-center justify-between rounded border px-4 py-3 text-sm hover:bg-gray-50"
         >

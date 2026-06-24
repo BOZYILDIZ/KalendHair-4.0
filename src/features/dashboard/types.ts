@@ -35,6 +35,19 @@ export type FillRateResult = {
   ratePercent: number | null;
 };
 
+export type TopCommissionEmployee = {
+  employeeId: string;
+  firstName: string;
+  lastName: string;
+  color: string | null;
+  commissionCents: number;
+};
+
+export type CommissionKpi = {
+  totalCents: number;
+  topEmployees: TopCommissionEmployee[];
+};
+
 export type DashboardKpi = {
   period: Period;
   revenueCents: number;
@@ -44,4 +57,5 @@ export type DashboardKpi = {
   topServices: TopServiceRow[];
   topEmployees: TopEmployeeRow[];
   fillRate: FillRateResult;
+  commissions: CommissionKpi;
 };
