@@ -416,8 +416,66 @@ export async function addOrganizationNote(
   orgId: string,
   content: string,
 ): Promise<void> {
-  await prisma.organizationAdminNote.create({
-    data: { organizationId: orgId, adminId, content },
+  await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+    await tx.organizationAdminNote.create({
+      data: { organizationId: orgId, adminId, content },
+    });
+    await logAdminAction(tx, adminId, "ADD_NOTE", orgId, "Ajout de note interne", {
+      content,
+    });
+  });
+}
+
+export async function updateOrganizationNote(
+  adminId: string,
+  orgId: string,
+  noteId: string,
+  content: string,
+): Promise<void> {
+  const note = await prisma.organizationAdminNote.findUnique({
+    where: { id: noteId },
+    select: { organizationId: true, content: true },
+  });
+  if (!note) throw new Error("Note introuvable.");
+  if (note.organizationId !== orgId)
+    throw new Error("Note non associée à cette organisation.");
+
+  await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+    await tx.organizationAdminNote.update({
+      where: { id: noteId },
+      data: { content },
+    });
+    await logAdminAction(
+      tx,
+      adminId,
+      "UPDATE_NOTE",
+      orgId,
+      "Modification de note interne",
+      { noteId, before: note.content, after: content },
+    );
+  });
+}
+
+export async function deleteOrganizationNote(
+  adminId: string,
+  orgId: string,
+  noteId: string,
+  reason: string,
+): Promise<void> {
+  const note = await prisma.organizationAdminNote.findUnique({
+    where: { id: noteId },
+    select: { organizationId: true, content: true },
+  });
+  if (!note) throw new Error("Note introuvable.");
+  if (note.organizationId !== orgId)
+    throw new Error("Note non associée à cette organisation.");
+
+  await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+    await tx.organizationAdminNote.delete({ where: { id: noteId } });
+    await logAdminAction(tx, adminId, "DELETE_NOTE", orgId, reason, {
+      noteId,
+      deletedContent: note.content,
+    });
   });
 }
 

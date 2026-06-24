@@ -8,10 +8,13 @@ import { AdminAuditTable } from "@/features/admin/components/admin-audit-table";
 import { SuspendForm } from "@/features/admin/components/suspend-form";
 import { ReactivateForm } from "@/features/admin/components/reactivate-form";
 import { AddNoteForm } from "@/features/admin/components/add-note-form";
+import { NoteItem } from "@/features/admin/components/note-item";
 import {
   suspendOrganizationAction,
   reactivateOrganizationAction,
   addNoteAction,
+  updateNoteAction,
+  deleteNoteAction,
   startImpersonationAction,
 } from "./actions";
 
@@ -169,13 +172,13 @@ export default async function AdminOrgDetailPage({
             <p className="text-sm text-gray-400">Aucune note.</p>
           )}
           {org.notes.map((note) => (
-            <div key={note.id} className="rounded border border-gray-200 p-3">
-              <p className="text-sm text-gray-800">{note.content}</p>
-              <p className="mt-1 text-xs text-gray-400">
-                {note.adminName} —{" "}
-                {note.createdAt.toLocaleDateString("fr-FR")}
-              </p>
-            </div>
+            <NoteItem
+              key={note.id}
+              note={note}
+              orgId={id}
+              updateAction={updateNoteAction}
+              deleteAction={deleteNoteAction}
+            />
           ))}
         </div>
         <AddNoteForm orgId={id} action={addNoteAction} />

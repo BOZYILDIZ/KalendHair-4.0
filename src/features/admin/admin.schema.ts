@@ -60,6 +60,16 @@ export const AddNoteSchema = z.object({
   content: z.string().min(1, "Le contenu de la note est obligatoire."),
 });
 
+export const UpdateNoteSchema = z.object({
+  noteId: z.string().min(1, "ID de note manquant."),
+  content: z.string().min(1, "Le contenu de la note est obligatoire."),
+});
+
+export const DeleteNoteSchema = z.object({
+  noteId: z.string().min(1, "ID de note manquant."),
+  reason,
+});
+
 export const AdminLoginSchema = z.object({
   email: z.string().email("Email invalide."),
   password: z.string().min(1, "Mot de passe obligatoire."),
