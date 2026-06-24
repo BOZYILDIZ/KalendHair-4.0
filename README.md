@@ -92,7 +92,7 @@ Voir `docs/ARCHITECTURE.md` et `docs/DATABASE.md`.
 
 ## État actuel
 
-**Sprint 19 — Super Admin SaaS** — TERMINÉ ✅ (tag `v2.0.0-super-admin`)
+**Sprint 20 — Commissions Employés** — TERMINÉ ✅ (tag `v2.1.0-commissions`)
 
 | Sprint | Description | Tag |
 |---|---|---|
@@ -116,3 +116,4 @@ Voir `docs/ARCHITECTURE.md` et `docs/DATABASE.md`.
 | Sprint 17 | Fournisseurs & Bons de Commande : CRUD fournisseurs, machine à états commandes, réception partielle/complète, StockMovement PURCHASE_RECEIPT | `v1.8.0-suppliers-purchase-orders` |
 | Sprint 18 | Abonnements SaaS Core : plans ESSENTIAL/PRO/BUSINESS, feature gates, quotas, simulation sans Stripe | `v1.9.0-billing-core` |
 | Sprint 19 | Super Admin SaaS : dual JWT, tableau de bord admin, suspension/réactivation, remises, impersonation, notes internes, audit complet (62/62 PASS) | `v2.0.0-super-admin` |
+| Sprint 20 | Commissions Employés : règles PERCENTAGE/FIXED_AMOUNT, algorithme de priorité (spécificité 0–3), intégration paiements/inventaire/KPI, permissions OWNER/MANAGER, ajustements auditables (45/45 PASS) | `v2.1.0-commissions` |

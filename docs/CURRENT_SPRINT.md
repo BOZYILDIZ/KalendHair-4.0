@@ -6,15 +6,77 @@
 
 ## Sprint actuel
 
+**Sprint 20 — Commissions Employés** — TERMINÉ ✅ (PR #41 mergée, tag v2.1.0-commissions)
+
 **Sprint 19 — Super Admin SaaS** — TERMINÉ ✅ (PR #39 mergée, tag v2.0.0-super-admin)
 
 **Sprint 18 — Abonnements SaaS & Facturation (Core sans Stripe)** — TERMINÉ ✅
 
 ---
 
-## Sprint 20 — À définir
+## Sprint 21 — À définir
 
-> En attente de validation ChatGPT pour la PR documentaire de clôture Sprint 19. Aucune tâche Sprint 20 en cours.
+> En attente de validation ChatGPT pour la PR documentaire de clôture Sprint 20. Aucune tâche Sprint 21 en cours.
+
+---
+
+## Objectifs Sprint 20 — Commissions Employés (TERMINÉ ✅)
+
+- [x] Migration `20260624000009_commissions` — 2 enums (`commission_type`, `commission_entry_status`) + 3 tables (`commission_rules`, `commission_entries`, `commission_adjustments`) + FK Cascade/Restrict/SetNull. Additive — zéro DROP/ALTER TABLE (Claude).
+- [x] `prisma/schema.prisma` modifié — 2 nouveaux enums (`CommissionType`, `CommissionEntryStatus`) + 3 nouveaux modèles (`CommissionRule`, `CommissionEntry`, `CommissionAdjustment`) + back-relations sur Organization, ProUser, Salon, Employee, Service, Product, Payment, PaymentLine, Appointment (Claude).
+- [x] `src/features/commissions/types.ts` — CommissionType, CommissionEntryStatus, CommissionRuleView, CommissionEntryView, CommissionAdjustmentView, CommissionSummary, CommissionEntriesPage, CommissionRulesPage, TopCommissionEmployee, CommissionKpi, CommissionOverview, RuleFormState, AdjustFormState (Codex).
+- [x] `src/features/commissions/commission.schema.ts` — CreateCommissionRuleSchema (refine : serviceId XOR productId, PERCENTAGE → 1–100), UpdateCommissionRuleSchema, DeactivateCommissionRuleSchema, AdjustCommissionSchema (deltaCents ≠ 0, reason min 10 chars) (Codex).
+- [x] `src/lib/permissions/commission.permissions.ts` — `canManageCommissionRules()` (OWNER uniquement), `canViewCommissions()` (OWNER + MANAGER), `canAdjustCommissions()` (OWNER uniquement) (Claude).
+- [x] `src/features/commissions/commission-calculator.service.ts` — `ruleSpecificity()` (0–3), `resolveRule()` (tri DESC spécificité → DESC createdAt, premier match), `calculateAndRecordCommissions(tx, opts)` — appelé uniquement dans `$transaction` existant (Claude).
+- [x] `src/features/commissions/commission-rule.service.ts` — `getCommissionRules`, `getCommissionRule`, `createCommissionRule`, `updateCommissionRule` (type+valeur), `deactivateCommissionRule` (guard) (Claude).
+- [x] `src/features/commissions/commission-entry.service.ts` — `getCommissionEntries` (paginé), `getCommissionEntriesForPayment`, `getEmployeeCommissions`, `getEmployeeCommissionSummary` (CANCELLED exclus), `getCommissionOverview` (byEmployee, CANCELLED exclus), `adjustCommission` ($transaction, guard CANCELLED) (Claude).
+- [x] `src/features/payments/payment.service.ts` modifié — `createPaymentForAppointment` : intègre `calculateAndRecordCommissions(tx)` dans `$transaction` · `cancelPayment` : wrappé dans `$transaction` + `commissionEntry.updateMany({status: CANCELLED})` atomique (Claude).
+- [x] `src/features/inventory/stock.service.ts` modifié — `createProductSalePayment` : résolution `employee.findFirst({proUserId, salonId})` + `calculateAndRecordCommissions(tx)` si employé trouvé (Claude).
+- [x] `src/features/dashboard/types.ts` modifié — `TopCommissionEmployee`, `CommissionKpi`, `DashboardKpi` étendu (Claude).
+- [x] `src/features/dashboard/dashboard.service.ts` modifié — `fetchCommissionTotals` + `fetchTopCommissionEmployees` + `getDashboardKpi` 9 agrégats (Claude).
+- [x] 7 composants UI (Codex) : `commission-status-badge`, `commission-summary-card`, `commission-entry-table` (`showEmployee?`), `commission-rule-list` (Client), `commission-rule-form` (Client), `commission-adjust-form` (Client), `kpi-commission-card`.
+- [x] `src/app/(dashboard)/dashboard/commissions/rules/actions.ts` — `createCommissionRuleAction`, `updateCommissionRuleAction`, `deactivateCommissionRuleAction` (Claude).
+- [x] `src/app/(dashboard)/dashboard/commissions/actions.ts` — `adjustCommissionAction` (OWNER uniquement) (Claude).
+- [x] `src/app/(dashboard)/dashboard/commissions/page.tsx` — vue d'ensemble par employé (OWNER + MANAGER) (Claude).
+- [x] `src/app/(dashboard)/dashboard/commissions/rules/page.tsx` — liste règles actives/inactives (OWNER) (Claude).
+- [x] `src/app/(dashboard)/dashboard/commissions/rules/new/page.tsx` — création règle (Claude).
+- [x] `src/app/(dashboard)/dashboard/commissions/rules/[id]/edit/page.tsx` — modification règle (`boundAction` typé `RuleFormState`) (Claude).
+- [x] `src/app/(dashboard)/dashboard/employees/[id]/commissions/page.tsx` — commissions employé + ajustement (Claude).
+- [x] `src/app/(dashboard)/dashboard/payments/[id]/page.tsx` modifié — `CommissionEntryTable` avec `showEmployee={true}` (Claude).
+- [x] `src/app/(dashboard)/dashboard/kpi/page.tsx` modifié — `KpiCommissionCard` (Claude).
+- [x] `src/app/(dashboard)/dashboard/page.tsx` modifié — lien "Commissions" (Claude).
+- [x] `prisma validate` ✅ · `prisma generate` ✅ · `npm run lint` ✅ · `npm run typecheck` ✅ · `npm run build` ✅ (Claude).
+- [x] Score final : **45/45 PASS** — T01→T45 + sections transactions, algorithme de priorité, sécurité, régressions, risques non bloquants.
+
+## Décisions techniques Sprint 20
+
+| Décision | Valeur |
+|---|---|
+| Atomicité commissions | `calculateAndRecordCommissions(tx)` uniquement dans `$transaction` existant — jamais hors transaction |
+| Algorithme priorité | spécificité = (employeeId ? 2 : 0) + (serviceId ∥ productId ? 1 : 0) ; tri DESC spécificité → DESC createdAt ; premier match |
+| CommissionEntry immuable | `commissionCents` jamais modifié ; tout delta via `CommissionAdjustment.deltaCents` ; net = base + SUM(deltas) |
+| Annulation paiement | `cancelPayment` wrappé dans `$transaction` → `commissionEntry.updateMany({status: CANCELLED})` atomique |
+| ProUser → Employee (produits) | `employee.findFirst({proUserId, salonId, isActive: true})` dans tx ; introuvable → commission silencieusement ignorée |
+| CANCELLED exclus des KPI | `getEmployeeCommissionSummary`, `getCommissionOverview`, `fetchCommissionTotals` : `status: { not: "CANCELLED" }` |
+| organizationId | Toujours depuis `session.organizationId` (JWT) — aucune donnée commission depuis client FormData |
+| salonId | Toujours depuis `getSalon(session.organizationId)` server-side |
+| Migration | Strictement additive — 2 CREATE TYPE + 3 CREATE TABLE, zéro DROP/ALTER TABLE existant |
+| Permissions | `canManageCommissionRules` + `canAdjustCommissions` = OWNER uniquement ; `canViewCommissions` = OWNER + MANAGER |
+
+## Risques non bloquants Sprint 20
+
+| ID | Risque | Sévérité |
+|---|---|---|
+| R1 | UX ajustement : formulaire fixé sur le premier entry du paginator | LOW |
+| R2 | `cancelPayment` sans `tx` explicite en signature (fonctionnel) | LOW |
+| R3 | Filtre rules par `salonId` uniquement (cosmétique, sécurisé par FK) | LOW |
+| R4 | Bouton "Règles" visible en MANAGER (redirect server-side actif) | LOW |
+| R5 | `createFreePayment` sans commission (comportement voulu) | LOW |
+
+## Condition de sortie du sprint
+
+> ✅ PR `feature/sprint20-commissions` (#41) validée par ChatGPT (45/45 PASS), mergée dans `main` (merge commit `b44e07f`), tag `v2.1.0-commissions`.
+> **Sprint 20 TERMINÉ.**
 
 ---
 
@@ -685,4 +747,4 @@
 
 ---
 
-_Dernière mise à jour : 2026-06-24 — Sprint 17 Fournisseurs & Bons de Commande TERMINÉ, tag v1.8.0-suppliers-purchase-orders._
+_Dernière mise à jour : 2026-06-24 — Sprint 20 Commissions Employés TERMINÉ, PR #41 mergée (merge commit b44e07f), tag v2.1.0-commissions._
