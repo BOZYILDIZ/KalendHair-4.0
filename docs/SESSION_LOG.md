@@ -4,6 +4,36 @@
 
 ---
 
+## 2026-06-24 — Session 38 : Sprint 18 — Abonnements SaaS & Facturation (Core sans Stripe)
+
+- **Auteur** : Claude Sonnet 4.6 (architecture complète) + OpenAI Codex (contributeur encadré).
+- **Phase** : 18 (implémentation complète).
+- **Branche** : `feature/sprint18-billing-core`.
+- **Commit** : `f86746b` — 20 fichiers créés/modifiés, 981 insertions.
+- **PR** : #37 ouverte — en attente review ChatGPT.
+- **Actions** :
+  - `prisma/schema.prisma` modifié — 3 nouveaux enums (`SubscriptionPlanCode`, `BillingCycle`, `OrgSubscriptionStatus`) + 2 nouveaux modèles (`BillingPlan`, `OrganizationSubscription`) + back-relation sur `Organization`.
+  - `prisma/migrations/20260624000006_billing_core/migration.sql` — migration additive : 3 `CREATE TYPE`, 2 `CREATE TABLE`, FK Cascade/Restrict. Zéro DROP/ALTER TABLE existant.
+  - `prisma/seed.ts` modifié — upsert 3 billing plans (ESSENTIAL 29€/290€, PRO 59€/590€, BUSINESS 99€/990€).
+  - `src/features/billing/types.ts` — 8 types TS (Codex).
+  - `src/features/billing/billing.schema.ts` — 2 schémas Zod : UpgradePlanSchema, ChangeBillingCycleSchema (Codex).
+  - `src/features/billing/components/billing-status-badge.tsx` — badge TRIAL/ACTIVE/PAST_DUE/CANCELED (Codex).
+  - `src/features/billing/components/plan-card.tsx` — carte plan avec features, prix, économies annuelles (Codex).
+  - `src/features/billing/components/billing-quota-card.tsx` — quotas salons/employés avec barres de progression (Codex).
+  - `src/features/billing/components/billing-current-plan.tsx` — Client Component : plan actuel + changement cycle + upgrade (Codex).
+  - `src/features/billing/billing.service.ts` — 8 fonctions : getCurrentSubscription, getSubscriptionPlan, getActivePlans, canCreateSalon, canCreateEmployee, getRemainingQuota, isFeatureEnabled, getBillingDashboard, upsertSubscription (simulation ACTIVE) (Claude).
+  - `src/lib/permissions/billing.permissions.ts` — 4 helpers : canUseInventory, canUsePayments, canUseSuppliers, canUseDashboard (Claude).
+  - `src/app/(dashboard)/dashboard/billing/actions.ts` — upgradePlanAction, changeBillingCycleAction (Claude).
+  - `src/app/(dashboard)/dashboard/billing/page.tsx` — dashboard abonnement : plan + statut + période + quotas (Claude).
+  - `src/app/(dashboard)/dashboard/plans/page.tsx` — catalogue plans avec marquage plan actuel (Claude).
+  - `src/app/(dashboard)/dashboard/page.tsx` modifié — 2 nouveaux liens : Mon abonnement + Plans (Claude).
+  - 5 pages modifiées — guards billing : kpi (`canUseDashboard`), inventory (`canUseInventory`), payments (`canUsePayments`), suppliers (`canUseSuppliers`), purchase-orders (`canUseSuppliers`) → redirect `/dashboard/billing` si plan insuffisant (Claude).
+- **Vérifications** : `prisma validate` ✅ · `prisma generate` ✅ · `tsc --noEmit` ✅ (0 erreur Sprint 18) · `eslint` ✅ · `build` ✅ (53 routes, `/dashboard/billing` + `/dashboard/plans` dans le manifeste).
+- **Écarts documentés** : BillingPlan ≠ SubscriptionPlan (conflict nom Sprint 2), OrgSubscriptionStatus ≠ SubscriptionStatus (valeurs différentes Sprint 2).
+- **État de sortie** : commit `f86746b` + push + PR #37 ouverte. **Aucun merge.** En attente review ChatGPT.
+
+---
+
 ## 2026-06-24 — Session 37 : clôture Sprint 17 — docs/sprint17-closure + PR #36
 
 - **Auteur** : Claude Code (exécutant technique).

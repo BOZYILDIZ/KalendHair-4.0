@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth/session";
 import { getSalon } from "@/features/salons/salon.service";
 import { canManageSuppliers } from "@/lib/permissions/supplier.permissions";
+import { canUseSuppliers } from "@/lib/permissions/billing.permissions";
 import { getSuppliers } from "@/features/suppliers/supplier.service";
 import { SupplierList } from "@/features/suppliers/components/supplier-list";
 
@@ -14,8 +15,12 @@ export default async function SuppliersPage({
   const session = await getSession();
   if (!session) redirect("/login");
 
-  const salon = await getSalon(session.organizationId);
+  const [salon, billingOk] = await Promise.all([
+    getSalon(session.organizationId),
+    canUseSuppliers(session.organizationId),
+  ]);
   if (!salon || !canManageSuppliers(session, session.organizationId)) redirect("/dashboard");
+  if (!billingOk) redirect("/dashboard/billing");
 
   const { page, search } = await searchParams;
   const pageNum = Math.max(1, parseInt(page ?? "1", 10));

@@ -6,6 +6,52 @@
 
 ## Sprint actuel
 
+**Sprint 18 — Abonnements SaaS & Facturation (Core sans Stripe)** — EN COURS 🔄 (PR #37 ouverte, en attente review ChatGPT)
+
+---
+
+## Objectifs Sprint 18 (EN COURS)
+
+- [x] Migration `20260624000006_billing_core` — 3 enums (`subscription_plan_code`, `billing_cycle`, `org_subscription_status`) + 2 tables (`billing_plans`, `organization_subscriptions`). Additive — zéro DROP/ALTER TABLE existant (Claude).
+- [x] `prisma/seed.ts` modifié — upsert 3 billing plans : ESSENTIAL (29€/290€, 1 salon, 2 employés), PRO (59€/590€, 3 salons, 10 employés), BUSINESS (99€/990€, illimités) (Claude).
+- [x] `src/features/billing/types.ts` — 8 types : PlanCode, BillingCycleType, OrgSubStatus, BillingPlanView, OrgSubscriptionView, QuotaStatus, BillingQuota, BillingDashboard, UpgradePlanFormState (Codex).
+- [x] `src/features/billing/billing.schema.ts` — UpgradePlanSchema, ChangeBillingCycleSchema (Zod v4) (Codex).
+- [x] `src/features/billing/components/billing-status-badge.tsx` — badge TRIAL/ACTIVE/PAST_DUE/CANCELED (Codex).
+- [x] `src/features/billing/components/plan-card.tsx` — carte plan : nom, prix, économies annuelles, quotas, features hardcodées par plan (Codex).
+- [x] `src/features/billing/components/billing-quota-card.tsx` — quotas salons/employés avec barres de progression (Codex).
+- [x] `src/features/billing/components/billing-current-plan.tsx` — Client Component : plan actuel + changement cycle + upgrade vers autres plans (Codex).
+- [x] `src/features/billing/billing.service.ts` — 8 fonctions exportées : getCurrentSubscription, getSubscriptionPlan, getActivePlans, canCreateSalon, canCreateEmployee, getRemainingQuota, isFeatureEnabled (backward compat : true si pas d'abonnement), getBillingDashboard, upsertSubscription (simulation ACTIVE) (Claude).
+- [x] `src/lib/permissions/billing.permissions.ts` — 4 helpers : canUseInventory, canUsePayments, canUseSuppliers, canUseDashboard (Claude).
+- [x] `src/app/(dashboard)/dashboard/billing/actions.ts` — upgradePlanAction, changeBillingCycleAction (Claude).
+- [x] `src/app/(dashboard)/dashboard/billing/page.tsx` — dashboard abonnement : plan actuel, statut, période, quotas (Claude).
+- [x] `src/app/(dashboard)/dashboard/plans/page.tsx` — catalogue plans avec marquage plan actuel (Claude).
+- [x] `src/app/(dashboard)/dashboard/page.tsx` modifié — 2 nouveaux liens : Mon abonnement + Plans (Claude).
+- [x] 5 pages modifiées avec guards billing — redirect `/dashboard/billing` si plan insuffisant : kpi, inventory, payments, suppliers, purchase-orders (Claude).
+- [x] `prisma validate` ✅ · `prisma generate` ✅ · `tsc --noEmit` ✅ · `eslint` ✅ · `build` ✅ (53 routes) · 0 régression Sprint 17.
+- [x] PR #37 ouverte (`feature/sprint18-billing-core`).
+
+## Décisions techniques Sprint 18
+
+| Décision | Valeur |
+|---|---|
+| Pas de Stripe | Simulation uniquement — `upsertSubscription` force `status = ACTIVE`, pas de paiement réel |
+| `BillingPlan` ≠ `SubscriptionPlan` | Conflit de nom avec enum Sprint 2 → modèle `BillingPlan` + table `billing_plans` |
+| `OrgSubscriptionStatus` ≠ `SubscriptionStatus` | Conflit de valeurs avec enum Sprint 2 → `OrgSubscriptionStatus` + `org_subscription_status` |
+| Backward compat | `isFeatureEnabled` retourne `true` si `getCurrentSubscription` retourne `null` — zéro régression installations existantes |
+| organizationId | Toujours depuis `session.organizationId` (JWT) — jamais depuis FormData |
+| Feature gates | ESSENTIAL bloque : kpi, inventory, suppliers, payments. PRO/BUSINESS : tout ouvert |
+| Simulation période | MONTHLY : +1 mois depuis now. YEARLY : +12 mois depuis now |
+| `upsertSubscription` | Toujours `status: "ACTIVE"` — pas de `TRIALING`, pas de `status` depuis le client |
+| Migration | Strictement additive — zéro `ALTER TABLE` sur tables existantes, zéro DROP |
+| Seed plans | Upsert idempotent par `code` — relancer le seed ne crée pas de doublons |
+
+## Condition de sortie du sprint
+
+> En attente review ChatGPT et validation Hasan.
+> Après validation : merge PR #37 → `main`, tag `v1.9.0-billing-core`.
+
+---
+
 **Sprint 17 — Fournisseurs & Bons de Commande** — TERMINÉ ✅
 
 **Sprint 16 — Gestion des Stocks & Produits** — TERMINÉ ✅

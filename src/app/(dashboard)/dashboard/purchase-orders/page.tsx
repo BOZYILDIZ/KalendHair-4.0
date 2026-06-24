@@ -4,6 +4,7 @@ import type { PurchaseOrderStatus } from "@prisma/client";
 import { getSession } from "@/lib/auth/session";
 import { getSalon } from "@/features/salons/salon.service";
 import { canManagePurchaseOrders } from "@/lib/permissions/purchase-order.permissions";
+import { canUseSuppliers } from "@/lib/permissions/billing.permissions";
 import { getPurchaseOrders } from "@/features/purchase-orders/purchase-order.service";
 import { PurchaseOrderList } from "@/features/purchase-orders/components/purchase-order-list";
 
@@ -31,8 +32,12 @@ export default async function PurchaseOrdersPage({
   const session = await getSession();
   if (!session) redirect("/login");
 
-  const salon = await getSalon(session.organizationId);
+  const [salon, billingOk] = await Promise.all([
+    getSalon(session.organizationId),
+    canUseSuppliers(session.organizationId),
+  ]);
   if (!salon || !canManagePurchaseOrders(session, session.organizationId)) redirect("/dashboard");
+  if (!billingOk) redirect("/dashboard/billing");
 
   const { page, search, status } = await searchParams;
   const pageNum = Math.max(1, parseInt(page ?? "1", 10));

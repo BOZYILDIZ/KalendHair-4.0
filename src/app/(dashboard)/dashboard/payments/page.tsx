@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth/session";
 import { getSalon } from "@/features/salons/salon.service";
 import { canManagePayment } from "@/lib/permissions/payment.permissions";
+import { canUsePayments } from "@/lib/permissions/billing.permissions";
 import { getPayments } from "@/features/payments/payment.service";
 import { PaymentHistoryTable } from "@/features/payments/components/payment-history-table";
 import type { PaymentFilters, PaymentMethod, PaymentStatus } from "@/features/payments/types";
@@ -25,10 +26,14 @@ export default async function PaymentsPage({ searchParams }: Props) {
   const session = await getSession();
   if (!session) redirect("/login");
 
-  const salon = await getSalon(session.organizationId);
+  const [salon, billingOk] = await Promise.all([
+    getSalon(session.organizationId),
+    canUsePayments(session.organizationId),
+  ]);
   if (!salon || !canManagePayment(session, session.organizationId)) {
     redirect("/dashboard");
   }
+  if (!billingOk) redirect("/dashboard/billing");
 
   const sp = await searchParams;
 

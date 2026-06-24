@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth/session";
 import { getSalon } from "@/features/salons/salon.service";
 import { canManageInventory } from "@/lib/permissions/inventory.permissions";
+import { canUseInventory } from "@/lib/permissions/billing.permissions";
 import { getInventoryDashboard } from "@/features/inventory/stock.service";
 import { InventoryStatsCard } from "@/features/inventory/components/inventory-stats-card";
 import { LowStockAlert } from "@/features/inventory/components/low-stock-alert";
@@ -16,10 +17,14 @@ export default async function InventoryPage() {
   const session = await getSession();
   if (!session) redirect("/login");
 
-  const salon = await getSalon(session.organizationId);
+  const [salon, billingOk] = await Promise.all([
+    getSalon(session.organizationId),
+    canUseInventory(session.organizationId),
+  ]);
   if (!salon || !canManageInventory(session, session.organizationId)) {
     redirect("/dashboard");
   }
+  if (!billingOk) redirect("/dashboard/billing");
 
   const dashboard = await getInventoryDashboard(salon.id, session.organizationId);
 
