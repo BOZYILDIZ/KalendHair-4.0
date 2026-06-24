@@ -4,6 +4,49 @@
 
 ---
 
+## 2026-06-24 — Session 33 : clôture Sprint 15 — docs/sprint15-closure + PR #32
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : 15 (clôture).
+- **Actions** :
+  - Review finale ChatGPT reçue pour PR #31 (54/54 vérifications PASS, 0 FAIL, 0 correction demandée).
+  - PR **#31** (`feature/sprint15-reminders-receipts`) **mergée** dans `main` (merge commit `bc96874`).
+  - Branche `feature/sprint15-reminders-receipts` **supprimée** (locale + distante).
+  - Tag **`v1.6.0-reminders-receipts`** créé et poussé sur `bc96874`.
+  - Branche `docs/sprint15-closure` créée.
+  - Mise à jour : `PROJECT_STATE.md`, `CURRENT_SPRINT.md`, `SESSION_LOG.md`, `README.md`.
+- **Code métier** : aucun. Clôture documentaire uniquement.
+- **État de sortie** : commit + push + PR documentaire ouverte (#32). **Aucun merge.** En attente de validation.
+
+---
+
+## 2026-06-24 — Session 32 : Sprint 15 — Professionnalisation (Rappels email + Numérotation reçus)
+
+- **Auteur** : Claude Code + OpenAI Codex (contributeur encadré).
+- **Phase** : 15 (implémentation).
+- **Branche** : `feature/sprint15-reminders-receipts`.
+- **Actions** :
+  - `prisma/schema.prisma` modifié — modèle `SalonReceiptCounter` + back-relation `Salon.receiptCounters` (Claude).
+  - `prisma/migrations/20260624000003_receipt_counter/migration.sql` — migration additive SQL (Claude).
+  - `src/features/payments/receipt.service.ts` — upsert atomique compteur séquentiel DGFIP (Claude).
+  - `src/features/payments/payment.service.ts` modifié — `receiptNumber` dans les deux `$transaction`, `year = paidAt.getUTCFullYear()` (Claude).
+  - `src/features/notifications/notification.service.ts` modifié — dispatch exhaustif + throw final (Claude).
+  - `src/features/notifications/reminder.service.ts` — fenêtre 22–26h, déduplication Notification.none (Claude).
+  - `vercel.json` — CRON `"0 * * * *"` → `/api/cron/reminders` (Claude).
+  - `src/app/api/cron/reminders/route.ts` — route GET sécurisée CRON_SECRET (Claude).
+  - `.env.example` modifié — section CRON_SECRET (Claude).
+  - `src/features/notifications/templates/appointment-reminder.template.ts` — email HTML ambre complet (Codex).
+  - `src/features/payments/components/receipt-print-button.tsx` — Client Component print:hidden (Codex).
+  - `src/app/(dashboard)/dashboard/payments/[id]/receipt/page.tsx` — reçu imprimable + bandeau ANNULÉ (Claude).
+  - `src/app/(dashboard)/dashboard/payments/[id]/page.tsx` modifié — lien "Imprimer le reçu →" (Claude).
+  - `prisma validate` ✅ · `typecheck` ✅ · `lint` ✅ · `build` ✅ (32 routes).
+  - Rapport 54/54 vérifications PASS produit (analyse statique exhaustive).
+  - Commit `dea0f06` + push + PR #31 créée.
+- **Fichiers créés** : 8. **Fichiers modifiés** : 5.
+- **Co-authors** : `Co-authored-by: Codex <codex@openai.com>` + `Co-authored-by: Claude Sonnet 4.6 <noreply@anthropic.com>`.
+
+---
+
 ## 2026-06-24 — Session 31 : clôture Sprint 14 — docs/sprint14-closure + PR #30
 
 - **Auteur** : Claude Code (exécutant technique).
