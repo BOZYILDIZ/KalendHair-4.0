@@ -39,7 +39,7 @@
 - [ ] PR3 — Pages produit : `/fonctionnalites`, `/demo`, `/pourquoi-kalendhair`
 - [ ] PR4 — Pages ressources : `/tarifs`, `/a-propos`, `/roadmap`, `/aide`
 - [ ] PR5 — Page `/contact` + Server Action + `/contact/merci`
-- [ ] PR6 — Pages légales (squelettes)
+- [x] PR6 — Pages légales : `/mentions-legales`, `/confidentialite`, `/conditions-utilisation` (PR #57)
 - [ ] PR7 — SEO : `sitemap.ts`, `robots.ts`, JSON-LD, metadata complètes
 - [ ] Constitution du salon de démonstration "L'Atelier Lumière"
 - [ ] 20 captures produit (après salon démo constitué)

@@ -17,8 +17,8 @@ const FOOTER_RESOURCES = [
 
 const FOOTER_LEGAL = [
   { label: 'Mentions légales', href: '/mentions-legales' },
-  { label: 'Politique de confidentialité', href: '/politique-confidentialite' },
-  { label: 'CGV', href: '/cgv' },
+  { label: 'Confidentialité', href: '/confidentialite' },
+  { label: "Conditions d'utilisation", href: '/conditions-utilisation' },
 ]
 
 const FOOTER_ACCESS = [
