@@ -16,10 +16,40 @@
 
 ---
 
-## Phase actuelle : Pilote Fermé — OPÉRATIONNEL 🚀
+## Phase actuelle : Product Phase 1 — Marketing Website v1 (EN COURS)
+
+> Branche `marketing/website-v1-architecture` — PR #50 ouverte.
+> En attente validation finale ChatGPT avant toute implémentation.
+
+### Objectifs de la phase Marketing Website v1
+
+- [x] `docs/MARKETING_WEBSITE_V1.md` v1.0 — architecture initiale (PR #50, Session 48)
+- [x] `docs/MARKETING_WEBSITE_V1.md` v1.1 — révision ChatGPT intégrée (Session 49)
+  - [x] Page `/demo` — galerie produit avec onglets
+  - [x] Page `/pourquoi-kalendhair` — bénéfices métier + comparatif
+  - [x] Page `/a-propos` — histoire, vision, engagement
+  - [x] Page `/roadmap` — disponible / en prépa / prévu (mention non-contractuel)
+  - [x] Page `/aide` — base de connaissances, FAQ, tutoriels, support
+  - [x] CTA révisé : "Essayer gratuitement" / "Rejoindre les premiers salons pilotes"
+  - [x] Stratégie salon de démonstration documentée (20 captures, salon "L'Atelier Lumière")
+- [x] `npm run lint` ✅ · `npm run typecheck` ✅
+- [ ] Validation finale ChatGPT — **EN ATTENTE**
+- [ ] Constitution du salon de démonstration "L'Atelier Lumière"
+- [ ] Implémentation React/Next.js (après validation ChatGPT uniquement)
+- [ ] 20 captures produit (après salon démo constitué)
+
+### Contraintes de la phase
+
+- Aucune implémentation avant validation ChatGPT
+- Aucun Sprint 21 avant fin du pilote fermé
+- RESEND non configuré (à activer uniquement sur validation Hasan)
+- `salon-beaute-test` conservé (ne pas supprimer sans validation Hasan)
+
+---
+
+## Phase Pilote Fermé — OPÉRATIONNEL 🚀
 
 > PR #49 mergée (SHA `0e3cd2a`), déploiement `dpl_EV43Eg9Tk65b2SQgrpXpursjxrqH` READY.
-> Aucune branche de travail active — `main` est la seule branche.
 
 ### Objectifs de la phase pilote fermée
 
@@ -31,14 +61,6 @@
 - [x] Tests runtime 5/5 ✅
 - [ ] Sélection des premiers salons pilotes (3–5 salons) — décision Hasan
 - [ ] Onboarding premier salon pilote — processus manuel via Super Admin
-
-### Contraintes de la phase pilote
-
-- Aucun développement fonctionnel majeur
-- Aucun Sprint 21 avant fin du pilote fermé
-- RESEND non configuré (à activer uniquement sur validation Hasan)
-- `salon-beaute-test` conservé (ne pas supprimer sans validation Hasan)
-- Durée cible : 4 semaines par salon
 
 ---
 

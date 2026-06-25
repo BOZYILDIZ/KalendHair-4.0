@@ -4,6 +4,51 @@
 
 ---
 
+## 2026-06-25 — Session 49 : Product Phase 1 — Révision architecture vitrine v1.1
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : Product Phase 1 — Marketing Website v1.
+- **Branche** : `marketing/website-v1-architecture`
+- **Actions** :
+  - Mise à jour de `docs/MARKETING_WEBSITE_V1.md` — révision v1.1 complète (réécriture intégrale).
+  - 5 nouvelles pages ajoutées : `/demo`, `/pourquoi-kalendhair`, `/a-propos`, `/roadmap`, `/aide`.
+  - Stratégie CTA révisée : "Essayer gratuitement" / "Rejoindre les premiers salons pilotes".
+  - Stratégie salon de démonstration documentée (salon "L'Atelier Lumière", 20 captures définies).
+  - Sitemap mis à jour (10 pages + 3 légales).
+  - Navigation révisée (menus Produit / Ressources).
+  - 26 composants définis (5 Client, 21 Server).
+  - `npm run lint` ✅ · `npm run typecheck` ✅
+  - PR #50 mise à jour — en attente validation finale ChatGPT.
+- **Décisions documentées** :
+  - CTA primaire → "Essayer gratuitement" → `/contact?type=essai` (plus engageant que "Contact")
+  - Captures après constitution d'un salon démo complet (pas sur salon vide)
+  - `/roadmap` avec mention légale "non contractuel" obligatoire
+  - Comparatif concurrents neutre et factuel (non diffamatoire)
+  - Barre de recherche `/aide` = placeholder HTML en v1, fonctionnelle en v2
+- **État de sortie** : Révision v1.1 livrée. Aucune modification fonctionnelle. En attente validation ChatGPT.
+
+---
+
+## 2026-06-25 — Session 48 : Product Phase 1 — Architecture vitrine marketing
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : Product Phase 1 — Marketing Website v1.
+- **Branche** : `marketing/website-v1-architecture`
+- **Actions** :
+  - Création de `docs/MARKETING_WEBSITE_V1.md` — architecture complète de la vitrine SaaS (13 sections, ~500 lignes).
+  - Nettoyage cache `.next/` (fichiers dupliqués pré-existants `.next/types/cache-life.d 2.ts`).
+  - `npm run lint` ✅ · `npm run typecheck` ✅
+  - PR #50 ouverte — en attente review ChatGPT avant tout développement.
+- **Décisions documentées** :
+  - CTA → `/contact` (pas `/register`) — qualification manuelle pendant le pilote
+  - Prix hardcodés sur `/tarifs` — rendu statique
+  - Route group `(marketing)` — isolation totale du back-office
+  - 19 composants identifiés (4 Client, 15 Server)
+  - 5 phases d'implémentation définies
+- **État de sortie** : Document d'architecture livré. Aucune modification fonctionnelle. En attente validation ChatGPT.
+
+---
+
 ## 2026-06-25 — Session 47 : Phase Pilote Fermé — Clôture officielle
 
 - **Auteur** : Claude Code (exécutant technique).
