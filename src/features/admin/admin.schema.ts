@@ -75,5 +75,22 @@ export const AdminLoginSchema = z.object({
   password: z.string().min(1, "Mot de passe obligatoire."),
 });
 
+export const ChangeAdminPasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, "Mot de passe actuel obligatoire."),
+    newPassword: z
+      .string()
+      .min(12, "Minimum 12 caractères.")
+      .regex(/[A-Z]/, "Doit contenir une majuscule.")
+      .regex(/[a-z]/, "Doit contenir une minuscule.")
+      .regex(/[0-9]/, "Doit contenir un chiffre.")
+      .regex(/[^A-Za-z0-9]/, "Doit contenir un caractère spécial."),
+    confirmPassword: z.string().min(1, "Confirmation obligatoire."),
+  })
+  .refine((d) => d.newPassword === d.confirmPassword, {
+    message: "Les mots de passe ne correspondent pas.",
+    path: ["confirmPassword"],
+  });
+
 export type ChangePlanData = z.infer<typeof ChangePlanSchema>;
 export type CreateDiscountData = z.infer<typeof CreateDiscountSchema>;
