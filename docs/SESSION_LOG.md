@@ -4,6 +4,52 @@
 
 ---
 
+## 2026-06-24 — Session 43 : clôture Sprint 20 — docs/sprint20-closure
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : 20 (clôture).
+- **Actions** :
+  - PR **#41** (`feature/sprint20-commissions`) **mergée** dans `main` (merge commit `b44e07f`).
+  - Branche `feature/sprint20-commissions` **supprimée** (locale + distante, confirmé via `git fetch --prune`).
+  - Tag **`v2.1.0-commissions`** créé et poussé sur `b44e07f`.
+  - Branche `docs/sprint20-closure` créée.
+  - Mise à jour : `docs/PROJECT_STATE.md`, `docs/CURRENT_SPRINT.md`, `docs/SESSION_LOG.md`, `README.md`.
+  - Documenté : CommissionRule, CommissionEntry, CommissionAdjustment, CommissionType, CommissionEntryStatus, algorithme de priorité (spécificité 0–3), commissions prestations, commissions produits, ajustements manuels, intégration paiements, intégration inventaire, intégration KPI, permissions OWNER/MANAGER, exclusion CANCELLED, migration 20260624000009_commissions, score final 45/45 PASS, risques non bloquants R1–R5.
+- **Code métier** : aucun. Clôture documentaire uniquement.
+- **État de sortie** : commit + push + PR documentaire ouverte. **Aucun merge.** En attente de validation ChatGPT.
+
+---
+
+## 2026-06-24 — Session 42 : Sprint 20 — Commissions Employés
+
+- **Auteur** : Claude Sonnet 4.6 (architecture complète) + OpenAI Codex (contributeur encadré).
+- **Phase** : 20 (implémentation complète).
+- **Branche** : `feature/sprint20-commissions`.
+- **PR** : #41 — score final **45/45 PASS**.
+- **Actions** :
+  - `prisma/schema.prisma` modifié — 2 nouveaux enums (`CommissionType`, `CommissionEntryStatus`), 3 nouveaux modèles (`CommissionRule`, `CommissionEntry`, `CommissionAdjustment`), back-relations sur 9 modèles existants (Claude).
+  - `prisma/migrations/20260624000009_commissions/migration.sql` — migration additive : 2 `CREATE TYPE`, 3 `CREATE TABLE`, FK Cascade/Restrict/SetNull, zéro DROP/ALTER TABLE (Claude).
+  - `src/lib/permissions/commission.permissions.ts` — `canManageCommissionRules`, `canViewCommissions`, `canAdjustCommissions` (Claude).
+  - `src/features/commissions/types.ts` — 13 exports TypeScript (Codex).
+  - `src/features/commissions/commission.schema.ts` — 4 schémas Zod (Codex).
+  - `src/features/commissions/commission-calculator.service.ts` — `ruleSpecificity`, `resolveRule`, `calculateAndRecordCommissions(tx)` (Claude).
+  - `src/features/commissions/commission-rule.service.ts` — 5 fonctions CRUD règles (Claude).
+  - `src/features/commissions/commission-entry.service.ts` — 6 fonctions lecture + `adjustCommission` (Claude).
+  - `src/features/payments/payment.service.ts` modifié — intégration `calculateAndRecordCommissions` dans `$transaction` + `cancelPayment` atomique (Claude).
+  - `src/features/inventory/stock.service.ts` modifié — intégration `calculateAndRecordCommissions` produits via `employee.findFirst` (Claude).
+  - `src/features/dashboard/types.ts` modifié — `TopCommissionEmployee`, `CommissionKpi`, `DashboardKpi` étendu (Claude).
+  - `src/features/dashboard/dashboard.service.ts` modifié — 2 nouvelles fonctions privées + 9 agrégats `Promise.all` (Claude).
+  - 7 composants UI (Codex) : `commission-status-badge`, `commission-summary-card`, `commission-entry-table`, `commission-rule-list`, `commission-rule-form`, `commission-adjust-form`, `kpi-commission-card`.
+  - 2 fichiers actions Server Actions (Claude) : `commissions/actions.ts`, `commissions/rules/actions.ts`.
+  - 5 nouvelles pages (Claude) : `/dashboard/commissions`, `/dashboard/commissions/rules`, `/rules/new`, `/rules/[id]/edit`, `/employees/[id]/commissions`.
+  - 3 pages modifiées (Claude) : `/dashboard/payments/[id]`, `/dashboard/kpi`, `/dashboard/page`.
+  - Corrections TypeScript/ESLint : `AdjustFormState.success boolean`, 6 entités françaises échappées, `boundAction` typé `RuleFormState`, `entries[0]?.id ?? ""`.
+  - `prisma validate` ✅ · `prisma generate` ✅ · `npm run lint` ✅ · `npm run typecheck` ✅ · `npm run build` ✅.
+- **Fichiers créés** : 21. **Fichiers modifiés** : 8.
+- **Co-authors** : `Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>` + `Co-authored-by: Codex <codex@openai.com>`.
+
+---
+
 ## 2026-06-24 — Session 41 : clôture Sprint 19 — docs/sprint19-closure
 
 - **Auteur** : Claude Code (exécutant technique).
