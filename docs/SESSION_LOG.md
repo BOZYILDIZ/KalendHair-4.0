@@ -4,6 +4,31 @@
 
 ---
 
+## 2026-06-25 — Session : Product Phase 1 — PR #57 Pages légales
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : Product Phase 1 — Marketing Website v1 — PR7 (légal).
+- **Branche** : `marketing/pr7-legal`
+- **Actions** :
+  - Création `src/app/(marketing)/mentions-legales/page.tsx` → `○ Static`
+  - Création `src/app/(marketing)/confidentialite/page.tsx` → `○ Static`
+  - Création `src/app/(marketing)/conditions-utilisation/page.tsx` → `○ Static`
+  - Mise à jour `marketing-footer.tsx` : liens légaux alignés (`/confidentialite`, `/conditions-utilisation`)
+  - `npm run lint` ✅ · `npm run typecheck` ✅ · `npm run build` ✅ (14 routes statiques)
+  - Zéro régression dashboard/admin/booking
+- **Contenu** :
+  - Mentions légales : éditeur (Hasan Biçer, SIRET en cours), hébergeur Vercel + Neon, propriété intellectuelle, responsabilité
+  - Politique de confidentialité : données collectées (formulaire + SaaS futur), 5 sous-traitants (Vercel/Neon/Resend/Sentry/Analytics), base légale RGPD, droits utilisateurs, cookies
+  - CGU : accès site vitrine, programme pilote, utilisation acceptable, absence de garantie commerciale, suspension, évolution
+  - Disclaimer amber sur chaque page ("à valider par un juriste")
+- **Décisions** :
+  - `/confidentialite` et `/conditions-utilisation` (pas `/politique-confidentialite` ni `/cgv`) — routes concises
+  - Aucune dépendance externe, aucune logique, Server Component static pur
+  - Helper `Section` / `SubSection` inline (non exporté) — pas de composant partagé pour une page unique
+- **État de sortie** : PR #57 livrée. En attente validation ChatGPT.
+
+---
+
 ## 2026-06-25 — Session 51 : Product Phase 1 — PR2 Homepage
 
 - **Auteur** : Claude Code (exécutant technique).
