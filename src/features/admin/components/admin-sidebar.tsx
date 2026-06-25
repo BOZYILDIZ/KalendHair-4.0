@@ -5,6 +5,7 @@ const NAV_ITEMS = [
   { href: "/admin/organizations", label: "Organisations" },
   { href: "/admin/subscriptions", label: "Abonnements" },
   { href: "/admin/metrics", label: "Métriques" },
+  { href: "/admin/account", label: "Mon compte" },
 ];
 
 export function AdminSidebar() {

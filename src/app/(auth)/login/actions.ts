@@ -4,6 +4,8 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { validateCredentials } from "@/features/auth/auth.service";
 import { signToken } from "@/features/auth/session.utils";
+import { checkRateLimit } from "@/lib/rate-limit/in-memory";
+import { getClientIP } from "@/lib/rate-limit/get-ip";
 
 export type LoginState = { error: string } | null;
 
@@ -11,6 +13,14 @@ export async function login(
   _prevState: LoginState,
   formData: FormData,
 ): Promise<LoginState> {
+  const ip = await getClientIP();
+  const rl = checkRateLimit("tenant-login", ip);
+  if (rl.limited) {
+    return {
+      error: `Trop de tentatives. Réessayez dans ${rl.retryAfterSeconds} secondes.`,
+    };
+  }
+
   const email = formData.get("email")?.toString().trim() ?? "";
   const password = formData.get("password")?.toString() ?? "";
 
