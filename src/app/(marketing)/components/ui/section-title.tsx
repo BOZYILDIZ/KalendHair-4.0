@@ -13,6 +13,7 @@ interface SectionTitleProps {
   titleAs?: TitleTag
   titleClassName?: string
   className?: string
+  id?: string
 }
 
 export function SectionTitle({
@@ -24,6 +25,7 @@ export function SectionTitle({
   titleAs: Tag = 'h2',
   titleClassName,
   className,
+  id,
 }: SectionTitleProps) {
   return (
     <div className={cn(align === 'center' ? 'text-center' : 'text-left', className)}>
@@ -38,6 +40,7 @@ export function SectionTitle({
         </p>
       )}
       <Tag
+        id={id}
         className={cn(
           'text-3xl font-bold tracking-tight sm:text-4xl',
           dark ? 'text-white' : 'text-slate-900',
