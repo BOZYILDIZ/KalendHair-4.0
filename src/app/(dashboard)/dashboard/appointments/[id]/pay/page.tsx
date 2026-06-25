@@ -38,7 +38,7 @@ export default async function AppointmentPayPage({ params }: Props) {
     redirect(`/dashboard/appointments/${id}`);
   }
 
-  const expectedCents = appointment.service.priceCents;
+  const expectedCents = appointment.priceCentsSnapshot ?? appointment.service.priceCents;
   const summary = await getPaymentSummaryForAppointment(salon.id, id, expectedCents);
 
   const remainingCents = Math.max(0, expectedCents - summary.totalPaidCents);

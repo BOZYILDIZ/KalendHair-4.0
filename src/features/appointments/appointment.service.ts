@@ -82,20 +82,21 @@ async function resolveOrCreateClient(
 // ─── Select shape ────────────────────────────────────────────────────────────
 
 const LIST_SELECT = {
-  id:             true,
-  organizationId: true,
-  salonId:        true,
-  employeeId:     true,
-  serviceId:      true,
-  clientId:       true,
-  guestFirstName: true,
-  guestLastName:  true,
-  guestEmail:     true,
-  guestPhone:     true,
-  startAt:        true,
-  endAt:          true,
-  status:         true,
-  notes:          true,
+  id:                  true,
+  organizationId:      true,
+  salonId:             true,
+  employeeId:          true,
+  serviceId:           true,
+  clientId:            true,
+  guestFirstName:      true,
+  guestLastName:       true,
+  guestEmail:          true,
+  guestPhone:          true,
+  priceCentsSnapshot:  true,
+  startAt:             true,
+  endAt:               true,
+  status:              true,
+  notes:               true,
   employee: {
     select: { id: true, firstName: true, lastName: true, color: true },
   },
@@ -115,6 +116,7 @@ function mapToListView(row: {
   guestLastName: string | null;
   guestEmail: string | null;
   guestPhone: string | null;
+  priceCentsSnapshot: number | null;
   startAt: Date;
   endAt: Date;
   status: string;

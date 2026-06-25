@@ -50,6 +50,7 @@ export type AppointmentListView = {
   guestLastName: string | null;
   guestEmail: string | null;
   guestPhone: string | null;
+  priceCentsSnapshot: number | null;
   startAt: Date;
   endAt: Date;
   status: AppointmentStatus;
