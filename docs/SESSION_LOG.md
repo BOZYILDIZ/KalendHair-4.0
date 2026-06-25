@@ -4,6 +4,30 @@
 
 ---
 
+## 2026-06-25 — Session 51 : Product Phase 1 — PR2 Homepage
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : Product Phase 1 — Marketing Website v1 — PR2.
+- **Branche** : `marketing/pr2-homepage`
+- **Actions** :
+  - Merge PR #51 → `main` + suppression branche `marketing/pr1-structure-layout`.
+  - `src/app/globals.css` — ajout animation `mk-fade-up` (cubic-bezier, prefers-reduced-motion).
+  - `sections/hero-section.tsx` — Hero premium : quasi-plein-écran, dot grid, glow indigo, titre fort, 2 CTAs, trust signals, ScreenshotFrame placeholder.
+  - `sections/trust-strip.tsx` — Bande de confiance 4 items (SVG inline, factuel, sans faux chiffres).
+  - `sections/module-grid.tsx` — Grille 9 modules avec `ModuleCard` (hover, accessibilité keyboard, SVG icons).
+  - `components/ui/section-title.tsx` — Extension : ajout prop `id` pour aria-labelledby.
+  - `src/app/(marketing)/page.tsx` — Homepage assemblée (Hero + TrustStrip + ModuleGrid).
+  - `npm run lint` ✅ · `npm run typecheck` ✅ · `npm run build` ✅
+  - `/` → `○ Static` · Dashboard/Admin/Booking → `ƒ Dynamic` (zéro régression).
+- **Décisions** :
+  - Animations CSS-only (`mk-fade-up`) — sobres, respectent `prefers-reduced-motion`
+  - TrustStrip : données factuelles uniquement, pas de faux chiffres
+  - ModuleCard : hover `-translate-y-0.5` + `shadow-md` — discret et professionnel
+  - Aucun nouveau composant temporaire : `ModuleCard` sera réutilisé dans `/fonctionnalites`
+- **État de sortie** : PR2 livrée. En attente validation ChatGPT avant suite de la homepage.
+
+---
+
 ## 2026-06-25 — Session 50 : Product Phase 1 — PR1 Structure & Layout marketing
 
 - **Auteur** : Claude Code (exécutant technique).

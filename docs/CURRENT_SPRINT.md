@@ -34,8 +34,8 @@
   - [x] Stratégie salon de démonstration documentée (20 captures, salon "L'Atelier Lumière")
 - [x] `npm run lint` ✅ · `npm run typecheck` ✅
 - [x] Validation finale ChatGPT — validée
-- [x] PR1 — Structure & Layout : `marketing-nav`, `marketing-footer`, composants UI de base (`Container`, `Badge`, `Button`, `SectionTitle`, `ScreenshotFrame`, `PageHero`, `CtaBanner`), layout `(marketing)`, page placeholder `/` statique. PR ouverte, en attente validation ChatGPT.
-- [ ] PR2 — Homepage `/` complète (après validation PR1 par ChatGPT)
+- [x] PR1 — Structure & Layout : `marketing-nav`, `marketing-footer`, composants UI de base, layout `(marketing)`, page placeholder. Mergée.
+- [x] PR2 — Homepage `/` : `HeroSection` (quasi-plein-écran, dot grid, glow, 2 CTAs), `TrustStrip` (4 items factuels), `ModuleGrid` (9 modules + `ModuleCard`). PR ouverte, en attente validation ChatGPT.
 - [ ] PR3 — Pages produit : `/fonctionnalites`, `/demo`, `/pourquoi-kalendhair`
 - [ ] PR4 — Pages ressources : `/tarifs`, `/a-propos`, `/roadmap`, `/aide`
 - [ ] PR5 — Page `/contact` + Server Action + `/contact/merci`
