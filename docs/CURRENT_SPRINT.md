@@ -6,6 +6,8 @@
 
 ## Sprint actuel
 
+**Phase Stabilisation Production** — TERMINÉE ✅ (PR #46 mergée, SHA `46882a0`, déploiement `dpl_GYSE6t8MgFdJXzMX4NA64poViJi5`)
+
 **Sprint 20 — Commissions Employés** — TERMINÉ ✅ (PR #41 mergée, tag v2.1.0-commissions)
 
 **Sprint 19 — Super Admin SaaS** — TERMINÉ ✅ (PR #39 mergée, tag v2.0.0-super-admin)
@@ -14,9 +16,9 @@
 
 ---
 
-## Sprint 21 — À définir
+## Prochaine phase : Go Live Readiness
 
-> En attente de validation ChatGPT pour la PR documentaire de clôture Sprint 20. Aucune tâche Sprint 21 en cours.
+> En attente de validation ChatGPT. Aucune nouvelle tâche en cours.
 
 ---
 
@@ -747,4 +749,4 @@
 
 ---
 
-_Dernière mise à jour : 2026-06-24 — Sprint 20 Commissions Employés TERMINÉ, PR #41 mergée (merge commit b44e07f), tag v2.1.0-commissions._
+_Dernière mise à jour : 2026-06-25 — Phase Stabilisation Production TERMINÉE, PR #46 mergée (SHA 46882a0), déploiement dpl_GYSE6t8MgFdJXzMX4NA64poViJi5. Prochaine phase : Go Live Readiness._
