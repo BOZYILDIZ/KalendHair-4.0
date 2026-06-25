@@ -33,9 +33,15 @@
   - [x] CTA révisé : "Essayer gratuitement" / "Rejoindre les premiers salons pilotes"
   - [x] Stratégie salon de démonstration documentée (20 captures, salon "L'Atelier Lumière")
 - [x] `npm run lint` ✅ · `npm run typecheck` ✅
-- [ ] Validation finale ChatGPT — **EN ATTENTE**
+- [x] Validation finale ChatGPT — validée
+- [x] PR1 — Structure & Layout : `marketing-nav`, `marketing-footer`, composants UI de base (`Container`, `Badge`, `Button`, `SectionTitle`, `ScreenshotFrame`, `PageHero`, `CtaBanner`), layout `(marketing)`, page placeholder `/` statique. PR ouverte, en attente validation ChatGPT.
+- [ ] PR2 — Homepage `/` complète (après validation PR1 par ChatGPT)
+- [ ] PR3 — Pages produit : `/fonctionnalites`, `/demo`, `/pourquoi-kalendhair`
+- [ ] PR4 — Pages ressources : `/tarifs`, `/a-propos`, `/roadmap`, `/aide`
+- [ ] PR5 — Page `/contact` + Server Action + `/contact/merci`
+- [ ] PR6 — Pages légales (squelettes)
+- [ ] PR7 — SEO : `sitemap.ts`, `robots.ts`, JSON-LD, metadata complètes
 - [ ] Constitution du salon de démonstration "L'Atelier Lumière"
-- [ ] Implémentation React/Next.js (après validation ChatGPT uniquement)
 - [ ] 20 captures produit (après salon démo constitué)
 
 ### Contraintes de la phase

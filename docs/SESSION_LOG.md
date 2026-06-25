@@ -4,6 +4,32 @@
 
 ---
 
+## 2026-06-25 — Session 50 : Product Phase 1 — PR1 Structure & Layout marketing
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : Product Phase 1 — Marketing Website v1 — PR1.
+- **Branche** : `marketing/pr1-structure-layout`
+- **Actions** :
+  - Merge PR #50 → `main` + suppression branche `marketing/website-v1-architecture`.
+  - Création de la structure marketing complète (route group `(marketing)`).
+  - `src/lib/cn.ts` — utilitaire className minimal (sans dépendance externe).
+  - `src/app/globals.css` — ajout `scroll-behavior: smooth; overflow-x: hidden`.
+  - `src/app/(marketing)/layout.tsx` — layout marketing avec `metadataBase`.
+  - `src/app/(marketing)/page.tsx` — placeholder homepage (statique, SSG).
+  - Suppression de `src/app/page.tsx` (remplacé par `(marketing)/page.tsx`).
+  - 7 composants UI : `Container`, `Badge`, `Button`, `SectionTitle`, `ScreenshotFrame`, `PageHero`, `CtaBanner`.
+  - 2 composants layout : `MarketingNav` (Client — scroll + dropdowns + mobile menu), `MarketingFooter` (Server).
+  - `npm run lint` ✅ · `npm run typecheck` ✅ · `npm run build` ✅
+  - `/` → `○ Static` · tous les espaces Pro/Admin/Booking restent `ƒ Dynamic` (zéro régression).
+- **Décisions** :
+  - `MarketingNav` est un Client Component (scroll state, dropdowns, mobile menu).
+  - `MarketingFooter` est un Server Component.
+  - Tous les composants UI sont Server Components (pas de "use client").
+  - Aucun nouveau package npm.
+- **État de sortie** : Structure livrée. En attente validation ChatGPT avant la homepage complète.
+
+---
+
 ## 2026-06-25 — Session 49 : Product Phase 1 — Révision architecture vitrine v1.1
 
 - **Auteur** : Claude Code (exécutant technique).
