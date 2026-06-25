@@ -394,9 +394,21 @@ Sprint 20 : `prisma validate` ✅ · `prisma generate` ✅ · `npm run lint` ✅
   - P2022 `admin_users.passwordHash` — corrigé PR #44 (@map) + PR #45 (prisma generate dans build)
   - Redirect loop `/admin/login` — corrigé PR #43 (route group `(protected)`)
 
+## Phase actuelle : Pilote Fermé
+
+**Go Live Readiness** — TERMINÉE ✅ (PR #47 + #48 mergées, SHA `3ad8143`, verdict READY FOR CLOSED PILOT)
+
+**Phase Pilote Fermé** — EN COURS 🚀
+
+- Branche : `pilot/closed-pilot-preparation` — PR ouverte, en attente review ChatGPT
+- Runbook opérationnel : `docs/PILOT_RUNBOOK.md` (18 sections)
+- RESEND non configuré — à activer uniquement sur validation Hasan
+- `salon-beaute-test` conservé — ne pas supprimer sans validation Hasan
+- Aucun Sprint 21 avant fin du pilote fermé
+
 ## Prochaine étape
 
-Sprint 21 : à définir avec ChatGPT.
+Sprint 21 : à définir avec ChatGPT après fin du pilote fermé.
 
 ⚠️ **Prérequis persistant** : appliquer les migrations en attente via `pnpm db:migrate` dès que Docker + `.env` disponibles :
 - `20260624000001_crm_snapshot_and_indexes` (Sprint 10 — non destructive)
@@ -429,4 +441,4 @@ Sprint 21 : à définir avec ChatGPT.
 
 ---
 
-_Dernière mise à jour : 2026-06-25 — Bascule domaines terminée. Les 4 domaines (`pro.`, `admin.`, `www.`, apex) attachés à `kalendhair-4-0`. `kalend-hair-2-0` non supprimé. `kalendhair-4-0` est le projet de production actif._
+_Dernière mise à jour : 2026-06-25 — Phase Pilote Fermé lancée. PR `pilot/closed-pilot-preparation` ouverte. `docs/PILOT_RUNBOOK.md` créé. `kalendhair-4-0` est le projet de production actif sur les 4 domaines custom._

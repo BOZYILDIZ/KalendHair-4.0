@@ -4,6 +4,22 @@
 
 ---
 
+## 2026-06-25 — Session 46 : Phase Pilote Fermé — Préparation
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : Pilote Fermé — branche `pilot/closed-pilot-preparation`.
+- **Actions** :
+  - Création de `docs/PILOT_RUNBOOK.md` — runbook opérationnel complet pour la conduite du pilote fermé (18 sections).
+  - `npm run lint` ✅ · `npm run typecheck` ✅ · `npm run build` ✅ — 68 routes, 0 erreur, warnings pré-existants inchangés.
+  - PR ouverte (`pilot/closed-pilot-preparation`) — en attente review ChatGPT.
+- **Décisions** :
+  - `salon-beaute-test` : conserver sans suppression (recommandation documentée dans le runbook — ne pas supprimer sans validation Hasan).
+  - RESEND : section documentée dans le runbook (procédure complète SPF/DKIM/DMARC) — ne pas configurer sans validation Hasan.
+  - Cron 08:00 UTC : limitation documentée (couverture 08:00–12:00 Paris CEST) — acceptable pour le pilote car RESEND non configuré.
+- **État de sortie** : PR créée, branche poussée. En attente validation ChatGPT avant merge.
+
+---
+
 ## 2026-06-25 — Session 45 : Bascule domaines → kalendhair-4-0
 
 - **Auteur** : Claude Code (exécutant technique).
