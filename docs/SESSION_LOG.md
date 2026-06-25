@@ -4,6 +4,23 @@
 
 ---
 
+## 2026-06-25 — Session 45 : Bascule domaines → kalendhair-4-0
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : Production — bascule domaines custom.
+- **Ordre exécuté** : `pro.kalendhair.fr` → `admin.kalendhair.fr` → `www.kalendhair.fr` → `kalendhair.fr`
+- **Méthode** : API Vercel REST — DELETE `/v9/projects/{old}/domains/{domain}` puis POST `/v9/projects/{new}/domains` — atomique par domaine, aucune interruption service.
+- **Résultats** :
+  - Tous les 4 domaines : `verified=true` sur `kalendhair-4-0`, `0` domaine custom sur `kalend-hair-2-0`.
+  - HTTP 200 sur les 4 URLs immédiatement après bascule.
+  - Logs runtime : tous les hits sur `dpl_9ErGzhzRYvoRvnvHYAVZHYdrfm7C` (`kalendhair-4-0`).
+- **DNS IONOS** : aucune modification — les enregistrements CNAME/A pointent toujours vers Vercel sans changement.
+- **Certificats HTTPS** : hérités depuis la configuration précédente, `verified=true` sur chaque domaine.
+- **`kalend-hair-2-0`** : projet toujours existant, non supprimé, 0 domaine custom.
+- **État de sortie** : `kalendhair-4-0` est désormais le projet de production actif sur les 4 domaines custom.
+
+---
+
 ## 2026-06-25 — Session 44 : Correctifs production — PR #43 / #44 / #45
 
 - **Auteur** : Claude Code (exécutant technique).

@@ -381,7 +381,12 @@ Sprint 20 : `prisma validate` ✅ · `prisma generate` ✅ · `npm run lint` ✅
 - **Neon DB** : `kalendhair-4-prod` (Frankfurt, `aws-eu-central-1`) — 44 tables + 24 enums, 13 migrations appliquées
 - **BillingPlan** : ESSENTIAL / PRO / BUSINESS (upsert idempotent, 0 donnée DEV)
 - **AdminUser production** : `hasan@netzinformatique.fr` / `Hasan Biçer` (bcrypt x12, jamais connecté)
-- **Domaines custom** : attachés à `kalend-hair-2-0` uniquement — aucune bascule effectuée
+- **Domaines custom** : bascule effectuée le 2026-06-25 — tous les 4 domaines attachés à `kalendhair-4-0`
+  - `pro.kalendhair.fr` → 200 ✓
+  - `admin.kalendhair.fr` → 200 ✓ (`/admin/login` formulaire visible)
+  - `www.kalendhair.fr` → 200 ✓
+  - `kalendhair.fr` → 200 ✓
+  - `kalend-hair-2-0` existe toujours, 0 domaine custom, non supprimé
 - **Routes testées** :
   - `/` → 200 ✓ · `/login` → 200 ✓ · `/admin/login` → 200 ✓ (formulaire visible)
   - `/admin` → 307 → `/admin/login` ✓ · `/dashboard` → 307 → `/login` ✓
@@ -424,4 +429,4 @@ Sprint 21 : à définir avec ChatGPT.
 
 ---
 
-_Dernière mise à jour : 2026-06-25 — Correctifs production PR #43/#44/#45 mergés, déploiement `dpl_9ErGzhzRYvoRvnvHYAVZHYdrfm7C` actif, 0 erreur P2022, `/admin/login` HTTP 200._
+_Dernière mise à jour : 2026-06-25 — Bascule domaines terminée. Les 4 domaines (`pro.`, `admin.`, `www.`, apex) attachés à `kalendhair-4-0`. `kalend-hair-2-0` non supprimé. `kalendhair-4-0` est le projet de production actif._
