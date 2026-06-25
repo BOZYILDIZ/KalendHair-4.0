@@ -16,9 +16,26 @@
 
 ---
 
-## Prochaine phase : Go Live Readiness
+## Phase actuelle : Pilote Fermé — EN COURS 🚀
 
-> En attente de validation ChatGPT. Aucune nouvelle tâche en cours.
+> Branche : `pilot/closed-pilot-preparation` — PR en attente review ChatGPT.
+
+### Objectifs de la phase pilote fermée
+
+- [x] `docs/PILOT_RUNBOOK.md` — runbook opérationnel complet (18 sections)
+- [x] `npm run lint` ✅ · `npm run typecheck` ✅ · `npm run build` ✅
+- [ ] Review ChatGPT — en attente
+- [ ] Merge PR `pilot/closed-pilot-preparation` — après validation ChatGPT
+- [ ] Sélection des premiers salons pilotes (3–5 salons) — décision Hasan
+- [ ] Onboarding premier salon pilote — processus manuel via Super Admin
+
+### Contraintes de la phase pilote
+
+- Aucun développement fonctionnel majeur
+- Aucun Sprint 21 avant fin du pilote fermé
+- RESEND non configuré (à activer uniquement sur validation Hasan)
+- `salon-beaute-test` conservé (ne pas supprimer sans validation Hasan)
+- Durée cible : 4 semaines par salon
 
 ---
 
