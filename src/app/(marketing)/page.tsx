@@ -2,6 +2,9 @@ import type { Metadata } from 'next'
 import { HeroSection } from './components/sections/hero-section'
 import { TrustStrip } from './components/sections/trust-strip'
 import { ModuleGrid } from './components/sections/module-grid'
+import { FeatureShowcase } from './components/sections/feature-showcase'
+import { PricingTeaser } from './components/sections/pricing-teaser'
+import { PilotCta } from './components/sections/pilot-cta'
 
 export const metadata: Metadata = {
   title: 'KalendHair — Logiciel de gestion pour salons de coiffure',
@@ -21,6 +24,9 @@ export default function HomePage() {
       <HeroSection />
       <TrustStrip />
       <ModuleGrid />
+      <FeatureShowcase />
+      <PricingTeaser />
+      <PilotCta />
     </>
   )
 }
