@@ -4,6 +4,26 @@
 
 ---
 
+## 2026-06-25 — Session 47 : Phase Pilote Fermé — Clôture officielle
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : Pilote Fermé — clôture officielle.
+- **Actions** :
+  - PR #49 (`pilot/closed-pilot-preparation`) mergée dans `main` (merge commit `0e3cd2a`).
+  - Branche `pilot/closed-pilot-preparation` supprimée (locale + distante).
+  - Déploiement production `dpl_EV43Eg9Tk65b2SQgrpXpursjxrqH` — statut READY.
+  - Build : `prisma generate && next build` ✅ — 68 routes, TypeScript OK, warnings pré-existants inchangés.
+- **Tests runtime** :
+  - `https://kalendhair.fr` → 200 ✓
+  - `https://pro.kalendhair.fr/login` → 200 ✓
+  - `https://admin.kalendhair.fr/admin/login` → 200 ✓
+  - `https://pro.kalendhair.fr/dashboard` → 307 → `/login` ✓
+  - `https://admin.kalendhair.fr/admin` → 307 → `/admin/login` ✓
+- **Logs** : 0 erreur, 0 warning nouveau — hits propres sur toutes les routes testées.
+- **État de sortie** : `main` HEAD = `0e3cd2a`. `kalendhair-4-0` est le projet de production actif. KalendHair 4.0 est officiellement prêt à accueillir les premiers salons pilotes.
+
+---
+
 ## 2026-06-25 — Session 46 : Phase Pilote Fermé — Préparation
 
 - **Auteur** : Claude Code (exécutant technique).

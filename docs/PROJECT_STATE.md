@@ -398,13 +398,15 @@ Sprint 20 : `prisma validate` ✅ · `prisma generate` ✅ · `npm run lint` ✅
 
 **Go Live Readiness** — TERMINÉE ✅ (PR #47 + #48 mergées, SHA `3ad8143`, verdict READY FOR CLOSED PILOT)
 
-**Phase Pilote Fermé** — EN COURS 🚀
+**Phase Pilote Fermé — Préparation** — TERMINÉE ✅ (PR #49 mergée, SHA `0e3cd2a`, déploiement `dpl_EV43Eg9Tk65b2SQgrpXpursjxrqH`)
 
-- Branche : `pilot/closed-pilot-preparation` — PR ouverte, en attente review ChatGPT
-- Runbook opérationnel : `docs/PILOT_RUNBOOK.md` (18 sections)
+**Phase Pilote Fermé — Opérationnel** — EN ATTENTE SALONS 🚀
+
+- Runbook opérationnel : `docs/PILOT_RUNBOOK.md` (18 sections) — sur `main`
 - RESEND non configuré — à activer uniquement sur validation Hasan
 - `salon-beaute-test` conservé — ne pas supprimer sans validation Hasan
 - Aucun Sprint 21 avant fin du pilote fermé
+- Prochaine action : sélection des salons pilotes (décision Hasan)
 
 ## Prochaine étape
 
@@ -441,4 +443,4 @@ Sprint 21 : à définir avec ChatGPT après fin du pilote fermé.
 
 ---
 
-_Dernière mise à jour : 2026-06-25 — Phase Pilote Fermé lancée. PR `pilot/closed-pilot-preparation` ouverte. `docs/PILOT_RUNBOOK.md` créé. `kalendhair-4-0` est le projet de production actif sur les 4 domaines custom._
+_Dernière mise à jour : 2026-06-25 — Clôture officielle de la phase Closed Pilot Preparation. PR #49 mergée (SHA `0e3cd2a`), déploiement `dpl_EV43Eg9Tk65b2SQgrpXpursjxrqH` READY. `docs/PILOT_RUNBOOK.md` présent sur main. KalendHair 4.0 est officiellement prêt à accueillir les premiers salons pilotes._

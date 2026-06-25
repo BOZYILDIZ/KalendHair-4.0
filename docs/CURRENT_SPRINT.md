@@ -16,16 +16,19 @@
 
 ---
 
-## Phase actuelle : Pilote Fermé — EN COURS 🚀
+## Phase actuelle : Pilote Fermé — OPÉRATIONNEL 🚀
 
-> Branche : `pilot/closed-pilot-preparation` — PR en attente review ChatGPT.
+> PR #49 mergée (SHA `0e3cd2a`), déploiement `dpl_EV43Eg9Tk65b2SQgrpXpursjxrqH` READY.
+> Aucune branche de travail active — `main` est la seule branche.
 
 ### Objectifs de la phase pilote fermée
 
 - [x] `docs/PILOT_RUNBOOK.md` — runbook opérationnel complet (18 sections)
 - [x] `npm run lint` ✅ · `npm run typecheck` ✅ · `npm run build` ✅
-- [ ] Review ChatGPT — en attente
-- [ ] Merge PR `pilot/closed-pilot-preparation` — après validation ChatGPT
+- [x] Review ChatGPT — validée
+- [x] Merge PR #49 — `main` HEAD `0e3cd2a`
+- [x] Déploiement production READY — `dpl_EV43Eg9Tk65b2SQgrpXpursjxrqH`
+- [x] Tests runtime 5/5 ✅
 - [ ] Sélection des premiers salons pilotes (3–5 salons) — décision Hasan
 - [ ] Onboarding premier salon pilote — processus manuel via Super Admin
 
