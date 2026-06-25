@@ -374,6 +374,21 @@ Sprint 20 : `prisma validate` ✅ · `prisma generate` ✅ · `npm run lint` ✅
 - Migrations appliquées : voir tableau ci-dessus.
 - Seed DEV : `owner@test.local / Test1234!` + Salon "Salon Test" (commande : `pnpm db:seed`).
 
+## Production Vercel (`kalendhair-4-0`)
+
+- **Déploiement actif** : `dpl_9ErGzhzRYvoRvnvHYAVZHYdrfm7C` — alias `https://kalendhair-4-0.vercel.app`
+- **Script build Vercel** : `prisma generate && next build` (package.json, PR #45, SHA `2cb6778`)
+- **Neon DB** : `kalendhair-4-prod` (Frankfurt, `aws-eu-central-1`) — 44 tables + 24 enums, 13 migrations appliquées
+- **BillingPlan** : ESSENTIAL / PRO / BUSINESS (upsert idempotent, 0 donnée DEV)
+- **AdminUser production** : `hasan@netzinformatique.fr` / `Hasan Biçer` (bcrypt x12, jamais connecté)
+- **Domaines custom** : attachés à `kalend-hair-2-0` uniquement — aucune bascule effectuée
+- **Routes testées** :
+  - `/` → 200 ✓ · `/login` → 200 ✓ · `/admin/login` → 200 ✓ (formulaire visible)
+  - `/admin` → 307 → `/admin/login` ✓ · `/dashboard` → 307 → `/login` ✓
+- **Erreurs résolues** :
+  - P2022 `admin_users.passwordHash` — corrigé PR #44 (@map) + PR #45 (prisma generate dans build)
+  - Redirect loop `/admin/login` — corrigé PR #43 (route group `(protected)`)
+
 ## Prochaine étape
 
 Sprint 21 : à définir avec ChatGPT.
@@ -409,4 +424,4 @@ Sprint 21 : à définir avec ChatGPT.
 
 ---
 
-_Dernière mise à jour : 2026-06-24 — Sprint 20 Commissions Employés TERMINÉ, PR #41 mergée (merge commit b44e07f), tag v2.1.0-commissions._
+_Dernière mise à jour : 2026-06-25 — Correctifs production PR #43/#44/#45 mergés, déploiement `dpl_9ErGzhzRYvoRvnvHYAVZHYdrfm7C` actif, 0 erreur P2022, `/admin/login` HTTP 200._

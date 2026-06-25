@@ -4,6 +4,24 @@
 
 ---
 
+## 2026-06-25 — Session 44 : Correctifs production — PR #43 / #44 / #45
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : Production — correctifs runtime Vercel.
+- **PRs mergées** :
+  - **PR #43** (`fix/vercel-production-runtime`) — restructuration route group `(admin)/admin/(protected)/` pour sortir `/admin/login` du layout protégé → suppression redirect loop 307.
+  - **PR #44** (`fix/prisma-sprint19-schema-drift`) — ajout 22 `@map` manquants sur 6 modèles Sprint 19 (`AdminUser`, `AdminAuditLog`, `BillingDiscount`, `AdminImpersonationLog`, `OrganizationAdminNote`, `Organization`, `OrganizationSubscription`) → résolution erreur P2022 `admin_users.passwordHash`.
+  - **PR #45** (`fix/vercel-prisma-generate-build`) — `package.json` build script : `"next build"` → `"prisma generate && next build"` → garantit que le client Prisma est régénéré à chaque build Vercel même avec cache pnpm "Already up to date". Merge SHA : `2cb6778`.
+- **Autres actions** :
+  - Neon DB `kalendhair-4-prod` provisionnée (Frankfurt, `aws-eu-central-1`) — 13 migrations appliquées, 44 tables, 24 enums.
+  - BillingPlan ESSENTIAL/PRO/BUSINESS insérés (idempotent, 0 donnée DEV).
+  - AdminUser production créé : `hasan@netzinformatique.fr` / `Hasan Biçer` (bcrypt x12, mot de passe temporaire généré).
+  - Déploiement final `dpl_9ErGzhzRYvoRvnvHYAVZHYdrfm7C` — alias `https://kalendhair-4-0.vercel.app`.
+- **Résultats** : `/` 200, `/login` 200, `/admin/login` 200 (formulaire), `/admin` 307, `/dashboard` 307. Aucune erreur P2022. Aucun domaine custom déplacé.
+- **État de sortie** : PR #45 mergée, branche supprimée, déploiement production actif. En attente test manuel Super Admin par Hasan.
+
+---
+
 ## 2026-06-24 — Session 43 : clôture Sprint 20 — docs/sprint20-closure
 
 - **Auteur** : Claude Code (exécutant technique).
