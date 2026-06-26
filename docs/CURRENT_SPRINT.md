@@ -33,7 +33,21 @@
 - [x] `src/app/(onboarding)/onboarding/actions.ts` — redirect étape 1 → `/onboarding/salon` (au lieu de /dashboard)
 - [x] `prisma generate` ✅ · `npm run lint` ✅ · `npm run typecheck` ✅ · `npm run build` ✅
 
-### Objectifs PR5 — Étape 3 : Configuration métier du salon (EN COURS — branche `onboarding/pr5-services-setup`)
+### Objectifs PR6 — Étape 4 : Configuration des employés (EN COURS — branche `onboarding/pr6-employees-setup`)
+
+- [x] Pas de migration — modèles `Employee` et `EmployeeService` déjà présents en DB
+- [x] `src/lib/schemas/employees-setup.schema.ts` — `EmployeesSetupPayloadSchema` (Zod v4) : tableau d'employés min 1, max 20 ; `EmployeePayloadSchema` : firstName/lastName requis, email optionnel (format ou vide), phone optionnel, color format hex ou vide, isActive, serviceIds min 1 ; `superRefine` : emails uniques (non vides), noms uniques (prénom+nom)
+- [x] `src/app/(onboarding)/onboarding/employees/actions.ts` — `updateEmployeesSetupAction` : requireSession, JSON.parse, Zod, `$transaction` (salon.findUnique par organizationId, vérif serviceIds appartenant au salon, guard appointments, employee.deleteMany avec cascade EmployeeService/EmployeeSchedule, employee.create + employeeService.createMany par boucle), redirect /dashboard
+- [x] `src/app/(onboarding)/onboarding/employees/page.tsx` — Étape 4/6, barre progression, charge employés + services actifs existants
+- [x] `src/app/(onboarding)/onboarding/employees/components/employees-setup-form.tsx` — Client Component : useState employés, add/remove/reorder/edit, JSON payload hidden input, useColor toggle, checkboxes services (tout sélectionner / tout effacer), avertissement si 0 services
+- [x] `src/app/(onboarding)/onboarding/services/actions.ts` — redirect étape 3 → `/onboarding/employees`
+- [x] `npm run lint` ✅ · `npm run typecheck` ✅ · `npm run build` ✅ (route `/onboarding/employees` présente, 76 routes)
+- [ ] Rapport complet de tests — en attente validation ChatGPT
+- [ ] Merge vers `main` — en attente validation ChatGPT
+
+**Note architecture** : Le modèle `Employee` n'a pas de champ `role` (contrairement à `ProUser.ProRole`). Le propriétaire (ProUser OWNER) n'est pas créé automatiquement comme employé — les deux entités sont distinctes (authentification vs agenda/réservations). Le propriétaire peut se créer manuellement comme premier employé s'il travaille dans le salon.
+
+### Objectifs PR5 — Étape 3 : Configuration métier du salon (TERMINÉ ✅ — mergé SHA `476d71e`)
 
 - [x] Migration `20260626000003_service_categories` — table `service_categories` + FK ; colonnes `services.categoryId TEXT` + `services.color TEXT`
 - [x] `prisma/schema.prisma` — modèle `ServiceCategory` + `categoryId String?` + `color String?` sur `Service` + `category` relation (onDelete: SetNull) + back-relations sur `Organization` et `Salon`

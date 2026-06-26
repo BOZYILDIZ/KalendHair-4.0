@@ -122,6 +122,6 @@ export async function updateServicesSetupAction(
     return { error: "Une erreur est survenue lors de la sauvegarde. Veuillez réessayer." };
   }
 
-  // ── 5. Étape 3 terminée → étape suivante ─────────────────────────────────
-  redirect("/dashboard");
+  // ── 5. Étape 3 terminée → étape 4 employés ───────────────────────────────
+  redirect("/onboarding/employees");
 }
