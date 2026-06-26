@@ -16,10 +16,16 @@
 
 ---
 
-## Phase actuelle : Product Phase 1 — Marketing Website v1 (EN COURS)
+## Phase actuelle : Product Phase 2 — Self-Service Onboarding (EN COURS)
 
-> Branche `marketing/website-v1-architecture` — PR #50 ouverte.
+> PR1 — Documentation architecture : branche `onboarding/pr1-architecture`.
 > En attente validation finale ChatGPT avant toute implémentation.
+
+---
+
+## Phase Product Phase 1 — Marketing Website v1 : TERMINÉE ✅
+
+> PRs #56–#59 mergées dans `main`. Vitrine prête pour démo commerciale et pilote fermé.
 
 ### Objectifs de la phase Marketing Website v1
 

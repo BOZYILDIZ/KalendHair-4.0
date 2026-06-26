@@ -4,6 +4,33 @@
 
 ---
 
+## 2026-06-26 — Session : Product Phase 2 — PR #60 Architecture Self-Service Onboarding
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : Product Phase 2 — Self-Service Onboarding — PR1 (Architecture).
+- **Branche** : `onboarding/pr1-architecture`
+- **Actions** :
+  - Merge PR #59 (polish) → `marketing/pr8-seo` (sa base stacked)
+  - Rebase PR #58 base → `main` + merge (PRs #56–#59 dans `main`)
+  - Suppression branches `marketing/pr8-seo` et `marketing/pr9-polish`
+  - Création branche `onboarding/pr1-architecture`
+  - Création `docs/SELF_SERVICE_ONBOARDING.md` (architecture complète, 8 sections)
+  - `npm run lint` ✅ · `npm run typecheck` ✅
+- **Architecture documentée** :
+  - Parcours complet : `/inscription` → wizard 6 étapes → `/dashboard`
+  - Migration additive requise : `onboarding_step TEXT` sur `organizations`
+  - Réutilisation maximale : `saveSalonSchedule`, `signToken`, `hashPassword`, `checkRateLimit`, `AuditLog`
+  - Middleware modifications prévues (guard /onboarding + redirect si step ≠ COMPLETED)
+  - Roadmap 5 PRs : pr1-architecture / pr2-signup / pr3-wizard-salon / pr4-wizard-config / pr5-finalisation
+- **Décisions** :
+  - Onboarding state dérivé de `Organization.onboardingStep` (nouveau champ, migration PR2)
+  - Comptes existants (salons pilotes) : `null` → traité comme `COMPLETED` (zéro régression)
+  - Email vérification différée Phase 3 (RESEND non activé)
+  - Pas de paiement Stripe — TRIAL simulé via `upsertSubscription` existant
+- **État de sortie** : PR #60 prête. En attente validation ChatGPT.
+
+---
+
 ## 2026-06-26 — Session : Product Phase 1 — PR #59 Polish
 
 - **Auteur** : Claude Code (exécutant technique).
