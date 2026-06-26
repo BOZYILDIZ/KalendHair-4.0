@@ -4,6 +4,32 @@
 
 ---
 
+## 2026-06-26 — Session : Product Phase 1 — PR #59 Polish
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : Product Phase 1 — Marketing Website v1 — PR9 (Polish / Finition).
+- **Branche** : `marketing/pr9-polish`
+- **Actions** :
+  - `src/app/icon.svg` — Favicon SVG (logo K indigo #4f46e5, 32×32, rx=6) — file-based convention Next.js
+  - `src/app/apple-icon.tsx` — Apple Touch Icon 180×180 via `ImageResponse` (`next/og`)
+  - `src/app/(marketing)/opengraph-image.tsx` — OG image 1200×630, dark navy, radial glow, K logo, badge pilote
+  - `src/app/(marketing)/twitter-image.tsx` — Twitter image 1200×630, même branding, tagline modules
+  - `src/app/(marketing)/layout.tsx` — Skip navigation + `id="main-content"` sur `<main>`
+  - `src/app/layout.tsx` — Suppression des `icons:` cassés (remplacés par file-based convention)
+  - `docs/MARKETING_RELEASE_CHECKLIST.md` — Checklist complète 7 sections : branding, SEO, responsive, accessibilité, captures, Lighthouse, lancement
+  - `docs/SCREENSHOTS_SPEC.md` — Spec 15 captures produit : dimensions, nommage, contenu démo, intégration next/image
+  - `npm run lint` ✅ · `npm run typecheck` ✅ · `npm run build` ✅ (21 pages statiques, 0 warning)
+  - Zéro régression dashboard/admin/booking
+- **Décisions** :
+  - `★` remplace `✦` dans opengraph-image.tsx (✦ causait un avertissement de font dynamique next/og non-bloquant mais corrigé)
+  - `app/icon.svg` + `app/apple-icon.tsx` : convention file-based Next.js 16 — aucun fichier ICO/PNG requis pour le favicon et l'apple icon
+  - OG image et Twitter image dans `app/(marketing)/` (pas root) pour ne s'appliquer qu'aux routes marketing
+  - FAQPage JSON-LD sur `/aide` : différé — page absente de cette branche (créée dans PR #55 sur une branche séparée)
+  - Screenshots : spécifiés dans SCREENSHOTS_SPEC.md, à créer après constitution du salon "L'Atelier Lumière"
+- **État de sortie** : PR #59 prête à livrer. En attente validation ChatGPT.
+
+---
+
 ## 2026-06-26 — Session : Product Phase 1 — PR #58 SEO
 
 - **Auteur** : Claude Code (exécutant technique).

@@ -41,6 +41,7 @@
 - [ ] PR5 — Page `/contact` + Server Action + `/contact/merci`
 - [x] PR6 — Pages légales : `/mentions-legales`, `/confidentialite`, `/conditions-utilisation` (PR #57)
 - [x] PR7 — SEO : `sitemap.ts`, `robots.ts`, `manifest.ts`, JSON-LD (Organization + SoftwareApplication + BreadcrumbList), metadata complètes (PR #58)
+- [x] PR8 — Polish / Finition : branding assets (icon.svg, apple-icon.tsx, opengraph-image.tsx, twitter-image.tsx), skip nav, accessibilité, MARKETING_RELEASE_CHECKLIST.md, SCREENSHOTS_SPEC.md (PR #59 — en attente validation ChatGPT)
 - [ ] Constitution du salon de démonstration "L'Atelier Lumière"
 - [ ] 20 captures produit (après salon démo constitué)
 

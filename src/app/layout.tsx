@@ -25,10 +25,6 @@ export const metadata: Metadata = {
   authors: [{ name: "KalendHair", url: "https://kalendhair.fr" }],
   creator: "KalendHair",
   robots: { index: true, follow: true },
-  icons: {
-    icon: "/favicon.ico",
-    apple: "/apple-touch-icon.png",
-  },
 };
 
 export default function RootLayout({
