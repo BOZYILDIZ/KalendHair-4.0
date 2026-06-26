@@ -4,6 +4,31 @@
 
 ---
 
+## 2026-06-26 — Session : Product Phase 2 — PR #65 Étape 4 : Configuration des employés
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : Product Phase 2 — Self-Service Onboarding — PR6 (Employees Setup Step 4).
+- **Branche** : `onboarding/pr6-employees-setup`
+- **Actions** :
+  - Merge PR #64 (Services Setup) → `main` (SHA `476d71e`)
+  - Création branche `onboarding/pr6-employees-setup`
+  - Pas de migration — modèles `Employee` et `EmployeeService` déjà présents
+  - `src/lib/schemas/employees-setup.schema.ts` — `EmployeesSetupPayloadSchema` (Zod v4, superRefine : emails uniques, noms uniques)
+  - `src/app/(onboarding)/onboarding/employees/actions.ts` — `updateEmployeesSetupAction` : requireSession, JSON.parse, Zod, $transaction (vérif serviceIds cross-tenant, guard appointments, deleteMany cascade, createMany employees + employeeServices)
+  - `src/app/(onboarding)/onboarding/employees/page.tsx` — Étape 4/6, charge employés + services actifs
+  - `src/app/(onboarding)/onboarding/employees/components/employees-setup-form.tsx` — useState, add/remove/reorder/edit, checkboxes services, JSON payload
+  - `src/app/(onboarding)/onboarding/services/actions.ts` — redirect → `/onboarding/employees`
+  - `npm run lint` ✅ · `npm run typecheck` ✅ · `npm run build` ✅ (76 routes, `/onboarding/employees` présent)
+- **Architecture** :
+  - Payload JSON hidden input — même pattern que step 3
+  - Vérification anti cross-tenant des serviceIds via `service.findMany({ where: { salonId: salon.id } })`
+  - `employee.deleteMany` cascade-supprime `EmployeeService` et `EmployeeSchedule` au niveau DB (FK `ON DELETE CASCADE`)
+  - `Employee.role` absent du modèle — documenté (ProUser.ProRole distinct de Employee)
+  - Guard `appointment.findFirst` avant deleteMany — erreur explicite si RDV existants
+- **État de sortie** : PR #65 prête. En attente validation ChatGPT.
+
+---
+
 ## 2026-06-26 — Session : Product Phase 2 — PR #64 Étape 3 : Configuration métier du salon (Services)
 
 - **Auteur** : Claude Code (exécutant technique).
