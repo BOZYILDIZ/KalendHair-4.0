@@ -21,6 +21,15 @@
 > PR1 ✅ mergée (`onboarding/pr1-architecture` — docs SELF_SERVICE_ONBOARDING.md).
 > PR2 — Self-Service Signup : branche `onboarding/pr2-signup`. En attente validation ChatGPT avant merge.
 
+### Objectifs PR3 — Wizard Shell (Organisation + Salon + Subscription)
+
+- [x] `src/lib/schemas/onboarding.schema.ts` — Zod : organizationName, salonName, city, postalCode (regex 5 chiffres), address?, phone?, planCode enum
+- [x] `src/app/(onboarding)/onboarding/actions.ts` — `createOrganizationAction` : vérif pending_session, guard double-submit, Zod, transaction Prisma (Org + Salon + Subscription + ProUser), delete pending_session, create session, redirect /dashboard
+- [x] `src/app/(onboarding)/onboarding/components/onboarding-form.tsx` — 3 sections (Org / Salon / Plan), cartes radio plan, lien logout, pending state
+- [x] `src/app/(onboarding)/onboarding/page.tsx` — charge ProUser, Étape 1/6, guard double-submit
+- [x] `src/app/api/auth/logout/route.ts` — supprime aussi `pending_session`
+- [x] `prisma validate` ✅ · `npm run lint` ✅ · `npm run typecheck` ✅ · `npm run build` ✅
+
 ### Objectifs PR2 — Self-Service Signup
 
 - [x] Migration `20260626000001_prouser_organization_nullable` — `ProUser.organizationId` nullable + FK `ON DELETE SET NULL`
