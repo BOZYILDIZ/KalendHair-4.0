@@ -74,16 +74,20 @@ export async function middleware(request: NextRequest) {
 
   // ── Bloc /onboarding ─────────────────────────────────────────────────────────
   if (pathname.startsWith("/onboarding")) {
-    // Utilisateur déjà authentifié avec organisation → dashboard
     const sessionToken = request.cookies.get("session")?.value;
     if (sessionToken) {
       const session = await verifyToken(sessionToken);
       if (session) {
-        return NextResponse.redirect(new URL("/dashboard", request.url));
+        // Page racine /onboarding (étape 1) : org déjà créée → dashboard
+        if (pathname === "/onboarding") {
+          return NextResponse.redirect(new URL("/dashboard", request.url));
+        }
+        // Sous-étapes du wizard (/onboarding/salon, etc.) : session tenant valide → autorisé
+        return next();
       }
     }
 
-    // Sans pending_session → retour à l'inscription
+    // Sans session valide → pending_session requis pour toutes les routes /onboarding
     const pendingToken = request.cookies.get(PENDING_SESSION_COOKIE)?.value;
     if (!pendingToken) {
       return NextResponse.redirect(new URL("/inscription", request.url));

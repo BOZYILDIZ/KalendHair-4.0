@@ -4,6 +4,34 @@
 
 ---
 
+## 2026-06-26 — Session : Product Phase 2 — PR #63 Étape 2 : Configuration du Salon
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : Product Phase 2 — Self-Service Onboarding — PR4 (Salon Setup Step 2).
+- **Branche** : `onboarding/pr4-salon-setup`
+- **Actions** :
+  - Merge PR #62 (Wizard Shell) → `main` (SHA `6107cb3`)
+  - Suppression branche distante `onboarding/pr3-wizard-shell` (via `gh pr merge --delete-branch`)
+  - Création branche `onboarding/pr4-salon-setup`
+  - Migration `20260626000002_salon_setup_fields` — 4 champs additifs : `Salon.currency`, `Salon.language`, `SalonSchedule.lunchStartMinute`, `SalonSchedule.lunchEndMinute`
+  - `prisma/schema.prisma` — ajout des 4 champs, `prisma generate` ✅
+  - `src/lib/schemas/salon-setup.schema.ts` — SalonSetupSchema + DayScheduleSchema (superRefine) + timeToMinutes/minutesToTime
+  - `src/app/(onboarding)/onboarding/salon/actions.ts` — updateSalonSetupAction : session, findUnique(organizationId), Zod, $transaction (salon.update + schedules deleteMany + createMany), redirect /dashboard
+  - `src/app/(onboarding)/onboarding/salon/page.tsx` — Étape 2/6, barre progression, pré-remplissage depuis DB
+  - `src/app/(onboarding)/onboarding/salon/components/salon-setup-form.tsx` — toggles jours (useState), horaires conditionnels, pause déjeuner, select locale, logo placeholder
+  - `src/middleware.ts` — sous-étapes wizard autorisées avec session tenant (pathname !== "/onboarding" + session → next())
+  - `src/app/(onboarding)/onboarding/actions.ts` — redirect fin étape 1 → `/onboarding/salon`
+  - `prisma generate` ✅ · `npm run lint` ✅ · `npm run typecheck` ✅ · `npm run build` ✅
+- **Architecture** :
+  - Authentification via `requireSession()` (session tenant, pas pending_session)
+  - Salon trouvé par `organizationId` via `@@unique([organizationId])` — sécurité multi-tenant garantie
+  - Transaction : `salon.update + salonSchedule.deleteMany + salonSchedule.createMany` (7 entrées, jours fermés inclus avec isOpen:false)
+  - Horaires stockés en minutes depuis minuit (startMinute/endMinute) — compatible avec booking existant
+  - Middleware: `/onboarding/salon` + session → `next()` ; `/onboarding` root + session → redirect /dashboard (inchangé)
+- **État de sortie** : PR #63 prête. En attente validation ChatGPT.
+
+---
+
 ## 2026-06-26 — Session : Product Phase 2 — PR #62 Wizard Shell (Organisation + Salon + Subscription)
 
 - **Auteur** : Claude Code (exécutant technique).
