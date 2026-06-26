@@ -443,4 +443,4 @@ Sprint 21 : à définir avec ChatGPT après fin du pilote fermé.
 
 ---
 
-_Dernière mise à jour : 2026-06-25 — Clôture officielle de la phase Closed Pilot Preparation. PR #49 mergée (SHA `0e3cd2a`), déploiement `dpl_EV43Eg9Tk65b2SQgrpXpursjxrqH` READY. `docs/PILOT_RUNBOOK.md` présent sur main. KalendHair 4.0 est officiellement prêt à accueillir les premiers salons pilotes._
+_Dernière mise à jour : 2026-06-26 — Phase marketing vitrine v1 : PR #59 (Polish) prête, en attente validation ChatGPT. Branche `marketing/pr9-polish`. Build ✅ (21 pages statiques), lint ✅, typecheck ✅. Branding (icon.svg, apple-icon, OG image, Twitter image), skip nav, accessibilité, MARKETING_RELEASE_CHECKLIST.md et SCREENSHOTS_SPEC.md livrés._
