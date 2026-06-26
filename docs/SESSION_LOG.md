@@ -4,6 +4,29 @@
 
 ---
 
+## 2026-06-26 — Session : Product Phase 2 — PR #62 Wizard Shell (Organisation + Salon + Subscription)
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : Product Phase 2 — Self-Service Onboarding — PR3 (Wizard Shell).
+- **Branche** : `onboarding/pr3-wizard-shell`
+- **Actions** :
+  - Merge PR #61 (Self-Service Signup) → `main` (SHA `38d921f`)
+  - Création branche `onboarding/pr3-wizard-shell`
+  - `src/lib/schemas/onboarding.schema.ts` — Zod : 7 champs, postalCode regex 5 chiffres, planCode enum
+  - `src/app/(onboarding)/onboarding/actions.ts` — `createOrganizationAction` : vérif pending_session, guard double-submit, Zod, transaction (Org + Salon + Subscription + ProUser.organizationId), delete pending_session, create session, redirect /dashboard
+  - `src/app/(onboarding)/onboarding/components/onboarding-form.tsx` — Client Component : useActionState, 3 sections (Org / Salon / Plan), 3 cartes plan radio, lien logout
+  - `src/app/(onboarding)/onboarding/page.tsx` — remplace placeholder : charge ProUser, guard double-submit, Étape 1 sur 6
+  - `src/app/api/auth/logout/route.ts` — supprime aussi `pending_session` (correction limitation PR #61)
+  - `prisma validate` ✅ · `prisma generate` ✅ · `npm run lint` ✅ · `npm run typecheck` ✅ · `npm run build` ✅
+- **Architecture** :
+  - Transaction atomique Prisma : Organization + Salon + OrganizationSubscription + ProUser.organizationId
+  - Slug généré serveur-side : `toSlug(name) + crypto.randomUUID().slice(0,8)`
+  - Double-submit guard : `proUser.organizationId !== null` → create session + redirect /dashboard
+  - pending_session → session tenant classique en fin de transaction réussie
+- **État de sortie** : PR #62 prête. En attente validation ChatGPT.
+
+---
+
 ## 2026-06-26 — Session : Product Phase 2 — PR #61 Self-Service Signup
 
 - **Auteur** : Claude Code (exécutant technique).
