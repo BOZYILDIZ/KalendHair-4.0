@@ -3,6 +3,7 @@ import { PageHero } from "../components/ui/page-hero";
 import { Container } from "../components/ui/container";
 import { Button } from "../components/ui/button";
 import { PilotContactForm } from "./components/pilot-contact-form";
+import { JsonLd } from "../components/ui/json-ld";
 
 /* ─── Metadata ──────────────────────────────────────────────────────────────── */
 
@@ -10,12 +11,29 @@ export const metadata: Metadata = {
   title: "Rejoindre le pilote — KalendHair",
   description:
     "Candidatez pour rejoindre les premiers salons pilotes KalendHair. Accès gratuit complet, accompagnement personnalisé. Logiciel de gestion pour salon de coiffure.",
+  alternates: { canonical: "https://kalendhair.fr/contact" },
   openGraph: {
     title: "Rejoindre le pilote — KalendHair",
     description:
       "Candidatez pour accéder gratuitement à KalendHair. Agenda, réservation, CRM, caisse, stocks — accompagnement personnalisé inclus.",
+    url: "https://kalendhair.fr/contact",
     type: "website",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Rejoindre le pilote — KalendHair",
+    description:
+      "Accès gratuit complet à KalendHair. Agenda, CRM, caisse, stocks — accompagnement personnalisé.",
+  },
+};
+
+const BREADCRUMB_LD = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Accueil", item: "https://kalendhair.fr/" },
+    { "@type": "ListItem", position: 2, name: "Rejoindre le pilote", item: "https://kalendhair.fr/contact" },
+  ],
 };
 
 /* ─── Sidebar blocks ─────────────────────────────────────────────────────────── */
@@ -60,6 +78,7 @@ function SidebarBlock({
 export default function ContactPage() {
   return (
     <>
+      <JsonLd data={BREADCRUMB_LD} />
       <PageHero
         badge="Pilote fermé"
         title="Rejoignez les premiers salons pilotes"

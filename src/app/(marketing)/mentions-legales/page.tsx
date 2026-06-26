@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PageHero } from "../components/ui/page-hero";
 import { Container } from "../components/ui/container";
+import { JsonLd } from "../components/ui/json-ld";
 
 /* ─── Metadata ──────────────────────────────────────────────────────────────── */
 
@@ -8,11 +9,27 @@ export const metadata: Metadata = {
   title: "Mentions légales — KalendHair",
   description:
     "Mentions légales du site kalendhair.fr — éditeur, hébergeur, propriété intellectuelle et conditions d'utilisation.",
+  alternates: { canonical: "https://kalendhair.fr/mentions-legales" },
   openGraph: {
     title: "Mentions légales — KalendHair",
     description: "Mentions légales du site kalendhair.fr.",
+    url: "https://kalendhair.fr/mentions-legales",
     type: "website",
   },
+  twitter: {
+    card: "summary",
+    title: "Mentions légales — KalendHair",
+    description: "Mentions légales du site kalendhair.fr.",
+  },
+};
+
+const BREADCRUMB_LD = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Accueil", item: "https://kalendhair.fr/" },
+    { "@type": "ListItem", position: 2, name: "Mentions légales", item: "https://kalendhair.fr/mentions-legales" },
+  ],
 };
 
 /* ─── Helpers ───────────────────────────────────────────────────────────────── */
@@ -31,6 +48,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 export default function MentionsLegalesPage() {
   return (
     <>
+      <JsonLd data={BREADCRUMB_LD} />
       <PageHero
         badge="Légal"
         title="Mentions légales"

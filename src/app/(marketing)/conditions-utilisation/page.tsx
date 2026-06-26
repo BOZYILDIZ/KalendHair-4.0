@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PageHero } from "../components/ui/page-hero";
 import { Container } from "../components/ui/container";
+import { JsonLd } from "../components/ui/json-ld";
 
 /* ─── Metadata ──────────────────────────────────────────────────────────────── */
 
@@ -8,12 +9,28 @@ export const metadata: Metadata = {
   title: "Conditions d'utilisation — KalendHair",
   description:
     "Conditions générales d'utilisation du site kalendhair.fr et du programme pilote KalendHair.",
+  alternates: { canonical: "https://kalendhair.fr/conditions-utilisation" },
   openGraph: {
     title: "Conditions d'utilisation — KalendHair",
     description:
       "CGU du site vitrine et du programme pilote KalendHair — accès, utilisation acceptable, disponibilité.",
+    url: "https://kalendhair.fr/conditions-utilisation",
     type: "website",
   },
+  twitter: {
+    card: "summary",
+    title: "Conditions d'utilisation — KalendHair",
+    description: "CGU du site et du programme pilote KalendHair.",
+  },
+};
+
+const BREADCRUMB_LD = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Accueil", item: "https://kalendhair.fr/" },
+    { "@type": "ListItem", position: 2, name: "Conditions d'utilisation", item: "https://kalendhair.fr/conditions-utilisation" },
+  ],
 };
 
 /* ─── Helpers ───────────────────────────────────────────────────────────────── */
@@ -32,6 +49,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 export default function ConditionsUtilisationPage() {
   return (
     <>
+      <JsonLd data={BREADCRUMB_LD} />
       <PageHero
         badge="Légal"
         title={"Conditions d'utilisation"}

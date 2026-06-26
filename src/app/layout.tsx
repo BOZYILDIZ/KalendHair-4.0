@@ -15,8 +15,20 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "KalendHair 4.0",
-  description: "SaaS de gestion de rendez-vous pour salons de coiffure.",
+  metadataBase: new URL("https://kalendhair.fr"),
+  title: {
+    default: "KalendHair — Logiciel de gestion de salon de coiffure",
+    template: "%s | KalendHair",
+  },
+  description:
+    "Logiciel de gestion pour salons de coiffure. Agenda, réservation en ligne, CRM clients, caisse et stocks.",
+  authors: [{ name: "KalendHair", url: "https://kalendhair.fr" }],
+  creator: "KalendHair",
+  robots: { index: true, follow: true },
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 export default function RootLayout({

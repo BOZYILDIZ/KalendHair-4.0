@@ -40,7 +40,7 @@
 - [ ] PR4 — Pages ressources : `/tarifs`, `/a-propos`, `/roadmap`, `/aide`
 - [ ] PR5 — Page `/contact` + Server Action + `/contact/merci`
 - [x] PR6 — Pages légales : `/mentions-legales`, `/confidentialite`, `/conditions-utilisation` (PR #57)
-- [ ] PR7 — SEO : `sitemap.ts`, `robots.ts`, JSON-LD, metadata complètes
+- [x] PR7 — SEO : `sitemap.ts`, `robots.ts`, `manifest.ts`, JSON-LD (Organization + SoftwareApplication + BreadcrumbList), metadata complètes (PR #58)
 - [ ] Constitution du salon de démonstration "L'Atelier Lumière"
 - [ ] 20 captures produit (après salon démo constitué)
 

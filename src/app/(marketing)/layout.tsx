@@ -4,7 +4,15 @@ import { MarketingNav } from './components/layout/marketing-nav'
 import { MarketingFooter } from './components/layout/marketing-footer'
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://kalendhair.fr'),
+  metadataBase: new URL("https://kalendhair.fr"),
+  openGraph: {
+    siteName: "KalendHair",
+    locale: "fr_FR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
 }
 
 export default function MarketingLayout({ children }: { children: ReactNode }) {

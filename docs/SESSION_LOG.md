@@ -4,6 +4,34 @@
 
 ---
 
+## 2026-06-26 — Session : Product Phase 1 — PR #58 SEO
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : Product Phase 1 — Marketing Website v1 — PR8 (SEO).
+- **Branche** : `marketing/pr8-seo`
+- **Actions** :
+  - `src/app/sitemap.ts` — 11 URLs marketing (priority/changeFrequency par type) → `○ /sitemap.xml`
+  - `src/app/robots.ts` — allow `/`, disallow `/admin /dashboard /login /book /api /contact/merci` → `○ /robots.txt`
+  - `src/app/manifest.ts` — Web App Manifest (indigo #4f46e5, dark bg, fr) → `○ /manifest.webmanifest`
+  - `src/app/(marketing)/components/ui/json-ld.tsx` — composant `JsonLd` Server Component (dangerouslySetInnerHTML)
+  - `src/app/layout.tsx` — metadataBase, title template, icons structure
+  - `src/app/(marketing)/layout.tsx` — OG defaults (siteName/locale/type) + Twitter summary_large_image
+  - `src/app/(marketing)/page.tsx` — Twitter Cards + JSON-LD Organization + SoftwareApplication
+  - `src/app/(marketing)/contact/page.tsx` — Twitter + canonical + BreadcrumbList JSON-LD
+  - `src/app/(marketing)/mentions-legales/page.tsx` — Twitter + canonical + BreadcrumbList
+  - `src/app/(marketing)/confidentialite/page.tsx` — Twitter + canonical + BreadcrumbList
+  - `src/app/(marketing)/conditions-utilisation/page.tsx` — Twitter + canonical + BreadcrumbList
+  - `npm run lint` ✅ · `npm run typecheck` ✅ · `npm run build` ✅
+  - Zéro régression dashboard/admin/booking
+- **Décisions** :
+  - FAQPage JSON-LD (pour /aide) : page non présente sur cette branche → différé au merge
+  - JSON-LD en constantes de module (pas dynamiques) : prerender correct pour sitemap statique
+  - `twitter.card: 'summary'` sur pages légales (pas de grande image) vs `summary_large_image` sur pages produit
+  - Icon assets (`favicon.ico`, `apple-touch-icon.png`, `icon-192.png`, `icon-512.png`) : structure déclarée, fichiers physiques à ajouter dans `public/` lors de la finalisation du branding
+- **État de sortie** : PR #58 livrée. En attente validation ChatGPT.
+
+---
+
 ## 2026-06-25 — Session : Product Phase 1 — PR #57 Pages légales
 
 - **Auteur** : Claude Code (exécutant technique).

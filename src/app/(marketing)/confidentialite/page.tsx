@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PageHero } from "../components/ui/page-hero";
 import { Container } from "../components/ui/container";
+import { JsonLd } from "../components/ui/json-ld";
 
 /* ─── Metadata ──────────────────────────────────────────────────────────────── */
 
@@ -8,12 +9,28 @@ export const metadata: Metadata = {
   title: "Politique de confidentialité — KalendHair",
   description:
     "Politique de confidentialité et protection des données personnelles de KalendHair. RGPD, données collectées, droits des utilisateurs.",
+  alternates: { canonical: "https://kalendhair.fr/confidentialite" },
   openGraph: {
     title: "Politique de confidentialité — KalendHair",
     description:
       "Données collectées, finalités, sous-traitants et droits RGPD — KalendHair.",
+    url: "https://kalendhair.fr/confidentialite",
     type: "website",
   },
+  twitter: {
+    card: "summary",
+    title: "Politique de confidentialité — KalendHair",
+    description: "Données collectées, droits RGPD et sous-traitants — KalendHair.",
+  },
+};
+
+const BREADCRUMB_LD = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Accueil", item: "https://kalendhair.fr/" },
+    { "@type": "ListItem", position: 2, name: "Politique de confidentialité", item: "https://kalendhair.fr/confidentialite" },
+  ],
 };
 
 /* ─── Helpers ───────────────────────────────────────────────────────────────── */
@@ -41,6 +58,7 @@ function SubSection({ title, children }: { title: string; children: React.ReactN
 export default function ConfidentialitePage() {
   return (
     <>
+      <JsonLd data={BREADCRUMB_LD} />
       <PageHero
         badge="RGPD"
         title="Politique de confidentialité"
