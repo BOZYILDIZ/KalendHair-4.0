@@ -199,5 +199,5 @@ export async function createOrganizationAction(
     path: "/",
   });
 
-  redirect("/dashboard");
+  redirect("/onboarding/salon");
 }

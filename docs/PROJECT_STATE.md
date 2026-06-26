@@ -104,6 +104,9 @@
   - `/dashboard/billing` — dashboard abonnement : plan actuel, statut, période, quotas salons/employés, changement de plan/cycle (**Sprint 18**)
   - `/dashboard/plans` — catalogue plans ESSENTIAL/PRO/BUSINESS avec prix, features, marquage plan actuel (**Sprint 18**)
   - `/dashboard/suspended` — page organisation suspendue (accessible sans vérification, affiche raison) (**Sprint 19**)
+  - `/onboarding` — Étape 1 : création Organisation + Salon + Subscription (wizard, pending_session → session) (**Phase 2 PR3**)
+  - `/onboarding/salon` — Étape 2 : configuration salon (horaires, timezone, devise, langue) (**Phase 2 PR4**)
+  - `/inscription` — Self-Service Signup (ProUser sans org, pending_session) (**Phase 2 PR2**)
   - `/admin/login` — connexion Super Admin (AdminUser, cookie admin_session séparé) (**Sprint 19**)
   - `/admin` — tableau de bord admin : stats MRR/ARR, abonnements, orgs suspendues, remises actives (**Sprint 19**)
   - `/admin/organizations` — liste toutes les organisations + recherche nom/email + filtre statut (**Sprint 19**)
@@ -129,7 +132,7 @@
 - **Services métier** : `src/features/organizations/` + `src/features/salons/` + `src/features/employees/` + `src/features/services/` + `src/features/schedules/` + `src/features/appointments/` + `src/features/clients/` + `src/features/dashboard/` + `src/features/payments/` + `src/features/notifications/` + `src/features/inventory/` + `src/features/suppliers/` + `src/features/purchase-orders/` + `src/features/billing/` + `src/features/admin/` + `src/features/commissions/`
 - **Validation** : `zod@4.4.3` — Server Actions
 - **Seed DEV** : `owner@test.local / Test1234!` (Organisation "Salon Test") + `admin@kalend.dev / AdminDev123!` (SuperAdmin).
-- **Schéma Prisma** : 43 modèles + 24 enums + 13 migrations (4 appliquées + 9 en attente Docker).
+- **Schéma Prisma** : 43 modèles + 24 enums + 15 migrations (2 ajoutées pour Self-Service Onboarding Phase 2 : ProUser.organizationId nullable + Salon.currency/language/SalonSchedule.lunchStart/End).
 - **Dépendances Sprint 8** : `date-fns-tz@3.2.0` (conversion timezone ↔ UTC).
 - **Dépendances Sprint 9** : `date-fns@4.4.0` (requis par `date-fns-tz`).
 - **CRM Sprint 10** :
