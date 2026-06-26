@@ -260,7 +260,7 @@ export function MarketingNav() {
               Se connecter
             </a>
             <Link
-              href="/contact?type=essai"
+              href="/inscription"
               className="inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
             >
               Essayer gratuitement
@@ -393,7 +393,7 @@ export function MarketingNav() {
                 Se connecter ↗
               </a>
               <Link
-                href="/contact?type=essai"
+                href="/inscription"
                 className="mt-1 flex items-center justify-center rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-700"
                 onClick={closeMobile}
               >

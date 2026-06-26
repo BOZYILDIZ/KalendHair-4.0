@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { validateCredentials } from "@/features/auth/auth.service";
 import { signToken } from "@/features/auth/session.utils";
+import { signPendingToken, PENDING_SESSION_COOKIE } from "@/lib/auth/pending-session";
 import { checkRateLimit } from "@/lib/rate-limit/in-memory";
 import { getClientIP } from "@/lib/rate-limit/get-ip";
 
@@ -34,13 +35,27 @@ export async function login(
     return { error: "Email ou mot de passe incorrect." };
   }
 
+  const cookieStore = await cookies();
+
+  // Compte sans organisation : l'onboarding n'est pas terminé
+  if (!user.organizationId) {
+    const token = await signPendingToken(user.id);
+    cookieStore.set(PENDING_SESSION_COOKIE, token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 86400,
+      path: "/",
+    });
+    redirect("/onboarding");
+  }
+
   const token = await signToken({
     id: user.id,
     organizationId: user.organizationId,
     role: user.role,
   });
 
-  const cookieStore = await cookies();
   cookieStore.set("session", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",

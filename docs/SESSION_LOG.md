@@ -4,6 +4,35 @@
 
 ---
 
+## 2026-06-26 — Session : Product Phase 2 — PR #61 Self-Service Signup
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : Product Phase 2 — Self-Service Onboarding — PR2 (Self-Service Signup).
+- **Branche** : `onboarding/pr2-signup`
+- **Actions** :
+  - Migration `20260626000001_prouser_organization_nullable` — `ProUser.organizationId` nullable + FK SET NULL
+  - `prisma/schema.prisma` — `organizationId String?` + `onDelete: SetNull`
+  - `src/lib/auth/pending-session.ts` — JWT audience `pending-onboarding` (signPendingToken / verifyPendingToken)
+  - `src/lib/auth/session.ts` — ajout `getPendingSession()`
+  - `src/lib/schemas/signup.schema.ts` — Zod 7 champs + règles password + CGU/privacy
+  - `src/app/(onboarding)/inscription/actions.ts` — signupAction (rate limit, Zod, createProUser, cookie, redirect)
+  - `src/app/(onboarding)/layout.tsx` — layout minimal
+  - `src/app/(onboarding)/inscription/page.tsx` — page inscription (Server Component)
+  - `src/app/(onboarding)/inscription/components/signup-form.tsx` — formulaire Client Component
+  - `src/app/(onboarding)/onboarding/page.tsx` — placeholder onboarding
+  - `src/app/(auth)/login/actions.ts` — handle organizationId === null → pending_session
+  - `src/middleware.ts` — gardes /inscription et /onboarding
+  - `src/app/(marketing)/components/sections/hero-section.tsx` — CTA → /inscription
+  - `src/app/(marketing)/components/layout/marketing-nav.tsx` — CTA → /inscription (×2)
+  - `src/app/(admin)/admin/(protected)/organizations/[id]/actions.ts` — guard impersonation si org null
+  - `prisma validate` ✅ · `prisma generate` ✅ · `npm run lint` ✅ · `npm run typecheck` ✅ · `npm run build` ✅
+- **Corrections TypeScript** :
+  - Zod v4 : `errorMap` remplacé par `message` dans `z.enum()`
+  - Admin impersonation : guard `!owner.organizationId` avant `signToken`
+- **État de sortie** : PR #61 prête. En attente validation ChatGPT.
+
+---
+
 ## 2026-06-26 — Session : Product Phase 2 — PR #60 Architecture Self-Service Onboarding
 
 - **Auteur** : Claude Code (exécutant technique).

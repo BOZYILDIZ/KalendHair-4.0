@@ -271,7 +271,7 @@ model Organization {
 
 model ProUser {
   id             String   @id @default(cuid())
-  organizationId String
+  organizationId String?
   email          String   @unique
   firstName      String
   lastName       String
@@ -281,7 +281,7 @@ model ProUser {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
   employees       Employee[]
   auditLogs       AuditLog[]     @relation("AuditLogActor")
   createdPayments        Payment[]

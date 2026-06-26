@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { verifyToken } from "@/features/auth/session.utils";
 import { verifyAdminToken } from "@/features/admin/admin-jwt.utils";
+import { verifyPendingToken, PENDING_SESSION_COOKIE } from "@/lib/auth/pending-session";
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -48,9 +49,57 @@ export async function middleware(request: NextRequest) {
     return next();
   }
 
+  // ── Bloc /inscription ────────────────────────────────────────────────────────
+  if (pathname === "/inscription") {
+    // Utilisateur déjà authentifié avec organisation → dashboard
+    const sessionToken = request.cookies.get("session")?.value;
+    if (sessionToken) {
+      const session = await verifyToken(sessionToken);
+      if (session) {
+        return NextResponse.redirect(new URL("/dashboard", request.url));
+      }
+    }
+
+    // Utilisateur en cours d'onboarding → onboarding
+    const pendingToken = request.cookies.get(PENDING_SESSION_COOKIE)?.value;
+    if (pendingToken) {
+      const pending = await verifyPendingToken(pendingToken);
+      if (pending) {
+        return NextResponse.redirect(new URL("/onboarding", request.url));
+      }
+    }
+
+    return next();
+  }
+
+  // ── Bloc /onboarding ─────────────────────────────────────────────────────────
+  if (pathname.startsWith("/onboarding")) {
+    // Utilisateur déjà authentifié avec organisation → dashboard
+    const sessionToken = request.cookies.get("session")?.value;
+    if (sessionToken) {
+      const session = await verifyToken(sessionToken);
+      if (session) {
+        return NextResponse.redirect(new URL("/dashboard", request.url));
+      }
+    }
+
+    // Sans pending_session → retour à l'inscription
+    const pendingToken = request.cookies.get(PENDING_SESSION_COOKIE)?.value;
+    if (!pendingToken) {
+      return NextResponse.redirect(new URL("/inscription", request.url));
+    }
+
+    const pending = await verifyPendingToken(pendingToken);
+    if (!pending) {
+      return NextResponse.redirect(new URL("/inscription", request.url));
+    }
+
+    return next();
+  }
+
   return next();
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/dashboard/:path*"],
+  matcher: ["/admin/:path*", "/dashboard/:path*", "/inscription", "/onboarding/:path*"],
 };
