@@ -76,7 +76,7 @@ export function HeroSection() {
             </p>
 
             <div className="mt-10 flex flex-wrap gap-3 sm:gap-4">
-              <Button href="/contact?type=essai" size="lg">
+              <Button href="/inscription" size="lg">
                 Essayer gratuitement
               </Button>
               <Button href="/demo" variant="outline-white" size="lg">

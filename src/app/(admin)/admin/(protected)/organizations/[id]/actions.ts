@@ -171,6 +171,7 @@ export async function startImpersonationAction(
   });
 
   if (!owner) redirect(`/admin/organizations/${orgId}`);
+  if (!owner.organizationId) redirect(`/admin/organizations/${orgId}`);
 
   const impersonateToken = await signToken({
     id: owner.id,

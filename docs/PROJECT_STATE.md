@@ -443,4 +443,4 @@ Sprint 21 : à définir avec ChatGPT après fin du pilote fermé.
 
 ---
 
-_Dernière mise à jour : 2026-06-26 — Phase marketing vitrine v1 TERMINÉE (PRs #56–#59 mergées dans main). Phase 2 démarrée : PR #60 (docs/SELF_SERVICE_ONBOARDING.md) sur branche `onboarding/pr1-architecture`. Lint ✅ · typecheck ✅. En attente validation ChatGPT._
+_Dernière mise à jour : 2026-06-26 — Phase 2 Self-Service Onboarding — PR #61 Self-Service Signup en cours. Branche `onboarding/pr2-signup`. Prisma validate ✅ · prisma generate ✅ · lint ✅ · typecheck ✅ · build ✅. En attente validation ChatGPT avant merge._

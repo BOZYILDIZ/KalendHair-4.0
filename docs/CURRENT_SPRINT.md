@@ -18,8 +18,27 @@
 
 ## Phase actuelle : Product Phase 2 — Self-Service Onboarding (EN COURS)
 
-> PR1 — Documentation architecture : branche `onboarding/pr1-architecture`.
-> En attente validation finale ChatGPT avant toute implémentation.
+> PR1 ✅ mergée (`onboarding/pr1-architecture` — docs SELF_SERVICE_ONBOARDING.md).
+> PR2 — Self-Service Signup : branche `onboarding/pr2-signup`. En attente validation ChatGPT avant merge.
+
+### Objectifs PR2 — Self-Service Signup
+
+- [x] Migration `20260626000001_prouser_organization_nullable` — `ProUser.organizationId` nullable + FK `ON DELETE SET NULL`
+- [x] `prisma/schema.prisma` — `organizationId String?` + `organization Organization? @relation(..., onDelete: SetNull)`
+- [x] `src/lib/auth/pending-session.ts` — `signPendingToken` / `verifyPendingToken` / `PENDING_SESSION_COOKIE` (audience `pending-onboarding`)
+- [x] `src/lib/auth/session.ts` — ajout `getPendingSession()`
+- [x] `src/lib/schemas/signup.schema.ts` — Zod : 7 champs, règles password (12 chars, maj, min, chiffre, spécial), CGU/privacy
+- [x] `src/app/(onboarding)/inscription/actions.ts` — `signupAction` : rate limit 5/15min, Zod, createProUser OWNER, pending_session cookie, redirect /onboarding
+- [x] `src/app/(onboarding)/layout.tsx` — layout minimal (header logo + centrage)
+- [x] `src/app/(onboarding)/inscription/page.tsx` — Server Component : redirect si session ou pending_session existants
+- [x] `src/app/(onboarding)/inscription/components/signup-form.tsx` — Client Component : useActionState, 7 champs, show/hide password, CGU/privacy, erreurs Zod
+- [x] `src/app/(onboarding)/onboarding/page.tsx` — placeholder protégé par pending_session
+- [x] `src/app/(auth)/login/actions.ts` — handle `user.organizationId === null` → pending_session + redirect /onboarding
+- [x] `src/middleware.ts` — garde /inscription (redirect si session/pending existants) + garde /onboarding (redirect si pas de pending_session)
+- [x] `src/app/(marketing)/components/sections/hero-section.tsx` — CTA `href="/inscription"`
+- [x] `src/app/(marketing)/components/layout/marketing-nav.tsx` — CTA `href="/inscription"` (2 occurrences)
+- [x] `src/app/(admin)/admin/(protected)/organizations/[id]/actions.ts` — guard `!owner.organizationId` avant impersonation
+- [x] `prisma validate` ✅ · `prisma generate` ✅ · `npm run lint` ✅ · `npm run typecheck` ✅ · `npm run build` ✅
 
 ---
 
