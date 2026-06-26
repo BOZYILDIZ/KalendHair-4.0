@@ -446,4 +446,4 @@ Sprint 21 : à définir avec ChatGPT après fin du pilote fermé.
 
 ---
 
-_Dernière mise à jour : 2026-06-26 — Phase 2 Self-Service Onboarding — PR #61 mergée (SHA 38d921f). PR #62 Wizard Shell en cours sur branche `onboarding/pr3-wizard-shell`. Prisma validate ✅ · lint ✅ · typecheck ✅ · build ✅. En attente validation ChatGPT avant merge._
+_Dernière mise à jour : 2026-06-26 — Phase 2 Self-Service Onboarding — PR #63 (Salon Setup) mergée (SHA `aa01de3`). PR #64 Étape 3 Services en cours sur branche `onboarding/pr5-services-setup`. Migration `20260626000003_service_categories` (ServiceCategory + categoryId/color sur Service). prisma generate ✅ · lint ✅ · typecheck ✅ · build ✅ (75 routes, `/onboarding/services` présent). En attente validation ChatGPT avant merge._

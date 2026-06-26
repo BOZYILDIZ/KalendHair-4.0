@@ -125,6 +125,6 @@ export async function updateSalonSetupAction(
     return { error: "Une erreur est survenue lors de la sauvegarde. Veuillez réessayer." };
   }
 
-  // ── 6. Étape 2 terminée → dashboard ───────────────────────────────────────
-  redirect("/dashboard");
+  // ── 6. Étape 2 terminée → étape 3 services ───────────────────────────────
+  redirect("/onboarding/services");
 }
