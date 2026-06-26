@@ -4,6 +4,34 @@
 
 ---
 
+## 2026-06-26 — Session : Product Phase 2 — PR #64 Étape 3 : Configuration métier du salon (Services)
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : Product Phase 2 — Self-Service Onboarding — PR5 (Services Setup Step 3).
+- **Branche** : `onboarding/pr5-services-setup`
+- **Actions** :
+  - Merge PR #63 (Salon Setup) → `main` (SHA `aa01de3`) — session précédente
+  - Migration `20260626000003_service_categories` — table `service_categories` + FK + colonnes `services.categoryId` + `services.color`
+  - `prisma/schema.prisma` — modèle `ServiceCategory` + relations + champs `categoryId`/`color` sur `Service`
+  - `prisma generate` ✅
+  - `src/lib/schemas/services-setup.schema.ts` — `ServicesSetupPayloadSchema` (Zod v4, superRefine : duplicates + cross-ref categoryKey)
+  - `src/app/(onboarding)/onboarding/services/actions.ts` — `updateServicesSetupAction` : requireSession, JSON.parse, Zod, $transaction (vérif appointments Restrict, deleteMany, createMany catégories + services avec table clé→id)
+  - `src/app/(onboarding)/onboarding/services/page.tsx` — Étape 3/6, charge catégories + services, pré-remplissage
+  - `src/app/(onboarding)/onboarding/services/components/services-setup-form.tsx` — Client Component : useState catégories + services, add/remove/reorder/edit, JSON payload hidden input, useColor toggle, useActionState
+  - `src/app/(onboarding)/onboarding/salon/actions.ts` — redirect → `/onboarding/services` (au lieu de /dashboard)
+  - Correction TypeScript : `formatZodErrors` paramètre `PropertyKey[]` (Zod v4 issue.path)
+  - Suppression fichiers `.next/types/*" 2.ts"` (duplicats stale — pré-existants)
+  - `npm run lint` ✅ · `npm run typecheck` ✅ · `npm run build` ✅ (75 routes, `/onboarding/services` présent)
+- **Architecture** :
+  - Payload JSON hidden input — React state → `JSON.stringify` → hidden `<input name="payload">` → Server Action `JSON.parse` + Zod
+  - Clés client (`cat-xxx`, `svc-xxx`) séparées des IDs DB — table `Map<string, string>` en transaction pour résoudre `categoryKey → categoryId`
+  - `ServiceCategory.onDelete: Cascade` sur salon + org ; `Service.category.onDelete: SetNull` — perte de catégorie ne supprime pas le service
+  - Sécurité : `salon.findUnique({ where: { organizationId } })` — jamais salonId depuis client
+  - Guard `onDelete: Restrict` : vérification `appointment.findFirst` avant toute suppression de service
+- **État de sortie** : PR #64 prête. En attente validation ChatGPT.
+
+---
+
 ## 2026-06-26 — Session : Product Phase 2 — PR #63 Étape 2 : Configuration du Salon
 
 - **Auteur** : Claude Code (exécutant technique).

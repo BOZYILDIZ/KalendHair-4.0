@@ -21,17 +21,31 @@
 > PR1 ✅ mergée (`onboarding/pr1-architecture` — docs SELF_SERVICE_ONBOARDING.md).
 > PR2 — Self-Service Signup : branche `onboarding/pr2-signup`. En attente validation ChatGPT avant merge.
 
-### Objectifs PR4 — Étape 2 : Configuration du Salon (EN COURS)
+### Objectifs PR4 — Étape 2 : Configuration du Salon (TERMINÉ ✅ — mergé SHA `aa01de3`)
 
 - [x] Migration `20260626000002_salon_setup_fields` — `Salon.currency`, `Salon.language`, `SalonSchedule.lunchStartMinute`, `SalonSchedule.lunchEndMinute`
 - [x] `prisma/schema.prisma` — 4 champs additifs (currency/language sur Salon, lunchStart/End sur SalonSchedule)
 - [x] `src/lib/schemas/salon-setup.schema.ts` — `SalonSetupSchema` + `DayScheduleSchema` (superRefine : fermeture > ouverture, pause dans la plage) + utilitaires `timeToMinutes` / `minutesToTime`
-- [x] `src/app/(onboarding)/onboarding/salon/actions.ts` — `updateSalonSetupAction` : requireSession, findUnique par organizationId, Zod, $transaction (salon.update + salonSchedule.deleteMany + createMany), redirect /dashboard
+- [x] `src/app/(onboarding)/onboarding/salon/actions.ts` — `updateSalonSetupAction` : requireSession, findUnique par organizationId, Zod, $transaction (salon.update + salonSchedule.deleteMany + createMany), redirect /onboarding/services
 - [x] `src/app/(onboarding)/onboarding/salon/page.tsx` — Étape 2 sur 6, barre de progression, charge salon + schedules existants, pré-remplit formulaire
 - [x] `src/app/(onboarding)/onboarding/salon/components/salon-setup-form.tsx` — Client Component : useActionState, toggles jours (useState), horaires conditionnels, pause déjeuner optionnelle, select timezone/devise/langue, logo placeholder, nav Précédent/Continuer
 - [x] `src/middleware.ts` — sous-étapes wizard (`/onboarding/salon`) autorisées avec session tenant valide
 - [x] `src/app/(onboarding)/onboarding/actions.ts` — redirect étape 1 → `/onboarding/salon` (au lieu de /dashboard)
 - [x] `prisma generate` ✅ · `npm run lint` ✅ · `npm run typecheck` ✅ · `npm run build` ✅
+
+### Objectifs PR5 — Étape 3 : Configuration métier du salon (EN COURS — branche `onboarding/pr5-services-setup`)
+
+- [x] Migration `20260626000003_service_categories` — table `service_categories` + FK ; colonnes `services.categoryId TEXT` + `services.color TEXT`
+- [x] `prisma/schema.prisma` — modèle `ServiceCategory` + `categoryId String?` + `color String?` sur `Service` + `category` relation (onDelete: SetNull) + back-relations sur `Organization` et `Salon`
+- [x] `prisma generate` ✅
+- [x] `src/lib/schemas/services-setup.schema.ts` — `ServicesSetupPayloadSchema` : tableau de catégories + tableau de services ; `superRefine` : noms uniques catégories, noms uniques services, categoryKey référence existante
+- [x] `src/app/(onboarding)/onboarding/services/actions.ts` — `updateServicesSetupAction` : requireSession, JSON.parse payload, Zod, $transaction (vérif appointments, deleteMany services+catégories, createMany catégories avec table clé→id, createMany services), redirect /dashboard
+- [x] `src/app/(onboarding)/onboarding/services/page.tsx` — Étape 3/6, barre progression, charge catégories + services existants depuis DB
+- [x] `src/app/(onboarding)/onboarding/services/components/services-setup-form.tsx` — Client Component : useActionState, useState catégories + services, add/remove/edit/reorder, JSON hidden input `payload`, useColor toggle, redirect Précédent → /onboarding/salon
+- [x] `src/app/(onboarding)/onboarding/salon/actions.ts` — redirect étape 2 → `/onboarding/services`
+- [x] `npm run lint` ✅ · `npm run typecheck` ✅ · `npm run build` ✅ (route `/onboarding/services` présente)
+- [ ] Rapport complet de tests — en attente validation ChatGPT
+- [ ] Merge vers `main` — en attente validation ChatGPT
 
 ### Objectifs PR3 — Wizard Shell (Organisation + Salon + Subscription)
 
