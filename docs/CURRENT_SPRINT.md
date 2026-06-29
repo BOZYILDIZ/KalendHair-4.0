@@ -33,15 +33,23 @@
 - [x] `src/app/(onboarding)/onboarding/actions.ts` — redirect étape 1 → `/onboarding/salon` (au lieu de /dashboard)
 - [x] `prisma generate` ✅ · `npm run lint` ✅ · `npm run typecheck` ✅ · `npm run build` ✅
 
-### Objectifs PR8 — Étape 6 : Finalisation Onboarding (EN COURS — branche `onboarding/pr8-finalisation`)
+### Objectifs PR9 — Validation E2E Onboarding (EN COURS — branche `onboarding/pr9-e2e-validation`)
+
+- [x] Bug #1 corrigé : `completeOnboardingAction` auto-crée les `EmployeeSchedule` manquants depuis les horaires salon — sans ce fix, `getAvailableSlots()` retournait `[]` pour tous les employés onboardés
+- [x] `src/app/(onboarding)/onboarding/finalisation/actions.ts` mis à jour : salonSchedules inclut dayOfWeek/startMinute/endMinute + boucle de création EmployeeSchedule idempotente
+- [x] Analyse E2E complète : 0 bug supplémentaire, 0 import mort, 0 TODO, chaîne redirect validée, cookies propres
+- [x] Déploiement production SHA `5bd714c` (PR #66+#67) → READY (`kalendhair.fr`)
+- [x] `prisma validate` ✅ · `npm run lint` ✅ · `npm run typecheck` ✅ · `npm run build` ✅ (83 routes)
+- [ ] Rapport complet de tests — en attente validation ChatGPT
+- [ ] Merge vers `main` — en attente validation ChatGPT
+
+### Objectifs PR8 — Étape 6 : Finalisation Onboarding (TERMINÉ ✅ — mergé SHA `5bd714c`)
 
 - [x] Pas de migration — pas de champ `onboardingCompletedAt` : la présence des données prouve la complétion
 - [x] `src/app/(onboarding)/onboarding/finalisation/page.tsx` — Étape 6/6, charge org/salon/services/employés/horaires/abonnement en une passe, construit checklist 8 items (PASS/WARN/BLOCKING), passe summary + items au FinalisationForm
 - [x] `src/app/(onboarding)/onboarding/finalisation/actions.ts` — `completeOnboardingAction` : requireSession, rechargement serveur, vérif 4 préconditions BLOCKING, redirect /dashboard si tout OK
 - [x] `src/app/(onboarding)/onboarding/finalisation/components/finalisation-form.tsx` — Client Component : useActionState, résumé salon (6 métriques), grille checklist avec StatusIcon PASS/WARN/BLOCKING, liens "Compléter →", bouton CTA désactivé si BLOCKING, lien retour horaires
-- [x] `prisma validate` ✅ · `npm run lint` ✅ · `npm run typecheck` ✅ · `npm run build` ✅ (83 routes, `/onboarding/finalisation` présent)
-- [ ] Rapport complet de tests — en attente validation ChatGPT
-- [ ] Merge vers `main` — en attente validation ChatGPT
+- [x] `prisma validate` ✅ · `npm run lint` ✅ · `npm run typecheck` ✅ · `npm run build` ✅ (83 routes)
 
 ### Objectifs PR7 — Étape 5 : Horaires d'ouverture (TERMINÉ ✅ — mergé SHA `e8b817f`)
 

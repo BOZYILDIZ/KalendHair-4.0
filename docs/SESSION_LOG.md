@@ -1310,3 +1310,20 @@
 - **Checks** : `prisma validate` ✅ · `npm run lint` ✅ · `npm run typecheck` ✅ (après `rm -rf .next`) · `npm run build` ✅ (83 routes, `/onboarding/finalisation` compilée)
 - **PR #66 + PR #67** : wizard complet sans aucune 404 lorsque les deux sont mergées
 - **État de sortie** : PR #67 ouverte, en attente validation ChatGPT. PR #66 reste ouverte également. Aucun merge.
+
+---
+
+### Session 2026-06-29 — Merge PR #66+#67 + PR #68 : Validation E2E
+
+- **Actions de merge** :
+  - PR #66 (`onboarding/pr7-schedule-setup`) mergée → SHA `e8b817f` → Vercel READY
+  - PR #67 (`onboarding/pr8-finalisation`) mergée → SHA `5bd714c` → Vercel READY (production : `kalendhair.fr`)
+  - Branches distantes `onboarding/pr7-schedule-setup` et `onboarding/pr8-finalisation` supprimées (via `--delete-branch`)
+- **Branche PR #68** : `onboarding/pr9-e2e-validation` (depuis `main`)
+- **Bug découvert et corrigé** :
+  - `getAvailableSlots()` dans `slots.service.ts` retourne `[]` si aucun `EmployeeSchedule` pour l'employé. Les employés créés pendant le wizard n'en ont pas → salon non-bookable après onboarding.
+  - Fix : `completeOnboardingAction` crée automatiquement les `EmployeeSchedule` manquants en copiant les horaires du salon pour chaque jour ouvert. Opération idempotente (vérifie les jours existants avant de créer).
+- **Fichier modifié** : `src/app/(onboarding)/onboarding/finalisation/actions.ts`
+- **Analyse E2E complète** : 0 autre bug, 0 import mort, 0 TODO, chaîne redirect complète (inscription→onboarding→salon→services→employees→schedule→finalisation→dashboard), cookies propres (pending_session supprimé à l'étape 1)
+- **Checks** : `prisma validate` ✅ · `npm run lint` ✅ · `npm run typecheck` ✅ · `npm run build` ✅ (83 routes)
+- **État de sortie** : PR #68 ouverte sur branche `onboarding/pr9-e2e-validation`. En attente validation ChatGPT.

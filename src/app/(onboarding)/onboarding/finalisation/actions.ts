@@ -34,7 +34,7 @@ export async function completeOnboardingAction(
       },
       salonSchedules: {
         where: { isOpen: true },
-        select: { id: true },
+        select: { dayOfWeek: true, startMinute: true, endMinute: true },
       },
     },
   });
@@ -66,10 +66,35 @@ export async function completeOnboardingAction(
     return { error: errors.join("\n") };
   }
 
-  // ── 4. Finalisation ───────────────────────────────────────────────────────
-  // Décision : pas d'écriture en base. La présence des données (salon +
-  // services + employés + horaires) prouve que l'onboarding est terminé.
-  // Un champ onboardingCompletedAt pourra être ajouté via migration si un
-  // besoin analytique ou de re-onboarding l'exige dans une version ultérieure.
+  // ── 4. Auto-créer les EmployeeSchedule manquants depuis les horaires salon ─
+  // Les employés créés pendant le wizard n'ont pas d'EmployeeSchedule.
+  // Sans ces enregistrements, getAvailableSlots() retourne [] : le salon
+  // ne serait pas réservable immédiatement après l'onboarding.
+  for (const employee of salon.employees) {
+    const existingDays = await prisma.employeeSchedule.findMany({
+      where: { employeeId: employee.id },
+      select: { dayOfWeek: true },
+    });
+    const existingDaySet = new Set(existingDays.map((s) => s.dayOfWeek));
+
+    const toCreate = salon.salonSchedules
+      .filter((s) => !existingDaySet.has(s.dayOfWeek))
+      .map((s) => ({
+        employeeId: employee.id,
+        dayOfWeek: s.dayOfWeek,
+        startMinute: s.startMinute,
+        endMinute: s.endMinute,
+        isWorking: true as const,
+      }));
+
+    if (toCreate.length > 0) {
+      await prisma.employeeSchedule.createMany({ data: toCreate });
+    }
+  }
+
+  // ── 5. Finalisation ───────────────────────────────────────────────────────
+  // Décision : pas d'écriture en base pour marquer la complétion. La présence
+  // des données prouve l'onboarding terminé. Un champ onboardingCompletedAt
+  // pourra être ajouté via migration si un besoin analytique l'exige plus tard.
   redirect("/dashboard");
 }
