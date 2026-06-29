@@ -4,6 +4,31 @@
 
 ---
 
+## 2026-06-26 — Session : Product Phase 2 — PR #66 Étape 5 : Horaires d'ouverture du salon
+
+- **Auteur** : Claude Code (exécutant technique).
+- **Phase** : Product Phase 2 — Self-Service Onboarding — PR7 (Schedule Setup Step 5).
+- **Branche** : `onboarding/pr7-schedule-setup`
+- **Actions** :
+  - Merge PR #65 (Employees Setup) → `main` (SHA `e9247c5`) ; suppression branche locale et distante `onboarding/pr6-employees-setup`
+  - Création branche `onboarding/pr7-schedule-setup`
+  - Pas de migration — `SalonSchedule` déjà présent avec tous les champs nécessaires
+  - `src/lib/schemas/schedule-setup.schema.ts` — `ScheduleSetupPayloadSchema` (Zod v4, superRefine : contraintes horaires par jour)
+  - `src/app/(onboarding)/onboarding/schedule/actions.ts` — `updateScheduleSetupAction` : requireSession, JSON.parse, Zod, $transaction (salon.findUnique par organizationId, salonSchedule.deleteMany + createMany 7 jours), redirect /onboarding/finalisation
+  - `src/app/(onboarding)/onboarding/schedule/page.tsx` — Étape 5/6, pré-remplissage intelligent depuis DB ou defaults
+  - `src/app/(onboarding)/onboarding/schedule/components/schedule-setup-form.tsx` — useState, toggle fermé, toggle pause déjeuner, JSON payload
+  - `src/app/(onboarding)/onboarding/employees/actions.ts` — redirect → `/onboarding/schedule`
+  - `npm run lint` ✅ · `npm run typecheck` ✅ · `npm run build` ✅ (81 routes, `/onboarding/schedule` présent)
+- **Architecture** :
+  - Payload JSON hidden input — même pattern que steps 3 et 4
+  - Conversion HH:mm ↔ minutes : `timeToMinutes` (server action) + `minutesToTime` (page server)
+  - Clean slate : `salonSchedule.deleteMany` + `salonSchedule.createMany` 7 entrées dans `$transaction`
+  - Jours fermés : `isOpen: false`, `startMinute/endMinute: 0`, `lunchStart/End: null`
+  - Aucune modification middleware — `/onboarding/schedule` déjà couvert par le bloc `pathname.startsWith("/onboarding")`
+- **État de sortie** : PR #66 prête. En attente validation ChatGPT.
+
+---
+
 ## 2026-06-26 — Session : Product Phase 2 — PR #65 Étape 4 : Configuration des employés
 
 - **Auteur** : Claude Code (exécutant technique).
