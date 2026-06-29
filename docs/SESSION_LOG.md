@@ -1271,3 +1271,17 @@
 - **Code métier** : **aucun**. **Sprint 2 non démarré.**
 - **État de sortie** : `main` à jour (fondations + bootstrap), tags `v0.1.0-foundations`
   et `v0.2.0-bootstrap`. En attente de la suite (Sprint 2) après validation.
+
+---
+
+### Session 2026-06-29 — PR #67 : Étape 6 Finalisation Onboarding
+
+- **Branche** : `onboarding/pr8-finalisation` (depuis `main`)
+- **Fichiers créés** :
+  - `src/app/(onboarding)/onboarding/finalisation/page.tsx` — Server Component Étape 6/6 : charge org/salon/services/employés/horaires/abonnement, construit checklist 8 items PASS/WARN/BLOCKING
+  - `src/app/(onboarding)/onboarding/finalisation/actions.ts` — `completeOnboardingAction` : requireSession + rechargement serveur + vérif préconditions + redirect /dashboard. Décision : pas de migration, présence des données = completion.
+  - `src/app/(onboarding)/onboarding/finalisation/components/finalisation-form.tsx` — Client Component : résumé salon, grille checklist, CTA désactivé si BLOCKING, liens corrective
+- **Décision technique** : pas de champ `onboardingCompletedAt` en DB. La présence de (salon + services + employés + horaires) prouve la complétion. Migration additive réservée si besoin analytique futur.
+- **Checks** : `prisma validate` ✅ · `npm run lint` ✅ · `npm run typecheck` ✅ (après `rm -rf .next`) · `npm run build` ✅ (83 routes, `/onboarding/finalisation` compilée)
+- **PR #66 + PR #67** : wizard complet sans aucune 404 lorsque les deux sont mergées
+- **État de sortie** : PR #67 ouverte, en attente validation ChatGPT. PR #66 reste ouverte également. Aucun merge.

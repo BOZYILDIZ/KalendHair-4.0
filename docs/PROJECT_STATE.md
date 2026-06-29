@@ -446,4 +446,4 @@ Sprint 21 : à définir avec ChatGPT après fin du pilote fermé.
 
 ---
 
-_Dernière mise à jour : 2026-06-26 — Phase 2 Self-Service Onboarding — PR #64 (Services Setup) mergée (SHA `476d71e`). PR #65 Étape 4 Employees en cours sur branche `onboarding/pr6-employees-setup`. Pas de migration (Employee + EmployeeService existants). lint ✅ · typecheck ✅ · build ✅ (76 routes, `/onboarding/employees` présent). En attente validation ChatGPT avant merge._
+_Dernière mise à jour : 2026-06-29 — Phase 2 Self-Service Onboarding — PR #66 (Horaires `/onboarding/schedule`) ouverte, en attente validation ChatGPT. PR #67 (Finalisation `/onboarding/finalisation`) ouverte sur branche `onboarding/pr8-finalisation`. Pas de migration. lint ✅ · typecheck ✅ · build ✅ (83 routes, `/onboarding/finalisation` présent). Wizard self-service complet (PR #66 + PR #67) — aucune 404 sur le parcours complet. En attente validation ChatGPT avant merge des deux PR._

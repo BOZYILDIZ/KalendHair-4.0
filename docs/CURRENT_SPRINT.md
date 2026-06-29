@@ -33,6 +33,16 @@
 - [x] `src/app/(onboarding)/onboarding/actions.ts` — redirect étape 1 → `/onboarding/salon` (au lieu de /dashboard)
 - [x] `prisma generate` ✅ · `npm run lint` ✅ · `npm run typecheck` ✅ · `npm run build` ✅
 
+### Objectifs PR8 — Étape 6 : Finalisation Onboarding (EN COURS — branche `onboarding/pr8-finalisation`)
+
+- [x] Pas de migration — pas de champ `onboardingCompletedAt` : la présence des données prouve la complétion
+- [x] `src/app/(onboarding)/onboarding/finalisation/page.tsx` — Étape 6/6, charge org/salon/services/employés/horaires/abonnement en une passe, construit checklist 8 items (PASS/WARN/BLOCKING), passe summary + items au FinalisationForm
+- [x] `src/app/(onboarding)/onboarding/finalisation/actions.ts` — `completeOnboardingAction` : requireSession, rechargement serveur, vérif 4 préconditions BLOCKING, redirect /dashboard si tout OK
+- [x] `src/app/(onboarding)/onboarding/finalisation/components/finalisation-form.tsx` — Client Component : useActionState, résumé salon (6 métriques), grille checklist avec StatusIcon PASS/WARN/BLOCKING, liens "Compléter →", bouton CTA désactivé si BLOCKING, lien retour horaires
+- [x] `prisma validate` ✅ · `npm run lint` ✅ · `npm run typecheck` ✅ · `npm run build` ✅ (83 routes, `/onboarding/finalisation` présent)
+- [ ] Rapport complet de tests — en attente validation ChatGPT
+- [ ] Merge vers `main` — en attente validation ChatGPT (simultané avec PR #66)
+
 ### Objectifs PR6 — Étape 4 : Configuration des employés (EN COURS — branche `onboarding/pr6-employees-setup`)
 
 - [x] Pas de migration — modèles `Employee` et `EmployeeService` déjà présents en DB
