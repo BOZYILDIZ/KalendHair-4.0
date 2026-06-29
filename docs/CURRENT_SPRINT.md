@@ -41,21 +41,41 @@
 - [x] `src/app/(onboarding)/onboarding/finalisation/components/finalisation-form.tsx` — Client Component : useActionState, résumé salon (6 métriques), grille checklist avec StatusIcon PASS/WARN/BLOCKING, liens "Compléter →", bouton CTA désactivé si BLOCKING, lien retour horaires
 - [x] `prisma validate` ✅ · `npm run lint` ✅ · `npm run typecheck` ✅ · `npm run build` ✅ (83 routes, `/onboarding/finalisation` présent)
 - [ ] Rapport complet de tests — en attente validation ChatGPT
-- [ ] Merge vers `main` — en attente validation ChatGPT (simultané avec PR #66)
+- [ ] Merge vers `main` — en attente validation ChatGPT
 
-### Objectifs PR6 — Étape 4 : Configuration des employés (EN COURS — branche `onboarding/pr6-employees-setup`)
+### Objectifs PR7 — Étape 5 : Horaires d'ouverture (TERMINÉ ✅ — mergé SHA `e8b817f`)
+
+- [x] `src/lib/schemas/schedule-setup.schema.ts` — `ScheduleSetupPayloadSchema` (Zod v4) : 7 jours, HH:mm, superRefine horaires
+- [x] `src/app/(onboarding)/onboarding/schedule/actions.ts` — `updateScheduleSetupAction` : $transaction clean slate salonSchedule
+- [x] `src/app/(onboarding)/onboarding/schedule/page.tsx` + composant client
+- [x] `src/app/(onboarding)/onboarding/employees/actions.ts` — redirect étape 4 → `/onboarding/schedule`
+- [x] `npm run lint` ✅ · `typecheck` ✅ · `build` ✅ (82 routes)
+
+### Objectifs PR6 — Étape 4 : Configuration des employés (TERMINÉ ✅ — mergé SHA `e9247c5`)
 
 - [x] Pas de migration — modèles `Employee` et `EmployeeService` déjà présents en DB
 - [x] `src/lib/schemas/employees-setup.schema.ts` — `EmployeesSetupPayloadSchema` (Zod v4) : tableau d'employés min 1, max 20 ; `EmployeePayloadSchema` : firstName/lastName requis, email optionnel (format ou vide), phone optionnel, color format hex ou vide, isActive, serviceIds min 1 ; `superRefine` : emails uniques (non vides), noms uniques (prénom+nom)
-- [x] `src/app/(onboarding)/onboarding/employees/actions.ts` — `updateEmployeesSetupAction` : requireSession, JSON.parse, Zod, `$transaction` (salon.findUnique par organizationId, vérif serviceIds appartenant au salon, guard appointments, employee.deleteMany avec cascade EmployeeService/EmployeeSchedule, employee.create + employeeService.createMany par boucle), redirect /dashboard
+- [x] `src/app/(onboarding)/onboarding/employees/actions.ts` — `updateEmployeesSetupAction` : requireSession, JSON.parse, Zod, `$transaction` (salon.findUnique par organizationId, vérif serviceIds appartenant au salon, guard appointments, employee.deleteMany avec cascade EmployeeService/EmployeeSchedule, employee.create + employeeService.createMany par boucle), redirect /onboarding/schedule
 - [x] `src/app/(onboarding)/onboarding/employees/page.tsx` — Étape 4/6, barre progression, charge employés + services actifs existants
 - [x] `src/app/(onboarding)/onboarding/employees/components/employees-setup-form.tsx` — Client Component : useState employés, add/remove/reorder/edit, JSON payload hidden input, useColor toggle, checkboxes services (tout sélectionner / tout effacer), avertissement si 0 services
 - [x] `src/app/(onboarding)/onboarding/services/actions.ts` — redirect étape 3 → `/onboarding/employees`
 - [x] `npm run lint` ✅ · `npm run typecheck` ✅ · `npm run build` ✅ (route `/onboarding/employees` présente, 76 routes)
-- [ ] Rapport complet de tests — en attente validation ChatGPT
-- [ ] Merge vers `main` — en attente validation ChatGPT
+- [x] Rapport complet 59/59 PASS — validé ChatGPT
+- [x] Merge vers `main` — SHA `e9247c5`
 
 **Note architecture** : Le modèle `Employee` n'a pas de champ `role` (contrairement à `ProUser.ProRole`). Le propriétaire (ProUser OWNER) n'est pas créé automatiquement comme employé — les deux entités sont distinctes (authentification vs agenda/réservations). Le propriétaire peut se créer manuellement comme premier employé s'il travaille dans le salon.
+
+### Objectifs PR7 — Étape 5 : Horaires d'ouverture du salon (EN COURS — branche `onboarding/pr7-schedule-setup`)
+
+- [x] Pas de migration — `SalonSchedule` déjà présent (colonnes `lunchStartMinute`, `lunchEndMinute` ajoutées en PR4)
+- [x] `src/lib/schemas/schedule-setup.schema.ts` — `ScheduleSetupPayloadSchema` (Zod v4) : 7 jours requis, `DayScheduleSchema` (dayOfWeek enum 7 valeurs, isOpen, openTime/closeTime HH:mm regex, hasLunch, lunchStartTime/lunchEndTime HH:mm) ; `superRefine` : ouverture < fermeture, pause dans la plage, début pause < fin pause — uniquement si isOpen et si hasLunch
+- [x] `src/app/(onboarding)/onboarding/schedule/actions.ts` — `updateScheduleSetupAction` : requireSession, JSON.parse, Zod, `$transaction` (salon.findUnique par organizationId, salonSchedule.deleteMany, salonSchedule.createMany 7 entrées), redirect /onboarding/finalisation ; helper `timeToMinutes(HH:mm) → Int`
+- [x] `src/app/(onboarding)/onboarding/schedule/page.tsx` — Étape 5/6, barre progression, charge horaires existants depuis DB, pré-remplissage intelligent (Lun-Ven 09-18h, Sam 09-17h, Dim fermé), helper `minutesToTime(Int) → HH:mm`
+- [x] `src/app/(onboarding)/onboarding/schedule/components/schedule-setup-form.tsx` — Client Component : useState 7 DayDraft, JSON payload hidden input, toggle fermé (désactive heures), toggle pause déjeuner (champs ambre), résumé jours ouverts/fermés, nav Précédent → /onboarding/employees
+- [x] `src/app/(onboarding)/onboarding/employees/actions.ts` — redirect étape 4 → `/onboarding/schedule`
+- [x] `npm run lint` ✅ · `npm run typecheck` ✅ · `npm run build` ✅ (route `/onboarding/schedule` présente, 81 routes)
+- [ ] Rapport complet de tests — en attente validation ChatGPT
+- [ ] Merge vers `main` — en attente validation ChatGPT
 
 ### Objectifs PR5 — Étape 3 : Configuration métier du salon (TERMINÉ ✅ — mergé SHA `476d71e`)
 

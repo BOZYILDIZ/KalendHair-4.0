@@ -136,6 +136,6 @@ export async function updateEmployeesSetupAction(
     };
   }
 
-  // ── 5. Étape 4 terminée → tableau de bord ────────────────────────────────
-  redirect("/dashboard");
+  // ── 5. Étape 4 terminée → étape 5 horaires ───────────────────────────────
+  redirect("/onboarding/schedule");
 }
