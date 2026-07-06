@@ -1,25 +1,231 @@
 @import "tailwindcss";
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   KalendHair Design System — Tokens CSS
+   Source : docs/design/02_DESIGN_SYSTEM.md · docs/design/12_VISUAL_LANGUAGE.md
+            docs/design/15_MOTION_LIBRARY.md · docs/design/09_ACCESSIBILITY.md
+   ──────────────────────────────────────────────────────────────────────────── */
+
 :root {
+  /* ── Brand — Indigo profond ──────────────────────────────────────────────── */
+  --kh-brand-50:  #EEF0FD;
+  --kh-brand-100: #DDE2FB;
+  --kh-brand-200: #BBC5F7;
+  --kh-brand-300: #99A8F3;
+  --kh-brand-400: #7789EF;
+  --kh-brand-500: #5567EB;
+  --kh-brand-600: #3347E7;
+  --kh-brand-700: #2636C5;
+  --kh-brand-800: #1C27A3;
+  --kh-brand-900: #141B6E;
+  --kh-brand-950: #0C1043;
+
+  /* ── Ardoise froide (neutrals) ───────────────────────────────────────────── */
+  --kh-slate-50:  #F7F8FC;
+  --kh-slate-100: #EEF0F7;
+  --kh-slate-200: #DDE0EE;
+  --kh-slate-300: #BBC2D9;
+  --kh-slate-400: #8B95B5;  /* ⚠ 2.9:1 sur blanc — NE PAS utiliser pour du texte */
+  --kh-slate-500: #6B7494;  /* ✓ texte secondaire min (4.6:1 sur blanc) */
+  --kh-slate-600: #4F5773;
+  --kh-slate-700: #363D57;
+  --kh-slate-800: #222840;
+  --kh-slate-900: #151A2D;
+  --kh-slate-950: #0B0E1C;
+
+  /* ── Succès ──────────────────────────────────────────────────────────────── */
+  --kh-success-50:  #ECFDF5;
+  --kh-success-100: #D1FAE5;
+  --kh-success-500: #10B981;
+  --kh-success-600: #059669;
+  --kh-success-700: #047857;
+
+  /* ── Avertissement ───────────────────────────────────────────────────────── */
+  --kh-warning-50:  #FFFBEB;
+  --kh-warning-100: #FEF3C7;
+  --kh-warning-500: #F59E0B;
+  --kh-warning-600: #D97706;
+  --kh-warning-700: #B45309;
+
+  /* ── Danger ──────────────────────────────────────────────────────────────── */
+  --kh-danger-50:  #FEF2F2;
+  --kh-danger-100: #FEE2E2;
+  --kh-danger-500: #EF4444;
+  --kh-danger-600: #DC2626;
+  --kh-danger-700: #B91C1C;
+
+  /* ── Info ────────────────────────────────────────────────────────────────── */
+  --kh-info-50:  #EFF6FF;
+  --kh-info-100: #DBEAFE;
+  --kh-info-500: #3B82F6;
+  --kh-info-600: #2563EB;
+  --kh-info-700: #1D4ED8;
+
+  /* ── Surfaces dark mode (valeurs primitives, toujours disponibles) ─────── */
+  --kh-dark-bg:         #0B0E1C;
+  --kh-dark-surface:    #111628;
+  --kh-dark-surface2:   #1A2138;
+  --kh-dark-surface3:   #222A47;
+  --kh-dark-border:     #2A3257;
+  --kh-dark-border2:    #374070;
+  --kh-dark-text:       #E8EAF6;
+  --kh-dark-text-muted: #8892B0;
+  --kh-dark-text-dim:   #4A527A;
+
+  /* ── Tokens sémantiques — light mode par défaut ───────────────────────── */
+  --kh-bg:               var(--kh-slate-50);
+  --kh-surface:          #FFFFFF;
+  --kh-surface-raised:   var(--kh-slate-100);
+  --kh-border:           var(--kh-slate-200);
+  --kh-border-strong:    var(--kh-slate-300);
+  --kh-text:             var(--kh-slate-900);
+  --kh-text-secondary:   var(--kh-slate-500);
+  --kh-text-muted:       var(--kh-slate-400);
+  --kh-text-placeholder: var(--kh-slate-300);
+  --kh-sidebar-bg:       var(--kh-slate-950); /* Toujours dark */
+
+  /* ── Typographie ─────────────────────────────────────────────────────────── */
+  /*
+    --font-inter et --font-jetbrains-mono sont injectés par next/font/google
+    sur l'élément <html>. Les fallbacks ci-dessous couvrent le cas où
+    la police Google n'est pas encore chargée.
+  */
+  --kh-font-body: var(--font-inter, "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+  --kh-font-mono: var(--font-jetbrains-mono, "JetBrains Mono", "SF Mono", "Fira Code", ui-monospace, monospace);
+  /* DM Serif Display est chargé uniquement par les pages marketing — jamais ici. */
+
+  --kh-text-xs:   0.75rem;   /* 12px */
+  --kh-text-sm:   0.875rem;  /* 14px */
+  --kh-text-base: 1rem;      /* 16px */
+  --kh-text-lg:   1.125rem;  /* 18px */
+  --kh-text-xl:   1.25rem;   /* 20px */
+  --kh-text-2xl:  1.5rem;    /* 24px */
+  --kh-text-3xl:  1.875rem;  /* 30px */
+  --kh-text-4xl:  2.25rem;   /* 36px */
+
+  --kh-font-normal:    400;
+  --kh-font-medium:    500;
+  --kh-font-semibold:  600;
+  --kh-font-bold:      700;
+  --kh-font-extrabold: 800;
+
+  --kh-leading-tight:   1.25;
+  --kh-leading-normal:  1.5;
+  --kh-leading-relaxed: 1.65;
+
+  /* ── Espacement (grille 4px) ─────────────────────────────────────────────── */
+  --kh-space-1:  0.25rem;  /* 4px  */
+  --kh-space-2:  0.5rem;   /* 8px  */
+  --kh-space-3:  0.75rem;  /* 12px */
+  --kh-space-4:  1rem;     /* 16px */
+  --kh-space-5:  1.25rem;  /* 20px */
+  --kh-space-6:  1.5rem;   /* 24px */
+  --kh-space-8:  2rem;     /* 32px */
+  --kh-space-10: 2.5rem;   /* 40px */
+  --kh-space-12: 3rem;     /* 48px */
+  --kh-space-16: 4rem;     /* 64px */
+  --kh-space-20: 5rem;     /* 80px */
+
+  /* ── Rayons ──────────────────────────────────────────────────────────────── */
+  --kh-radius-sm:   0.25rem;  /* 4px  */
+  --kh-radius:      0.375rem; /* 6px  */
+  --kh-radius-md:   0.5rem;   /* 8px  */
+  --kh-radius-lg:   0.75rem;  /* 12px */
+  --kh-radius-xl:   1rem;     /* 16px */
+  --kh-radius-full: 9999px;
+
+  /* ── Ombres ──────────────────────────────────────────────────────────────── */
+  --kh-shadow-xs:    0 1px 2px rgba(0, 0, 0, 0.04);
+  --kh-shadow-sm:    0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+  --kh-shadow-md:    0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --kh-shadow-lg:    0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+  --kh-shadow-xl:    0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+  --kh-shadow-brand: 0 4px 12px rgba(51, 71, 231, 0.25);
+
+  /* ── Dimensions UI (grille 8px) ──────────────────────────────────────────── */
+  --kh-sidebar-width:     240px;
+  --kh-sidebar-collapsed: 64px;
+  --kh-header-height:     56px;
+  --kh-btn-sm:            32px;
+  --kh-btn-md:            40px;
+  --kh-btn-lg:            48px;
+  --kh-btn-fab:           56px;
+  --kh-input-height:      40px;
+  --kh-agenda-row:        48px;
+  --kh-sidebar-item:      40px;
+
+  /* ── Breakpoints ─────────────────────────────────────────────────────────── */
+  --kh-screen-sm:  640px;
+  --kh-screen-md:  768px;
+  --kh-screen-lg:  1024px;
+  --kh-screen-xl:  1280px;
+  --kh-screen-2xl: 1536px;
+
+  /* ── Motion ──────────────────────────────────────────────────────────────── */
+  --kh-dur-instant: 0ms;
+  --kh-dur-fast:    100ms;
+  --kh-dur-normal:  200ms;
+  --kh-dur-slow:    300ms;
+  --kh-dur-xslow:   400ms;
+
+  --kh-ease-default: cubic-bezier(0.4, 0, 0.2, 1);
+  --kh-ease-in:      cubic-bezier(0.4, 0, 1, 1);
+  --kh-ease-out:     cubic-bezier(0, 0, 0.2, 1);
+  --kh-ease-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ── Focus ring ──────────────────────────────────────────────────────────── */
+  --kh-focus-ring:        2px solid var(--kh-brand-500);
+  --kh-focus-ring-offset: 2px;
+
+  /* ── Tokens rétrocompatibles (anciens — ne pas utiliser dans de nouveaux composants) */
   --background: #ffffff;
   --foreground: #171717;
 }
 
+/* ── Dark mode — préférence système ──────────────────────────────────────── */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+
+    --kh-bg:               var(--kh-dark-bg);
+    --kh-surface:          var(--kh-dark-surface);
+    --kh-surface-raised:   var(--kh-dark-surface2);
+    --kh-border:           var(--kh-dark-border);
+    --kh-border-strong:    var(--kh-dark-border2);
+    --kh-text:             var(--kh-dark-text);
+    --kh-text-secondary:   var(--kh-dark-text-muted);
+    --kh-text-muted:       var(--kh-dark-text-dim);
+    --kh-text-placeholder: var(--kh-dark-text-dim);
+  }
+}
+
+/* ── Dark mode — switch UI futur via [data-theme="dark"] sur <html> ────── */
+[data-theme="dark"] {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+
+  --kh-bg:               var(--kh-dark-bg);
+  --kh-surface:          var(--kh-dark-surface);
+  --kh-surface-raised:   var(--kh-dark-surface2);
+  --kh-border:           var(--kh-dark-border);
+  --kh-border-strong:    var(--kh-dark-border2);
+  --kh-text:             var(--kh-dark-text);
+  --kh-text-secondary:   var(--kh-dark-text-muted);
+  --kh-text-muted:       var(--kh-dark-text-dim);
+  --kh-text-placeholder: var(--kh-dark-text-dim);
+}
+
+/* ── Base HTML ───────────────────────────────────────────────────────────── */
 html {
   scroll-behavior: smooth;
   overflow-x: hidden;
 }
 
-/* ─── Marketing animations ───────────────────────────────────────────────── */
+/* ── Marketing animations (existantes — ne pas modifier) ─────────────────── */
 @keyframes mk-fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .mk-animate-fade-up {
@@ -30,30 +236,78 @@ html {
 .mk-animate-delay-300 { animation-delay: 0.30s; }
 .mk-animate-delay-450 { animation-delay: 0.45s; }
 
+/* ── KalendHair animations ───────────────────────────────────────────────── */
+@keyframes kh-fade-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes kh-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes kh-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes kh-value-flash {
+  0%   { color: var(--kh-brand-600); }
+  100% { color: inherit; }
+}
+
+/* ── Tailwind v4 — mapping des tokens ────────────────────────────────────── */
+@theme inline {
+  --font-sans: var(--kh-font-body);
+  --font-mono: var(--kh-font-mono);
+
+  /* Rétrocompatibilité Tailwind */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+}
+
+/* ── Styles de base ──────────────────────────────────────────────────────── */
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--kh-font-body);
+}
+
+/* ── Accessibilité — focus visible ──────────────────────────────────────── */
+:focus-visible {
+  outline: var(--kh-focus-ring);
+  outline-offset: var(--kh-focus-ring-offset);
+}
+
+/* Sidebar toujours dark — ring plus doux pour contraste */
+.sidebar :focus-visible {
+  outline-color: var(--kh-brand-300);
+}
+
+/* ── Utilitaire screen-reader ────────────────────────────────────────────── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Reduced motion ──────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .mk-animate-fade-up {
     animation: none;
     opacity: 1;
     transform: none;
   }
-}
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
 }
