@@ -301,6 +301,11 @@ body {
   background: var(--kh-surface-raised);
 }
 
+/* ── Équipe — ligne employé hover ────────────────────────────────────────── */
+.kh-team-row:hover {
+  background: var(--kh-surface-raised);
+}
+
 /* ── Agenda — liens de navigation ────────────────────────────────────────── */
 .kh-agenda-link:hover {
   color: var(--kh-brand-700);
