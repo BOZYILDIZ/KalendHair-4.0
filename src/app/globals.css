@@ -290,6 +290,31 @@ body {
   color: var(--kh-dark-text);
 }
 
+/* ── KPI card — hover ────────────────────────────────────────────────────── */
+.kh-kpi-card:hover {
+  box-shadow:   var(--kh-shadow-md);
+  border-color: var(--kh-border-strong);
+}
+
+/* ── Skeleton shimmer ────────────────────────────────────────────────────── */
+.kh-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--kh-surface-raised) 25%,
+    var(--kh-border)         50%,
+    var(--kh-surface-raised) 75%
+  );
+  background-size: 400% 100%;
+  animation: kh-shimmer 1.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kh-shimmer {
+    animation: none;
+    opacity: 0.6;
+  }
+}
+
 /* ── Utilitaire screen-reader ────────────────────────────────────────────── */
 .sr-only {
   position: absolute;
