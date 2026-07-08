@@ -284,6 +284,12 @@ body {
   outline-color: var(--kh-brand-300);
 }
 
+/* ── Sidebar nav item — hover (état non-actif uniquement) ────────────────── */
+.kh-sidebar-item:not([aria-current="page"]):hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--kh-dark-text);
+}
+
 /* ── Utilitaire screen-reader ────────────────────────────────────────────── */
 .sr-only {
   position: absolute;
