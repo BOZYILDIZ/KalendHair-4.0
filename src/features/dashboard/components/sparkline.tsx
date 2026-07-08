@@ -66,9 +66,7 @@ function buildPaths(
     .join(" ");
 
   // pts.length > 0 garanti par le guard n === 0 en tête de fonction
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const last   = pts[pts.length - 1]!;
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const first  = pts[0]!;
   const bottom = viewH - pad * 0.5;
 
