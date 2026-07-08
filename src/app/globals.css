@@ -296,6 +296,21 @@ body {
   border-color: var(--kh-border-strong);
 }
 
+/* ── Agenda — ligne de rendez-vous hover ─────────────────────────────────── */
+.kh-appointment-row:hover {
+  background: var(--kh-surface-raised);
+}
+
+/* ── Agenda — liens de navigation ────────────────────────────────────────── */
+.kh-agenda-link:hover {
+  color: var(--kh-brand-700);
+}
+
+.kh-agenda-footer-link:hover {
+  background: var(--kh-surface-raised);
+  color:      var(--kh-brand-700);
+}
+
 /* ── Skeleton shimmer ────────────────────────────────────────────────────── */
 .kh-shimmer {
   background: linear-gradient(
