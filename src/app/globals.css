@@ -306,6 +306,19 @@ body {
   background: var(--kh-surface-raised);
 }
 
+/* ── Dashboard V2 — grille principale (agenda + colonne droite) ─────────── */
+.kh-dashboard-main-grid {
+  display:               grid;
+  grid-template-columns: 1fr;
+  gap:                   var(--kh-space-4);
+  align-items:           start;
+}
+@media (min-width: 1024px) {
+  .kh-dashboard-main-grid {
+    grid-template-columns: 5fr 3fr;
+  }
+}
+
 /* ── Agenda — liens de navigation ────────────────────────────────────────── */
 .kh-agenda-link:hover {
   color: var(--kh-brand-700);
