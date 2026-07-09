@@ -8,16 +8,15 @@
  * Ne logue jamais la clé API.
  */
 
-import { config } from "dotenv";
-import { resolve } from "path";
-import { pingManus } from "./manus-client";
+import { loadEnv, getManusApiUrl } from "./utils/env";
+import { pingManus }               from "./client/index";
 
 // Charge .env.local depuis la racine du projet
-config({ path: resolve(process.cwd(), ".env.local") });
+loadEnv();
 
 async function main() {
   console.log("[Manus] Ping en cours...");
-  console.log(`[Manus] URL : ${process.env.MANUS_API_URL ?? "https://api.manus.ai"}`);
+  console.log(`[Manus] URL : ${getManusApiUrl()}`);
 
   const result = await pingManus();
 

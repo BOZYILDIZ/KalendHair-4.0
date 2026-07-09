@@ -1,0 +1,123 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# KalendHair — Intégration Continue
+#
+# Triggers :
+#   • Chaque Pull Request vers main
+#   • Chaque push sur main
+#
+# Pipeline :
+#   Install → Prisma Generate → Lint → Typecheck → Build
+#
+# Règles absolues :
+#   ✗ Aucune migration de base de données
+#   ✗ Aucune modification de données
+#   ✗ Aucun seed
+# ─────────────────────────────────────────────────────────────────────────────
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Annule les runs en cours sur la même branche/PR lors d'un nouveau push.
+# Sur main, on ne cancelle pas (on veut tracer chaque commit).
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  ci:
+    name: Lint · Typecheck · Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    # DATABASE_URL en secret GitHub (optionnel).
+    # Si absent : prisma validate est ignoré, le build reste fonctionnel.
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      NEXT_TELEMETRY_DISABLED: 1
+
+    steps:
+      # ── 1. Checkout ────────────────────────────────────────────────────────
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # ── 2. Setup pnpm (avant Node pour activer le cache pnpm) ──────────────
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      # ── 3. Setup Node.js 22 + cache pnpm store ─────────────────────────────
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc   # lit "22" depuis .nvmrc
+          cache: pnpm
+
+      # ── 4. Installation des dépendances ────────────────────────────────────
+      - name: Install dependencies
+        id: install
+        run: pnpm install --frozen-lockfile
+
+      # ── 5. Prisma — génération du client ──────────────────────────────────
+      # prisma generate lit schema.prisma et génère les types TypeScript.
+      # Aucune connexion à la base de données requise.
+      - name: Generate Prisma Client
+        id: prisma_generate
+        run: pnpm exec prisma generate
+
+      # ── 5b. Prisma — validation du schéma (si DATABASE_URL disponible) ─────
+      # prisma validate requiert DATABASE_URL. Ignoré si le secret est absent.
+      # JAMAIS de migration / seed / modification de données.
+      - name: Validate Prisma schema
+        id: prisma_validate
+        if: env.DATABASE_URL != ''
+        run: pnpm exec prisma validate
+
+      # ── 6. Lint ────────────────────────────────────────────────────────────
+      - name: Lint
+        id: lint
+        run: pnpm lint
+
+      # ── 7. Typecheck ───────────────────────────────────────────────────────
+      # rm -rf .next est obligatoire : tsconfig.json inclut .next/types/**
+      # ce qui génère des conflits d'identifiants si .next/ existe déjà.
+      - name: Typecheck
+        id: typecheck
+        run: |
+          rm -rf .next
+          pnpm typecheck
+
+      # ── 8. Build ──────────────────────────────────────────────────────────
+      # pnpm build = prisma generate && next build
+      # DATABASE_URL n'est pas requis : toutes les routes métier sont
+      # en rendu dynamique (force-dynamic). Le Prisma Client est généré
+      # mais n'ouvre aucune connexion pendant la compilation.
+      - name: Build
+        id: build
+        run: pnpm build
+        env:
+          NEXT_PUBLIC_APP_URL: ${{ vars.NEXT_PUBLIC_APP_URL || 'https://kalendhair.fr' }}
+
+      # ── 9. Résumé GitHub Actions ──────────────────────────────────────────
+      - name: CI Summary
+        if: always()
+        run: |
+          {
+            echo "## KalendHair CI — $(date -u '+%Y-%m-%d %H:%M UTC')"
+            echo ""
+            echo "| Étape | Résultat |"
+            echo "|-------|----------|"
+            echo "| 📦 Install | ${{ steps.install.outcome == 'success' && '✅ OK' || steps.install.outcome == 'skipped' && '⏭️ Ignoré' || '❌ Échec' }} |"
+            echo "| 🔧 Prisma Generate | ${{ steps.prisma_generate.outcome == 'success' && '✅ OK' || steps.prisma_generate.outcome == 'skipped' && '⏭️ Ignoré' || '❌ Échec' }} |"
+            echo "| 🔍 Prisma Validate | ${{ steps.prisma_validate.outcome == 'success' && '✅ OK' || steps.prisma_validate.outcome == 'skipped' && '⏭️ Non configuré' || '❌ Échec' }} |"
+            echo "| 🎨 Lint | ${{ steps.lint.outcome == 'success' && '✅ OK' || steps.lint.outcome == 'skipped' && '⏭️ Ignoré' || '❌ Échec' }} |"
+            echo "| 📝 Typecheck | ${{ steps.typecheck.outcome == 'success' && '✅ OK' || steps.typecheck.outcome == 'skipped' && '⏭️ Ignoré' || '❌ Échec' }} |"
+            echo "| 🏗️ Build | ${{ steps.build.outcome == 'success' && '✅ OK' || steps.build.outcome == 'skipped' && '⏭️ Ignoré' || '❌ Échec' }} |"
+            echo ""
+            echo "**Node.js** : \`22\` | **pnpm** : \`11\` | **Ref** : \`${{ github.ref_name }}\` | **SHA** : \`${{ github.sha }}\`"
+          } >> $GITHUB_STEP_SUMMARY
