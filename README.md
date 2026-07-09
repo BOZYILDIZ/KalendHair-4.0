@@ -1,5 +1,7 @@
 # KalendHair 4.0
 
+[![CI](https://github.com/BOZYILDIZ/KalendHair-4.0/actions/workflows/ci.yml/badge.svg)](https://github.com/BOZYILDIZ/KalendHair-4.0/actions/workflows/ci.yml)
+
 SaaS moderne de gestion de rendez-vous pour salons de coiffure.
 
 > ⚠️ Nouveau projet **isolé**. Ne pas confondre avec `kalendhair.fr` (production actuelle,
