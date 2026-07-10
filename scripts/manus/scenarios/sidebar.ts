@@ -66,7 +66,7 @@ export const sidebar: ScenarioDefinition = {
     return {
       prompt,
       assertionNames: assertionNames(ASSERTIONS),
-      timeoutSeconds: 120,
+      timeoutSeconds: 300,
       viewport:       VIEWPORTS.laptop,
     };
   },

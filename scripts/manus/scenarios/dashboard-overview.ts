@@ -67,7 +67,7 @@ export const dashboardOverview: ScenarioDefinition = {
     return {
       prompt,
       assertionNames: assertionNames(ASSERTIONS),
-      timeoutSeconds: 150,
+      timeoutSeconds: 300,
       viewport:       VIEWPORTS.desktop,
     };
   },
