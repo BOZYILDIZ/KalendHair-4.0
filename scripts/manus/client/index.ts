@@ -15,7 +15,21 @@ interface ManusCreateResponse {
   id?:      string;
 }
 
+interface ManusTaskDetail {
+  status?:    string;  // "stopped" = completed, "failed" | "error" | "cancelled" = failure
+  output?:    string;
+  result?:    string;
+  summary?:   string;
+  error?:     string;
+  artifacts?: Array<{ type?: string; name?: string; url?: string }>;
+  title?:     string;
+}
+
+// Vercel v2 API wraps the response: { ok: true, task: { status, output, ... } }
 interface ManusDetailResponse {
+  ok?:   boolean;
+  task?: ManusTaskDetail;
+  // legacy flat shape (kept for compatibility)
   status?:    string;
   output?:    string;
   result?:    string;
@@ -74,7 +88,8 @@ export async function pingManus(): Promise<{
 // ─── Création + polling ───────────────────────────────────────────────────────
 
 const POLL_INTERVAL_MS = 5_000;
-const TERMINAL_STATUSES = new Set(["completed", "failed", "error", "cancelled"]);
+// "stopped" = Manus v2 successful completion. "completed" kept for forward compat.
+const TERMINAL_STATUSES = new Set(["stopped", "completed", "failed", "error", "cancelled"]);
 
 /**
  * Crée une tâche Manus et attend son résultat via polling.
@@ -124,7 +139,9 @@ export async function createAndPollTask(
     }
 
     const detail = (await pollRes.json()) as ManusDetailResponse;
-    const status = (detail.status ?? "").toLowerCase();
+    // v2 API wraps result in detail.task; fall back to flat shape for compat
+    const inner  = detail.task ?? detail;
+    const status = (inner.status ?? "").toLowerCase();
 
     lastDetail      = detail;
     lastManusStatus = status;
@@ -135,19 +152,23 @@ export async function createAndPollTask(
 
     process.stdout.write("\n");
 
-    const rawOutput = detail.output ?? detail.result ?? detail.summary ?? "";
+    const rawOutput = inner.output ?? inner.result ?? inner.summary ?? "";
+    // "stopped" is Manus v2's success terminal status
+    const finalStatus = (status === "completed" || status === "stopped") ? "completed" : "failed";
     return {
       taskId,
-      status: status === "completed" ? "completed" : "failed",
+      status:          finalStatus,
       rawOutput,
-      error:  detail.error,
+      lastManusStatus: status,
+      error:           inner.error,
     };
   }
 
   process.stdout.write("\n");
   // Include last known output and status for diagnostic purposes
-  const lastOutput = lastDetail
-    ? (lastDetail.output ?? lastDetail.result ?? lastDetail.summary ?? "")
+  const lastInner = lastDetail?.task ?? lastDetail ?? null;
+  const lastOutput = lastInner
+    ? (lastInner.output ?? lastInner.result ?? lastInner.summary ?? "")
     : "";
   return {
     taskId,

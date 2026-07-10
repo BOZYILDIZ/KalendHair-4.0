@@ -61,7 +61,7 @@ export const loginOwner: ScenarioDefinition = {
     return {
       prompt,
       assertionNames: assertionNames(ASSERTIONS),
-      timeoutSeconds: 120,
+      timeoutSeconds: 300,
       viewport:       VIEWPORTS.desktop,
     };
   },
