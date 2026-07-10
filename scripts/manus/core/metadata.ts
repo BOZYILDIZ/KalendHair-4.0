@@ -3,6 +3,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { execSync } from "child_process";
+import { FRAMEWORK_VERSION, SCHEMA_VERSION, PROMPT_VERSION } from "./version";
 import type { ManusEnvironment, RunMetadata } from "./types";
 
 // ─── Git ─────────────────────────────────────────────────────────────────────
@@ -38,15 +39,18 @@ export function buildRunMetadata(params: {
   totalScenarios: number;
 }): RunMetadata {
   return {
-    runId:          params.runId,
-    commitSha:      getCommitSha(),
-    branch:         getBranch(),
-    date:           params.date,
-    environment:    params.environment,
-    baseUrl:        params.baseUrl,
-    browser:        "Manus Agent",
-    manusVersion:   "v2",
-    durationMs:     params.durationMs,
-    totalScenarios: params.totalScenarios,
+    runId:            params.runId,
+    commitSha:        getCommitSha(),
+    branch:           getBranch(),
+    date:             params.date,
+    environment:      params.environment,
+    baseUrl:          params.baseUrl,
+    browser:          "Manus Agent",
+    manusVersion:     "v2",
+    durationMs:       params.durationMs,
+    totalScenarios:   params.totalScenarios,
+    frameworkVersion: FRAMEWORK_VERSION,
+    schemaVersion:    SCHEMA_VERSION,
+    promptVersion:    PROMPT_VERSION,
   };
 }

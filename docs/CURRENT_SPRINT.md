@@ -33,6 +33,23 @@
 - [x] `src/app/(onboarding)/onboarding/actions.ts` — redirect étape 1 → `/onboarding/salon` (au lieu de /dashboard)
 - [x] `prisma generate` ✅ · `npm run lint` ✅ · `npm run typecheck` ✅ · `npm run build` ✅
 
+### Infrastructure QA Manus V2 (EN COURS — non committée, branche `fix/manus-vercel-sso-classification`)
+
+> Implémentation complète 2026-07-10. `pnpm lint ✅ · tsc ✅ · build ✅`. **Aucun commit — attente validation ChatGPT.**
+
+- [x] P0 : Credential pre-check (arrêt immédiat si QA_OWNER/ADMIN_EMAIL absent → 0 crédit gaspillé)
+- [x] P0 : 7 scénarios réécrits (RÔLE/OBJECTIF/INTERDICTIONS/CHECKLIST/FORMAT JSON/INSTRUCTION FINALE)
+- [x] P0 : Timeouts réduits (300→90/120/150s) — garde-fous, pas délais d'attente
+- [x] P0 : INSTRUCTION FINALE dans `buildAssertionsBlock()` — "ARRÊTE IMMÉDIATEMENT après le JSON"
+- [x] P1 : 6 métriques (pollCount, creditsConsumed, taskUrl, pollingDurationMs…) dans tous les rapports
+- [x] P2 : Backoff polling [2s, 2s, 5s, 10s, 15s] vs fixe 5s
+- [x] P3 : `MANUS_NATIVE_VERCEL_INTEGRATION=true` → bypass SSO désactivé automatiquement
+- [x] Architecture : `QA_EXECUTOR` (défaut, déterministe) / `QA_AGENT` (futur)
+- [ ] **Action bloquante** : remplir `QA_OWNER_EMAIL` + `QA_OWNER_PASSWORD` dans `.env.local`
+- [ ] Validation ChatGPT → commit + push sur `fix/manus-vercel-sso-classification`
+
+---
+
 ### Objectifs PR9 — Validation E2E Onboarding (EN COURS — branche `onboarding/pr9-e2e-validation`)
 
 - [x] Bug #1 corrigé : `completeOnboardingAction` auto-crée les `EmployeeSchedule` manquants depuis les horaires salon — sans ce fix, `getAvailableSlots()` retournait `[]` pour tous les employés onboardés

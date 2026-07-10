@@ -1327,3 +1327,65 @@
 - **Analyse E2E complète** : 0 autre bug, 0 import mort, 0 TODO, chaîne redirect complète (inscription→onboarding→salon→services→employees→schedule→finalisation→dashboard), cookies propres (pending_session supprimé à l'étape 1)
 - **Checks** : `prisma validate` ✅ · `npm run lint` ✅ · `npm run typecheck` ✅ · `npm run build` ✅ (83 routes)
 - **État de sortie** : PR #68 ouverte sur branche `onboarding/pr9-e2e-validation`. En attente validation ChatGPT.
+
+---
+
+## 2026-07-10 — Session : Manus QA Framework V2 — Audit + Implémentation complète
+
+- **Auteur** : Claude Sonnet 4.6 (exécutant technique).
+- **Périmètre** : `scripts/manus/` uniquement — zéro modification app KalendHair, zéro migration, zéro UI.
+- **Branche** : `fix/manus-vercel-sso-classification` (commit de base `e927c67` — timeouts augmentés). **Aucun nouveau commit.**
+- **Contexte** : Manus restait en statut "running" >5 min à chaque run, gaspillant ~200–300 crédits par scénario. L'utilisateur a connecté Vercel nativement à Manus (OAuth settings), rendant le bypass token URL superflu.
+
+### Phase 1 — Audit complet (10 missions)
+
+- Analyse exhaustive du runner, des scénarios, du client polling, du système de bypass.
+- **5 causes racines identifiées** :
+  1. Aucune instruction STOP → Manus continue de réfléchir après le JSON
+  2. Credentials absents → exploration aimless 200+ crédits
+  3. Bypass prologue actif inutilement avec intégration Vercel native
+  4. `rawOutput` architecturalement vide (API v2 limitation — output jamais retourné)
+  5. Étapes de prompt ouvertes → aucun garde-fou temporel
+- Rapport artifact publié.
+
+### Phase 2 — Implémentation V2 (P0/P1/P2/P3)
+
+**P0 — Fondations critiques :**
+- `core/types.ts` : +`ManusMode` (`QA_EXECUTOR` | `QA_AGENT`), +`RequiredCredential`, +6 champs dans `ScenarioResult` (taskUrl, pollCount, creditsConsumed, pollingDurationMs, parseDurationMs, networkDurationMs), +champs dans `TestContext` et `ScenarioDefinition`
+- `utils/env.ts` : +`getManusMode()`, +`hasNativeVercelIntegration()`
+- `core/context.ts` : bypass SSO conditionnel (`!nativeVercelIntegration && bypassToken`), +`manusMode`, +`nativeVercelIntegration`
+- `core/assertions.ts` : `buildAssertionsBlock()` enrichi avec INSTRUCTION FINALE "→ ARRÊTE IMMÉDIATEMENT après le JSON"
+- `core/runner.ts` : credential pre-check (arrêt immédiat si `requiresCredentials` absent → 0 crédit gaspillé), mode preamble (`⚡ MODE: QA_EXECUTOR`), propagation métriques
+- **7 scénarios réécrits** (`login-owner`, `dashboard-overview`, `sidebar`, `responsive`, `booking-public`, `admin-login`, `mobile-navigation`) : structure RÔLE/OBJECTIF/INTERDICTIONS/CHECKLIST/FORMAT JSON/INSTRUCTION FINALE, sélecteurs CSS précis, timeouts réduits (300→90/120/150s)
+
+**P1 — Métriques enrichies :**
+- `client/index.ts` : backoff polling `[2s, 2s, 5s, 10s, 15s]` vs fixe 5s, capture `pollCount`, `creditsConsumed`, `taskUrl`
+- `reporters/console.ts` : affichage pollCount, crédits, taskUrl, pollingDurationMs
+- `reporters/json.ts` : timings.json avec 5 nouvelles métriques par scénario
+- `reporters/markdown.ts` : taskUrl cliquable, métriques par scénario
+
+**P2 — Backoff polling :** `POLL_BACKOFF_MS = [2000, 2000, 5000, 10000, 15000]` — −3s de latence sur les tasks rapides
+
+**P3 — Smart bypass :** `MANUS_NATIVE_VERCEL_INTEGRATION=true` → bypass désactivé automatiquement
+
+**Architecture :** `QA_EXECUTOR` (défaut, déterministe) / `QA_AGENT` (exploratoire, futur)
+
+### Variables .env.local ajoutées (non committées)
+- `QA_OWNER_EMAIL=""` / `QA_OWNER_PASSWORD=""` — à remplir avec credentials staging réels
+- `QA_ADMIN_EMAIL=""` / `QA_ADMIN_PASSWORD=""`
+- `MANUS_MODE="QA_EXECUTOR"`
+- `MANUS_NATIVE_VERCEL_INTEGRATION="true"`
+
+### Corrections appliquées
+- TS2339 : `credit_usage` et `task_url` ajoutés à `ManusDetailResponse` (compat shape)
+- 4 variables `dashUrl` inutilisées supprimées (lint warnings)
+
+### Validation
+- `pnpm lint` : 0 erreurs, 0 warnings ✅
+- `pnpm exec tsc --noEmit` : 0 erreurs ✅
+- `pnpm build` : build complet ✅
+
+### État de sortie
+- **Aucun commit. Aucun push. Aucune PR.** Modifications locales uniquement sur `fix/manus-vercel-sso-classification`.
+- En attente de validation ChatGPT avant toute étape Git.
+- Action bloquante : renseigner `QA_OWNER_EMAIL` + `QA_OWNER_PASSWORD` dans `.env.local` pour activer les scénarios `requiresCredentials: "owner"`.

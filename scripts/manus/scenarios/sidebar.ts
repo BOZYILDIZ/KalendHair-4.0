@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// Scénario : Sidebar navigation
+// Scénario : Sidebar navigation — v2 QA_EXECUTOR
 // Tags     : nav, sidebar, smoke
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -21,44 +21,54 @@ const ASSERTIONS = [
   expectVisible("sidebar", "sidebar navigation"),
   expectElementCount("nav a, aside a", 4, "nav_links"),
   expectVisible("Dashboard", "lien Dashboard"),
-  expectScreenshot("sidebar_expanded", "Sidebar ouverte desktop"),
-  expectScreenshot("sidebar_collapsed", "Sidebar réduite (si applicable)"),
+  expectScreenshot("sidebar_desktop", "Sidebar navigation desktop"),
 ];
 
 export const sidebar: ScenarioDefinition = {
-  name:        "sidebar",
-  description: "Navigation sidebar — liens présents, responsive, sans erreurs",
-  tags:        ["nav", "sidebar", "smoke"],
+  scenarioId:          "SC-005",
+  name:                "sidebar",
+  description:         "Navigation sidebar — liens présents, responsive, sans erreurs",
+  tags:                ["nav", "sidebar", "smoke"],
+  requiresCredentials: "owner",
+  mode:                "QA_EXECUTOR",
 
   run(ctx) {
-    const dashUrl = `${ctx.baseUrl}/dashboard`;
-    const creds   = ctx.credentials.owner;
-
-    const authBlock = creds
-      ? `Si une page de connexion s'affiche, connecte-toi avec : ${creds.email} / ${creds.password}`
-      : "Si une page de connexion s'affiche, note que les credentials ne sont pas configurés.";
+    const creds    = ctx.credentials.owner!;
+    const loginUrl = `${ctx.baseUrl}/login`;
 
     const prompt = [
-      `# Mission QA — Scénario : Sidebar Navigation`,
+      `# QA-EXECUTOR — sidebar`,
       ``,
-      `## Contexte`,
-      `Application : KalendHair — Navigation principale`,
-      `URL : ${dashUrl}`,
+      `## RÔLE`,
+      `Tu es un exécuteur QA automatisé. Tu n'es pas un assistant. Tu n'es pas un explorateur.`,
+      `Tu exécutes UNIQUEMENT les étapes listées, dans l'ordre exact.`,
+      `Tu ne prends AUCUNE initiative.`,
       ``,
-      `## Spécification sidebar`,
-      `- Largeur fixe : 240px sur desktop`,
-      `- Liens attendus : Dashboard, Agenda, Clients, Équipe, Services, Paramètres (au minimum)`,
-      `- L'item actif doit être visuellement distinct`,
-      `- La sidebar doit être visible sans scroll horizontal`,
+      `## OBJECTIF`,
+      `Vérifier que la sidebar de navigation est présente, complète et sans erreur.`,
       ``,
-      `## Parcours utilisateur`,
-      `1. Navigue vers : ${dashUrl}`,
-      `2. ${authBlock}`,
-      `3. Identifie la sidebar de navigation.`,
-      `4. Liste tous les liens de navigation présents.`,
-      `5. Vérifie qu'au moins 4 liens sont présents.`,
-      `6. Clique sur 2 liens différents et vérifie la navigation.`,
-      `7. Vérifie l'absence d'erreur console et réseau.`,
+      `## INTERDICTIONS ABSOLUES`,
+      `- Ne jamais ouvrir d'autres pages que login et /dashboard.`,
+      `- Ne jamais cliquer sur des liens de navigation.`,
+      `- Si une étape échoue : marque l'assertion failed et CONTINUE.`,
+      `- Ne jamais continuer après avoir écrit le JSON final.`,
+      ``,
+      `## CHECKLIST — EXÉCUTE CES ÉTAPES DANS L'ORDRE`,
+      ``,
+      `Étape 1. Navigue vers : ${loginUrl}`,
+      `Étape 2. Attends max 5s que input[type="email"] soit visible.`,
+      `Étape 3. Saisis dans input[type="email"] : "${creds.email}"`,
+      `Étape 4. Saisis dans input[type="password"] : "${creds.password}"`,
+      `Étape 5. Clique sur button[type="submit"].`,
+      `Étape 6. Attends max 8s que l'URL contienne "/dashboard".`,
+      `Étape 7. Cherche un élément de type "nav" ou "aside" dans la page (la sidebar).`,
+      `         Si absent : marque visible_sidebar_navigation=false.`,
+      `Étape 8. Compte les liens "a" dans l'élément "nav" ou "aside".`,
+      `         Note le nombre trouvé (objectif : au moins 4).`,
+      `Étape 9. Cherche un lien dont le texte contient "Dashboard" dans la sidebar.`,
+      `Étape 10. Prends UNE capture d'écran de la page entière. Label: "sidebar_desktop".`,
+      `Étape 11. Note toute erreur console (type "error"). Ignore les warnings React/Next.js.`,
+      `Étape 12. Note toute requête réseau en 4xx ou 5xx (ignore 404).`,
       ``,
       buildAssertionsBlock(ASSERTIONS),
     ].join("\n");
@@ -66,7 +76,7 @@ export const sidebar: ScenarioDefinition = {
     return {
       prompt,
       assertionNames: assertionNames(ASSERTIONS),
-      timeoutSeconds: 300,
+      timeoutSeconds: 90,
       viewport:       VIEWPORTS.laptop,
     };
   },

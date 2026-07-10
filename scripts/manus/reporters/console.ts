@@ -6,6 +6,7 @@ import { formatDuration, formatDurationDelta } from "../utils/date";
 import { scoreBar }                            from "../core/score";
 import { severityEmoji }                       from "../analysis/severity";
 import { finalVerdict }                        from "../analysis/summary";
+import { FRAMEWORK_VERSION, PROMPT_VERSION }   from "../core/version";
 import type {
   ManusEnvironment,
   Reporter,
@@ -25,24 +26,45 @@ export class ConsoleReporter implements Reporter {
     total:       number;
   }): void {
     console.log("\n" + LINE);
-    console.log("  KalendHair QA — Manus");
+    console.log(`  KalendHair QA — Manus Framework v${FRAMEWORK_VERSION}`);
     console.log(LINE);
-    console.log(`  Run ID    : ${meta.runId}`);
-    console.log(`  Env       : ${meta.environment}`);
-    console.log(`  Base URL  : ${meta.baseUrl}`);
-    console.log(`  Scénarios : ${meta.total}`);
+    console.log(`  Run ID      : ${meta.runId}`);
+    console.log(`  Env         : ${meta.environment}`);
+    console.log(`  Base URL    : ${meta.baseUrl}`);
+    console.log(`  Scénarios   : ${meta.total}`);
+    console.log(`  Prompt Ver  : ${PROMPT_VERSION}`);
     console.log(LINE + "\n");
   }
 
   onScenarioEnd(result: ScenarioResult): void {
-    const icon  = result.status === "passed" ? "✅" : result.status === "timeout" ? "⏱️ " : "❌";
-    const vp    = `${result.viewport.label} ${result.viewport.width}×${result.viewport.height}`;
+    const icon   = result.status === "passed" ? "✅" : result.status === "timeout" ? "⏱️ " : "❌";
+    const vp     = `${result.viewport.label} ${result.viewport.width}×${result.viewport.height}`;
     const passed = result.assertions.filter((a) => a.passed).length;
+    const idTag  = result.scenarioId ? `[${result.scenarioId}] ` : "";
 
-    console.log(`${icon} ${result.name}`);
+    console.log(`${icon} ${idTag}${result.name}${result.dryRun ? " (DRY-RUN)" : ""}`);
     console.log(`   Viewport   : ${vp}`);
     console.log(`   Durée      : ${formatDuration(result.durationMs)}`);
     console.log(`   Assertions : ${passed}/${result.assertions.length}`);
+
+    // Métriques d'exécution Manus
+    if (result.pollCount !== undefined) {
+      const credits = result.creditsConsumed !== undefined ? ` | crédits: ${result.creditsConsumed}` : "";
+      const cost    = result.estimatedCostUsd !== undefined ? ` | coût: $${result.estimatedCostUsd}` : "";
+      console.log(`   Polls      : ${result.pollCount}${credits}${cost}`);
+    }
+    if (result.taskUrl) {
+      console.log(`   Task URL   : ${result.taskUrl}`);
+    }
+    if (result.pollingDurationMs !== undefined) {
+      console.log(`   Polling    : ${formatDuration(result.pollingDurationMs)}`);
+    }
+    if (result.promptHash) {
+      console.log(`   Hash       : ${result.promptHash.slice(0, 16)}…`);
+    }
+    if (result.capturesAttendues !== undefined) {
+      console.log(`   Captures   : ${result.capturesProduites}/${result.capturesAttendues} valides${result.capturesInvalides ? ` | ${result.capturesInvalides} invalides` : ""}`);
+    }
 
     for (const f of result.assertions.filter((a) => !a.passed)) {
       console.log(`     ✗ ${f.name} — ${f.message}`);
@@ -178,7 +200,13 @@ export class ConsoleReporter implements Reporter {
     console.log(`  Performance   ${String(score.breakdown.performance).padStart(3)} /  5`);
     console.log();
     console.log(LINE);
-    console.log(`  Total : ${run.totalScenarios} scénarios | ✅ ${run.passedScenarios} | ❌ ${run.failedScenarios} | ${formatDuration(run.durationMs)}`);
+    console.log(`  Total   : ${run.totalScenarios} scénarios | ✅ ${run.passedScenarios} | ❌ ${run.failedScenarios} | ${formatDuration(run.durationMs)}`);
+    if (run.totalCreditsConsumed !== undefined) {
+      console.log(`  Crédits : ${run.totalCreditsConsumed} | Coût estimé : $${run.totalEstimatedCostUsd ?? "?"}`);
+    }
+    if (run.dryRun) {
+      console.log(`  Mode    : DRY-RUN (zéro crédit consommé)`);
+    }
     console.log(LINE + "\n");
   }
 }

@@ -127,6 +127,22 @@ export function buildAssertionsBlock(assertions: AssertionInstruction[]): string
     `${i + 1}. [${a.name}] ${a.instruction}`
   );
 
+  const screenshotAssertions = assertions.filter((a) => a.name.startsWith("screenshot_"));
+
+  const jsonTemplate = {
+    assertions: assertions.map((a) => ({
+      name:    a.name,
+      passed:  true,
+      message: "Décris précisément ce que tu as observé.",
+    })),
+    urlsVisited:   ["https://example.com/page"],
+    consoleErrors: [] as string[],
+    networkErrors: [] as string[],
+    screenshots:   screenshotAssertions.length > 0
+      ? screenshotAssertions.map((a) => ({ label: a.name.replace(/^screenshot_/, ""), url: null }))
+      : [{ label: "capture", url: null }],
+  };
+
   return [
     "## Assertions à vérifier",
     "",
@@ -134,27 +150,20 @@ export function buildAssertionsBlock(assertions: AssertionInstruction[]): string
     "",
     "## Format de réponse requis",
     "",
-    "À la fin de ton analyse, retourne un bloc JSON entre balises ```json ... ``` avec cette structure :",
+    "Génère EXACTEMENT ce bloc JSON (entre ```json et ```) :",
     "",
     "```json",
-    JSON.stringify(
-      {
-        assertions: assertions.map((a) => ({
-          name:     a.name,
-          passed:   true,
-          message:  "Description du résultat",
-          expected: "(optionnel)",
-          actual:   "(optionnel)",
-        })),
-        urlsVisited:   ["https://example.com/..."],
-        consoleErrors: [],
-        networkErrors: [],
-        screenshots:   [{ label: "exemple", url: null }],
-      },
-      null,
-      2
-    ),
+    JSON.stringify(jsonTemplate, null, 2),
     "```",
+    "",
+    "## INSTRUCTION FINALE — OBLIGATOIRE",
+    "",
+    "Dès que tu as écrit le bloc JSON ci-dessus :",
+    "→ ARRÊTE IMMÉDIATEMENT.",
+    "→ Ne navigue plus sur aucune URL.",
+    "→ Ne prends plus aucune capture d'écran.",
+    "→ Ne vérifie plus rien.",
+    "→ Termine la tâche.",
   ].join("\n");
 }
 

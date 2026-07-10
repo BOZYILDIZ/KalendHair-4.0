@@ -12,6 +12,7 @@
 import { writeFileSync, mkdirSync } from "fs";
 import { resolve }                  from "path";
 import { formatDuration }           from "../utils/date";
+import { FRAMEWORK_VERSION, SCHEMA_VERSION, PROMPT_VERSION } from "../core/version";
 import type { ManusEnvironment, Reporter, RunSummary, ScenarioResult } from "../core/types";
 
 function runDir(runId: string): string {
@@ -42,32 +43,52 @@ export class JsonReporter implements Reporter {
     ensureDir(dir);
 
     // ── report.json — RunSummary complète ────────────────────────────────────
+    const versionEnvelope = { frameworkVersion: FRAMEWORK_VERSION, schemaVersion: SCHEMA_VERSION, promptVersion: PROMPT_VERSION };
+    const reportWithVersion = Object.assign({}, versionEnvelope, summary);
     writeFileSync(
       resolve(dir, "report.json"),
-      JSON.stringify(summary, null, 2),
+      JSON.stringify(reportWithVersion, null, 2),
       "utf-8"
     );
 
     // ── metadata.json ─────────────────────────────────────────────────────────
+    const metadataWithVersion = Object.assign({}, versionEnvelope, summary.metadata);
     writeFileSync(
       resolve(dir, "metadata.json"),
-      JSON.stringify(summary.metadata, null, 2),
+      JSON.stringify(metadataWithVersion, null, 2),
       "utf-8"
     );
 
     // ── timings.json ──────────────────────────────────────────────────────────
     const timings = {
+      frameworkVersion: FRAMEWORK_VERSION,
       totalMs:   summary.run.durationMs,
       formatted: formatDuration(summary.run.durationMs),
+      totalCreditsConsumed:   summary.run.totalCreditsConsumed,
+      totalEstimatedCostUsd:  summary.run.totalEstimatedCostUsd,
       scenarios: summary.run.scenarios.map((s) => ({
-        name:        s.name,
-        status:      s.status,
-        startedAt:   s.startedAt,
-        completedAt: s.completedAt,
-        durationMs:  s.durationMs,
-        formatted:   formatDuration(s.durationMs),
-        taskId:      s.taskId,
-        viewport:    `${s.viewport.label} ${s.viewport.width}×${s.viewport.height}`,
+        scenarioId:        s.scenarioId,
+        name:              s.name,
+        status:            s.status,
+        startedAt:         s.startedAt,
+        completedAt:       s.completedAt,
+        durationMs:        s.durationMs,
+        formatted:         formatDuration(s.durationMs),
+        taskId:            s.taskId,
+        taskUrl:           s.taskUrl,
+        viewport:          `${s.viewport.label} ${s.viewport.width}×${s.viewport.height}`,
+        // ── Métriques d'exécution ──────────────────────────────────────────
+        pollCount:         s.pollCount,
+        creditsConsumed:   s.creditsConsumed,
+        estimatedCostUsd:  s.estimatedCostUsd,
+        pollingDurationMs: s.pollingDurationMs,
+        parseDurationMs:   s.parseDurationMs,
+        networkDurationMs: s.networkDurationMs,
+        // ── Captures ──────────────────────────────────────────────────────
+        capturesAttendues: s.capturesAttendues,
+        capturesProduites: s.capturesProduites,
+        capturesInvalides: s.capturesInvalides,
+        promptHash:        s.promptHash,
       })),
     };
     writeFileSync(resolve(dir, "timings.json"), JSON.stringify(timings, null, 2), "utf-8");

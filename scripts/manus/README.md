@@ -1,177 +1,238 @@
-# Manus QA Platform — KalendHair
+# KalendHair — Manus QA Framework v2.1
 
-Infrastructure de tests navigateur automatisés via [Manus](https://manus.ai) (API v2).
+Infrastructure QA pilotée par Manus (agent IA navigateur), entièrement dans `scripts/manus/`.
 
 ---
 
-## Structure
+## Lancement rapide
+
+```bash
+# Run complet (production)
+tsx scripts/manus/run-all.ts
+
+# Scénario unique
+tsx scripts/manus/run-all.ts --scenario login-owner
+
+# Par tag
+tsx scripts/manus/run-all.ts --tag smoke
+
+# Simulation complète sans appel Manus (zéro crédit)
+tsx scripts/manus/run-all.ts --dry-run
+```
+
+---
+
+## Versioning
+
+| Constante          | Valeur            |
+|--------------------|-------------------|
+| `frameworkVersion` | `2.1.0`           |
+| `schemaVersion`    | `2`               |
+| `promptVersion`    | `qa-executor-v2`  |
+
+Ces valeurs apparaissent dans `report.json`, `report.md`, `metadata.json`, et la console.
+
+---
+
+## Scénarios
+
+| ID      | Scénario             | Credentials | Mode        | Timeout |
+|---------|----------------------|-------------|-------------|---------|
+| SC-001  | `login-owner`        | owner       | QA_EXECUTOR | 90s     |
+| SC-002  | `dashboard-overview` | owner       | QA_EXECUTOR | 120s    |
+| SC-003  | `booking-public`     | —           | QA_EXECUTOR | 90s     |
+| SC-004  | `admin-login`        | admin       | QA_EXECUTOR | 90s     |
+| SC-005  | `sidebar`            | owner       | QA_EXECUTOR | 90s     |
+| SC-006  | `mobile-navigation`  | owner       | QA_EXECUTOR | 90s     |
+| SC-007  | `responsive`         | owner       | QA_EXECUTOR | 150s    |
+| SC-T01  | `test-block-merge`   | —           | —           | —       |
+
+---
+
+## Dry-Run Mode
+
+Le flag `--dry-run` permet de simuler une exécution complète **sans consommer de crédits Manus** :
+
+- Génère le prompt final pour chaque scénario
+- Calcule le SHA-256 du prompt (`promptHash`)
+- Vérifie que les credentials sont configurés
+- Affiche le JSON attendu (structure des assertions)
+- Génère le rapport complet (`report.json`, `report.md`)
+- N'appelle **jamais** l'API Manus
+
+```bash
+tsx scripts/manus/run-all.ts --dry-run
+```
+
+---
+
+## Prompt Validation
+
+Avant chaque appel Manus, le prompt est validé structurellement.
+**6 sections obligatoires** :
+
+1. `ROLE` — identité de l'exécuteur
+2. `OBJECTIF` — ce qui doit être vérifié
+3. `INTERDICTIONS` — ce qui est interdit
+4. `CHECKLIST` — étapes à suivre dans l'ordre
+5. `FORMAT JSON` — template de réponse
+6. `INSTRUCTION FINALE` — ordre d'arrêt immédiat
+
+Si une section est manquante → erreur bloquante, le scénario n'est pas envoyé à Manus.
+
+---
+
+## Prompt Hash (SHA-256)
+
+Chaque prompt final est haché en SHA-256 avant envoi. Le hash apparaît dans :
+- `report.json` → champ `promptHash` de chaque scénario
+- `report.md` → section Détail de chaque scénario
+- Console → `Hash: <16 premiers caractères>…`
+
+Cela permet de vérifier qu'un run donné a utilisé exactement ce prompt.
+
+---
+
+## Screenshot Validation
+
+Après chaque scénario, les captures attendues (assertions `expectScreenshot`) sont comparées à celles retournées par Manus :
+
+| Champ               | Description                                  |
+|---------------------|----------------------------------------------|
+| `capturesAttendues` | Nombre d'assertions `expectScreenshot`       |
+| `capturesProduites` | Screenshots avec URL valide (`http://…`)     |
+| `capturesInvalides` | Screenshots absents ou URL invalide          |
+
+---
+
+## Estimation du coût
+
+Le coût est estimé à partir des crédits consommés :
+
+```
+1 crédit = $0.01 USD (configurable via MANUS_CREDIT_COST_USD)
+```
+
+Champs disponibles par scénario :
+- `creditsConsumed` — crédits réels consommés
+- `estimatedCostUsd` — coût estimé en USD
+
+Champs disponibles par run :
+- `totalCreditsConsumed` — somme des crédits
+- `totalEstimatedCostUsd` — coût total estimé
+
+---
+
+## Variables d'environnement
+
+Fichier `.env.local` (jamais commité) :
+
+```
+MANUS_API_KEY=...                       # obligatoire
+MANUS_API_URL=https://api.manus.ai      # optionnel
+MANUS_ENV=local                         # local | ci | staging | production
+MANUS_MODE=QA_EXECUTOR                  # QA_EXECUTOR | QA_AGENT
+BASE_URL=http://localhost:3000          # URL de l'app à tester
+QA_OWNER_EMAIL=...                      # credentials owner
+QA_OWNER_PASSWORD=...
+QA_ADMIN_EMAIL=...                      # credentials admin
+QA_ADMIN_PASSWORD=...
+VERCEL_PROTECTION_BYPASS=...            # token bypass SSO (jamais logué)
+MANUS_NATIVE_VERCEL_INTEGRATION=true    # désactive le bypass si true
+MANUS_CREDIT_COST_USD=0.01              # taux USD par crédit (défaut: 0.01)
+MANUS_CREDITS_REMAINING=500             # optionnel — crédits restants
+```
+
+---
+
+## Artefacts générés
+
+Pour chaque run, un dossier `reports/manus/<runId>/` est créé :
+
+```
+reports/manus/<runId>/
+├── report.json       — RunSummary complète (v2.1)
+├── report.md         — Rapport CTO-ready
+├── metadata.json     — Métadonnées + versioning
+├── timings.json      — Durées + crédits + coût par scénario
+├── network.json      — Erreurs réseau agrégées
+├── console.log       — Erreurs console par scénario
+└── screenshots/      — Dossier réservé aux captures locales
+```
+
+---
+
+## Architecture
 
 ```
 scripts/manus/
-├── run-all.ts                   # Entry point CLI
-├── ping.ts                      # Validation connexion API
-├── manus-client.ts              # Legacy (remplacé par client/)
-│
-├── client/
-│   └── index.ts                 # Client Manus API v2 (create + poll)
-│
+├── run-all.ts                  ← Point d'entrée (--dry-run, --scenario, --tag)
 ├── core/
-│   ├── types.ts                 # Types TypeScript partagés
-│   ├── assertions.ts            # Bibliothèque d'assertions
-│   ├── context.ts               # Contexte de test (env, baseUrl, creds)
-│   └── runner.ts                # Runner de scénarios
-│
-├── reporters/
-│   ├── console.ts               # Reporter console (résumé humain)
-│   ├── json.ts                  # Reporter JSON → reports/manus/<id>.json
-│   ├── markdown.ts              # Reporter Markdown → reports/manus/<id>.md
-│   └── index.ts                 # Exports groupés
-│
+│   ├── types.ts                ← Types TypeScript partagés
+│   ├── version.ts              ← Constantes de versioning (v2.1.0)
+│   ├── runner.ts               ← Orchestration des scénarios
+│   ├── assertions.ts           ← Bibliothèque d'assertions
+│   ├── context.ts              ← Construction du TestContext
+│   ├── metadata.ts             ← Collecte de métadonnées (git, env)
+│   ├── score.ts                ← Calcul du QA Score (0-100)
+│   └── compare.ts              ← Comparaison avec run précédent
+├── client/
+│   └── index.ts                ← Client API Manus + polling backoff
 ├── scenarios/
-│   ├── login-owner.ts           # Connexion owner + redirection dashboard
-│   ├── dashboard-overview.ts    # Vue d'ensemble dashboard v2
-│   ├── booking-public.ts        # Prise de RDV public (sans auth)
-│   ├── admin-login.ts           # Connexion back-office admin
-│   ├── sidebar.ts               # Navigation sidebar
-│   ├── mobile-navigation.ts     # Navigation mobile 390px
-│   ├── responsive.ts            # Breakpoints critiques
-│   └── pr-06-regression.ts      # Régression PR-06 (legacy)
-│
-├── utils/
-│   ├── date.ts                  # nowIso(), runId(), formatDuration()
-│   └── env.ts                   # Chargement variables d'environnement
-│
-├── screenshots/                 # Captures Manus (ignorées par git)
-└── artifacts/                   # Artefacts bruts (ignorés par git)
-
-reports/manus/
-├── <runId>.json                 # Résultat structuré (pour Codex)
-└── <runId>.md                   # Rapport Markdown (pour ChatGPT)
+│   ├── login-owner.ts          ← SC-001
+│   ├── dashboard-overview.ts   ← SC-002
+│   ├── booking-public.ts       ← SC-003
+│   ├── admin-login.ts          ← SC-004
+│   ├── sidebar.ts              ← SC-005
+│   ├── mobile-navigation.ts    ← SC-006
+│   ├── responsive.ts           ← SC-007
+│   └── test-block-merge.ts     ← SC-T01 (test uniquement)
+├── reporters/
+│   ├── console.ts              ← Rapport console temps réel
+│   ├── json.ts                 ← report.json + artefacts
+│   └── markdown.ts             ← report.md (CTO-ready)
+├── analysis/
+│   ├── index.ts                ← Moteur d'analyse
+│   ├── history.ts              ← Historique des runs
+│   ├── insights.ts             ← Insights automatiques
+│   ├── regressions.ts          ← Détection de régressions
+│   ├── recommendations.ts      ← Recommandations
+│   ├── severity.ts             ← Niveaux de sévérité
+│   └── summary.ts              ← Verdict final
+└── utils/
+    ├── date.ts                 ← Formatage des dates/durées
+    ├── env.ts                  ← Chargement des variables d'env
+    ├── hash.ts                 ← SHA-256 du prompt (v2.1)
+    ├── prompt-validator.ts     ← Validation structurelle du prompt (v2.1)
+    └── cost.ts                 ← Estimation du coût USD (v2.1)
 ```
 
 ---
 
-## Authentification Manus API v2
+## Quality Gates
 
-| Champ          | Valeur                         |
-|----------------|--------------------------------|
-| Base URL       | `https://api.manus.ai`         |
-| Header auth    | `x-manus-api-key: $MANUS_API_KEY` |
-| Créer tâche    | `POST /v2/task.create`         |
-| Polling statut | `GET /v2/task.detail?task_id=<id>` |
-
-**⛔ Ne PAS utiliser** `Authorization: Bearer` — invalide pour Manus (retourne 401).
+| Gate                | Seuil | Conséquence  |
+|---------------------|-------|--------------|
+| Score QA global     | ≥ 80  | BLOCK_MERGE  |
+| Pas d'erreur console| 0     | WARNING      |
+| Pas d'erreur réseau | 0     | WARNING      |
+| Taux de passage     | ≥ 70% | BLOCK_MERGE  |
 
 ---
 
-## Configuration
+## Polling Backoff
 
-```bash
-# .env.local — jamais commité (.env* est dans .gitignore)
-MANUS_API_KEY="sk-..."
-MANUS_API_URL="https://api.manus.ai"
-MANUS_ENV="local"                      # local | ci | staging | production
-BASE_URL="https://staging.kalendhair.fr"   # requis pour ci/staging/production
-
-# Credentials QA (comptes dédiés, jamais les comptes réels)
-QA_OWNER_EMAIL="qa-owner@kalendhair.fr"
-QA_OWNER_PASSWORD="..."
-QA_ADMIN_EMAIL="qa-admin@kalendhair.fr"
-QA_ADMIN_PASSWORD="..."
 ```
+[2000ms, 2000ms, 5000ms, 10000ms, 15000ms, …]
+```
+
+Si le timeout du scénario est dépassé : `status: "timeout"` + toutes les assertions marquées `false`.
 
 ---
 
-## Commandes
+## Règles de sécurité
 
-### Validation de la connexion
-
-```bash
-tsx scripts/manus/ping.ts
-```
-
-### Lancer tous les scénarios
-
-```bash
-tsx scripts/manus/run-all.ts
-```
-
-### Lancer un scénario spécifique
-
-```bash
-tsx scripts/manus/run-all.ts --scenario login-owner
-tsx scripts/manus/run-all.ts --scenario dashboard-overview
-```
-
-### Filtrer par tag
-
-```bash
-tsx scripts/manus/run-all.ts --tag smoke
-tsx scripts/manus/run-all.ts --tag mobile
-tsx scripts/manus/run-all.ts --tag dashboard-v2
-```
-
-### Cibler un environnement
-
-```bash
-MANUS_ENV=staging BASE_URL=https://staging.kalendhair.fr tsx scripts/manus/run-all.ts
-```
-
----
-
-## Scénarios disponibles
-
-| Nom                  | Tags                        | Description |
-|----------------------|-----------------------------|-------------|
-| `login-owner`        | auth, smoke, owner          | Connexion owner + dashboard |
-| `dashboard-overview` | dashboard, smoke, owner     | Vue dashboard v2 complète |
-| `booking-public`     | booking, public, smoke      | Réservation sans auth |
-| `admin-login`        | auth, admin, smoke          | Back-office admin |
-| `sidebar`            | nav, sidebar, smoke         | Navigation sidebar |
-| `mobile-navigation`  | mobile, nav, responsive     | Mobile 390px |
-| `responsive`         | responsive, visual, regression | Breakpoints 1920/1440/768/390 |
-
----
-
-## Assertions disponibles
-
-```typescript
-expectNoConsoleErrors(allowReactWarnings?)
-expectNoNetworkErrors(ignoreCodes?)
-expectVisible(selector, label?)
-expectText(text, context?)
-expectRoute(pathOrPattern)
-expectRedirect(fromPath, toPath)
-expectElementCount(selector, count, label?)
-expectScreenshot(label, description?)
-```
-
----
-
-## Format de rapport Manus
-
-Manus retourne son analyse sous forme de texte libre contenant un bloc JSON :
-
-```json
-{
-  "assertions": [
-    { "name": "no_console_errors", "passed": true, "message": "Aucune erreur." }
-  ],
-  "urlsVisited": ["https://staging.kalendhair.fr/dashboard"],
-  "consoleErrors": [],
-  "networkErrors": [],
-  "screenshots": [{ "label": "dashboard_overview", "url": null }]
-}
-```
-
----
-
-## Règles de sécurité (non négociables)
-
-- ⛔ Ne jamais committer `.env.local`
-- ⛔ Ne jamais afficher `MANUS_API_KEY` dans les logs, même partiellement
-- ⛔ Ne jamais stocker la clé dans le code source
-- ⛔ Ne jamais copier la clé dans un fichier du dépôt
-- ✅ Si la clé est exposée dans un chat ou un log → la régénérer immédiatement
-- ✅ CI : GitHub Secret `MANUS_API_KEY`
-- ✅ Vercel : Environment Variable `MANUS_API_KEY`
+- `MANUS_API_KEY` — jamais loggué, jamais commité, jamais affiché dans les rapports
+- `VERCEL_PROTECTION_BYPASS` — mêmes règles
+- Credentials QA (`QA_OWNER_*`, `QA_ADMIN_*`) — jamais commités, jamais loggués
+- Aucun commit sans validation ChatGPT préalable

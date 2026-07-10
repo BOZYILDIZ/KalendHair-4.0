@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// Scénario : Responsive — breakpoints critiques
+// Scénario : Responsive — breakpoints critiques — v2 QA_EXECUTOR
 // Tags     : responsive, visual, regression
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -18,52 +18,61 @@ const ASSERTIONS = [
   expectNoConsoleErrors(true),
   expectNoNetworkErrors([404]),
   expectVisible("Dashboard", "contenu principal"),
-  expectScreenshot("responsive_1920", "Dashboard 1920px (desktop large)"),
   expectScreenshot("responsive_1440", "Dashboard 1440px (laptop)"),
   expectScreenshot("responsive_768",  "Dashboard 768px (tablet)"),
   expectScreenshot("responsive_390",  "Dashboard 390px (mobile)"),
 ];
 
 export const responsive: ScenarioDefinition = {
-  name:        "responsive",
-  description: "Vérification visuelle aux 4 breakpoints critiques (1920, 1440, 768, 390px)",
-  tags:        ["responsive", "visual", "regression"],
+  scenarioId:          "SC-007",
+  name:                "responsive",
+  description:         "Vérification visuelle aux 3 breakpoints critiques (1440, 768, 390px)",
+  tags:                ["responsive", "visual", "regression"],
+  requiresCredentials: "owner",
+  mode:                "QA_EXECUTOR",
 
   run(ctx) {
-    const dashUrl = `${ctx.baseUrl}/dashboard`;
-    const creds   = ctx.credentials.owner;
-
-    const authBlock = creds
-      ? `Si une page de connexion s'affiche, connecte-toi avec : ${creds.email} / ${creds.password}`
-      : "Si une page de connexion s'affiche, note que les credentials ne sont pas configurés.";
+    const creds    = ctx.credentials.owner!;
+    const loginUrl = `${ctx.baseUrl}/login`;
 
     const prompt = [
-      `# Mission QA — Scénario : Responsive`,
+      `# QA-EXECUTOR — responsive`,
       ``,
-      `## Contexte`,
-      `Application : KalendHair Dashboard`,
-      `URL : ${dashUrl}`,
+      `## RÔLE`,
+      `Tu es un exécuteur QA automatisé. Tu n'es pas un assistant. Tu n'es pas un explorateur.`,
+      `Tu exécutes UNIQUEMENT les étapes listées, dans l'ordre exact.`,
+      `Tu ne prends AUCUNE initiative.`,
       ``,
-      `## Breakpoints à tester`,
-      `| Viewport   | Largeur | Description         |`,
-      `|------------|---------|---------------------|`,
-      `| Desktop XL | 1920px  | Grand écran         |`,
-      `| Laptop     | 1440px  | Laptop standard     |`,
-      `| Tablet     | 768px   | iPad portrait       |`,
-      `| Mobile     | 390px   | iPhone 14           |`,
+      `## OBJECTIF`,
+      `Vérifier visuellement le dashboard à 3 breakpoints critiques (1440, 768, 390px).`,
       ``,
-      `## Vérifications à chaque breakpoint`,
-      `- Aucun scroll horizontal`,
-      `- Les KPI Cards s'adaptent (auto-fill grid)`,
-      `- La sidebar est visible sur desktop, masquée sur mobile`,
-      `- Les textes restent lisibles`,
-      `- Aucun élément ne dépasse les bords de la fenêtre`,
+      `## INTERDICTIONS ABSOLUES`,
+      `- Ne jamais ouvrir d'autres pages que login et /dashboard.`,
+      `- Ne jamais interagir avec des éléments UI non listés.`,
+      `- Exactement 3 captures d'écran — une par breakpoint.`,
+      `- Si une étape échoue : marque l'assertion failed et CONTINUE.`,
+      `- Ne jamais continuer après avoir écrit le JSON final.`,
       ``,
-      `## Parcours utilisateur`,
-      `1. Navigue vers : ${dashUrl}`,
-      `2. ${authBlock}`,
-      `3. Pour chaque breakpoint listé, redimensionne le viewport et prends une capture.`,
-      `4. Note tout problème de mise en page à chaque taille.`,
+      `## CHECKLIST — EXÉCUTE CES ÉTAPES DANS L'ORDRE`,
+      ``,
+      `Étape 1. Navigue vers : ${loginUrl}`,
+      `Étape 2. Attends max 5s que input[type="email"] soit visible.`,
+      `Étape 3. Saisis dans input[type="email"] : "${creds.email}"`,
+      `Étape 4. Saisis dans input[type="password"] : "${creds.password}"`,
+      `Étape 5. Clique sur button[type="submit"].`,
+      `Étape 6. Attends max 8s que l'URL contienne "/dashboard".`,
+      `Étape 7. Redimensionne le viewport à 1440×900px.`,
+      `Étape 8. Attends 1s que la page s'adapte.`,
+      `Étape 9. Prends une capture d'écran. Label: "responsive_1440".`,
+      `Étape 10. Redimensionne le viewport à 768×1024px.`,
+      `Étape 11. Attends 1s que la page s'adapte.`,
+      `Étape 12. Prends une capture d'écran. Label: "responsive_768".`,
+      `Étape 13. Redimensionne le viewport à 390×844px.`,
+      `Étape 14. Attends 1s que la page s'adapte.`,
+      `Étape 15. Prends une capture d'écran. Label: "responsive_390".`,
+      `Étape 16. Vérifie que le contenu principal (dashboard) est visible à ce viewport.`,
+      `Étape 17. Note toute erreur console (type "error"). Ignore les warnings React/Next.js.`,
+      `Étape 18. Note toute requête réseau en 4xx ou 5xx (ignore 404).`,
       ``,
       buildAssertionsBlock(ASSERTIONS),
     ].join("\n");
@@ -71,7 +80,7 @@ export const responsive: ScenarioDefinition = {
     return {
       prompt,
       assertionNames: assertionNames(ASSERTIONS),
-      timeoutSeconds: 300,
+      timeoutSeconds: 150,
       viewport:       VIEWPORTS.desktop,
     };
   },

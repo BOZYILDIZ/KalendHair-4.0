@@ -32,6 +32,7 @@ const ASSERTIONS = [
 ];
 
 export const testBlockMerge: ScenarioDefinition = {
+  scenarioId:  "SC-T01",
   name:        "test-block-merge",
   description: "Scénario de test contrôlé — valide que BLOCK_MERGE se déclenche correctement",
   tags:        ["test", "qa-validation", "controlled-failure"],

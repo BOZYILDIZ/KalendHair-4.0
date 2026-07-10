@@ -6,6 +6,7 @@
 //   tsx scripts/manus/run-all.ts
 //   tsx scripts/manus/run-all.ts --scenario login-owner
 //   tsx scripts/manus/run-all.ts --tag smoke
+//   tsx scripts/manus/run-all.ts --dry-run          ← zéro crédit, simulation complète
 //   MANUS_ENV=staging tsx scripts/manus/run-all.ts
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -47,9 +48,14 @@ const ALL_SCENARIOS: ScenarioDefinition[] = [...PROD_SCENARIOS, ...TEST_SCENARIO
 
 // ─── Parsing des arguments CLI ─────────────────────────────────────────────────
 
-function parseArgs(argv: string[]): { scenarioFilter?: string; tagFilter?: string } {
+function parseArgs(argv: string[]): {
+  scenarioFilter?: string;
+  tagFilter?:      string;
+  dryRun:          boolean;
+} {
   let scenarioFilter: string | undefined;
   let tagFilter: string | undefined;
+  let dryRun = false;
 
   for (let i = 2; i < argv.length; i++) {
     const arg = argv[i];
@@ -59,10 +65,12 @@ function parseArgs(argv: string[]): { scenarioFilter?: string; tagFilter?: strin
     } else if (arg === "--tag" && argv[i + 1]) {
       tagFilter = argv[i + 1];
       i++;
+    } else if (arg === "--dry-run") {
+      dryRun = true;
     }
   }
 
-  return { scenarioFilter, tagFilter };
+  return { scenarioFilter, tagFilter, dryRun };
 }
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
@@ -71,7 +79,7 @@ async function main() {
   // 1. Charger l'environnement
   loadEnv();
 
-  const { scenarioFilter, tagFilter } = parseArgs(process.argv);
+  const { scenarioFilter, tagFilter, dryRun } = parseArgs(process.argv);
 
   // 2. Filtrer les scénarios
   // Par défaut : uniquement les scénarios de production
@@ -108,7 +116,7 @@ async function main() {
   ];
 
   // 5. Lancer le runner
-  const runner = new ScenarioRunner(reporters);
+  const runner = new ScenarioRunner(reporters, { dryRun });
   const result = await runner.runAll(scenarios, ctx);
 
   // 6. Code de sortie selon résultat
