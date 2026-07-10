@@ -179,10 +179,11 @@ export class ScenarioRunner {
 
     if (taskOutput.status === "timeout") {
       // Timeout = assertions non vérifiées → toutes marquées échouées
+      const lastStatus = taskOutput.lastManusStatus ?? "unknown";
       const timedOutAssertions: AssertionResult[] = spec.assertionNames.map((n) => ({
         name:    n,
         passed:  false,
-        message: "Timeout — assertion non vérifiée par Manus.",
+        message: `Timeout — assertion non vérifiée par Manus. Dernier statut Manus: ${lastStatus}`,
       }));
       return {
         name:          scenario.name,

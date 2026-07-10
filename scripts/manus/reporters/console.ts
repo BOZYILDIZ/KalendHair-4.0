@@ -68,7 +68,12 @@ export class ConsoleReporter implements Reporter {
     console.log();
     console.log(`  ${scoreBar(score.total)}  ${score.total} / 100`);
     console.log();
-    console.log(`  ${verdict === "READY_FOR_MERGE" ? "✅  READY FOR MERGE" : "🚫  BLOCK MERGE"}`);
+    if (score.qaInfraBlocked) {
+      console.log("  ⚠️   QA INFRASTRUCTURE BLOCKED");
+      console.log("  (Tous les scénarios ont timeouté — score non représentatif)");
+    } else {
+      console.log(`  ${verdict === "READY_FOR_MERGE" ? "✅  READY FOR MERGE" : "🚫  BLOCK MERGE"}`);
+    }
     console.log();
 
     if (analysis) {

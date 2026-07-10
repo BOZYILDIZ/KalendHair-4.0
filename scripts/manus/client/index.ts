@@ -25,10 +25,11 @@ interface ManusDetailResponse {
 }
 
 export interface ManusTaskOutput {
-  taskId:    string;
-  status:    "completed" | "failed" | "timeout";
-  rawOutput: string;
-  error?:    string;
+  taskId:           string;
+  status:           "completed" | "failed" | "timeout";
+  rawOutput:        string;
+  lastManusStatus?: string;
+  error?:           string;
 }
 
 // ─── Headers ─────────────────────────────────────────────────────────────────
@@ -107,6 +108,10 @@ export async function createAndPollTask(
   const maxMs      = timeoutSeconds * 1000;
   const startedAt  = Date.now();
 
+  // Track last polled detail for timeout diagnosis
+  let lastDetail: ManusDetailResponse | null = null;
+  let lastManusStatus = "";
+
   while (Date.now() - startedAt < maxMs) {
     await sleep(POLL_INTERVAL_MS);
 
@@ -120,6 +125,9 @@ export async function createAndPollTask(
 
     const detail = (await pollRes.json()) as ManusDetailResponse;
     const status = (detail.status ?? "").toLowerCase();
+
+    lastDetail      = detail;
+    lastManusStatus = status;
 
     process.stdout.write(".");
 
@@ -137,11 +145,16 @@ export async function createAndPollTask(
   }
 
   process.stdout.write("\n");
+  // Include last known output and status for diagnostic purposes
+  const lastOutput = lastDetail
+    ? (lastDetail.output ?? lastDetail.result ?? lastDetail.summary ?? "")
+    : "";
   return {
     taskId,
-    status:    "timeout",
-    rawOutput: "",
-    error:     `Timeout after ${timeoutSeconds}s`,
+    status:          "timeout",
+    rawOutput:       lastOutput,
+    lastManusStatus: lastManusStatus || "unknown (no poll completed)",
+    error:           `Timeout after ${timeoutSeconds}s — last Manus status: ${lastManusStatus || "unknown"}`,
   };
 }
 

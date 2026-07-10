@@ -134,10 +134,11 @@ export type QAScoreBreakdown = {
 };
 
 export type QAScore = {
-  total:     number;
-  verdict:   "READY_FOR_MERGE" | "BLOCK_MERGE";
-  threshold: number;
-  breakdown: QAScoreBreakdown;
+  total:           number;
+  verdict:         "READY_FOR_MERGE" | "BLOCK_MERGE";
+  threshold:       number;
+  breakdown:       QAScoreBreakdown;
+  qaInfraBlocked?: boolean;
 };
 
 // ─── Metadata ────────────────────────────────────────────────────────────────
