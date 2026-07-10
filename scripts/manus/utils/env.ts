@@ -84,3 +84,12 @@ export function getAdminCredentials(): { email: string; password: string } | und
   if (!email || !password) return undefined;
   return { email, password };
 }
+
+/**
+ * Retourne le token _vercel_share pour bypasser Vercel Deployment Protection.
+ * Undefined si absent — Manus fonctionnera sans bypass (peut timeout sur SSO).
+ * ⛔ Ne jamais logguer cette valeur.
+ */
+export function getVercelProtectionBypassToken(): string | undefined {
+  return process.env["VERCEL_PROTECTION_BYPASS"] || undefined;
+}

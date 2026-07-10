@@ -146,13 +146,34 @@ export class ScenarioRunner {
     const startedAt = nowIso();
     const startMs   = Date.now();
 
+    // Bypass Vercel Deployment Protection before the scenario proper
+    const bypassPrologue = ctx.vercelBypassUrl
+      ? [
+          `## Étape préliminaire — Bypass Vercel SSO`,
+          ``,
+          `⚠️ Cette application est protégée par Vercel Deployment Protection.`,
+          `Avant de commencer le scénario, tu DOIS :`,
+          `1. Naviguer vers l'URL de bypass (elle positionne un cookie d'authentification).`,
+          `2. Attendre la redirection ou le chargement complet de la page.`,
+          `3. Seulement ensuite, commencer le scénario ci-dessous.`,
+          ``,
+          `URL de bypass : ${ctx.vercelBypassUrl}`,
+          ``,
+          `---`,
+          ``,
+        ].join("\n")
+      : "";
+
+    const finalPrompt = bypassPrologue + spec.prompt;
+
     console.log(`\n▶  ${scenario.name}`);
     console.log(`   ${spec.viewport.label} ${spec.viewport.width}×${spec.viewport.height}`);
+    if (ctx.vercelBypassUrl) console.log(`   🔓 Bypass SSO actif`);
 
     let taskOutput: Awaited<ReturnType<typeof createAndPollTask>>;
 
     try {
-      taskOutput = await createAndPollTask(spec.prompt, spec.timeoutSeconds);
+      taskOutput = await createAndPollTask(finalPrompt, spec.timeoutSeconds);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       return {

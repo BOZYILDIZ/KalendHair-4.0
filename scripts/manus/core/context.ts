@@ -9,6 +9,7 @@ import {
   getBaseUrl,
   getOwnerCredentials,
   getAdminCredentials,
+  getVercelProtectionBypassToken,
 } from "../utils/env";
 
 // ─── Builder ──────────────────────────────────────────────────────────────────
@@ -20,12 +21,17 @@ import {
 export function buildTestContext(envOverride?: ManusEnvironment): TestContext {
   loadEnv();
 
-  const environment = envOverride ?? getManusEnv();
-  const baseUrl     = getBaseUrl(environment);
+  const environment        = envOverride ?? getManusEnv();
+  const baseUrl            = getBaseUrl(environment);
+  const bypassToken        = getVercelProtectionBypassToken();
+  const vercelBypassUrl    = bypassToken
+    ? `${baseUrl}?_vercel_share=${bypassToken}`
+    : undefined;
 
   return {
     environment,
     baseUrl,
+    vercelBypassUrl,
     credentials: {
       owner:   getOwnerCredentials(),
       admin:   getAdminCredentials(),

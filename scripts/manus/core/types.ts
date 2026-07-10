@@ -95,8 +95,9 @@ export type Credentials = {
 };
 
 export type TestContext = {
-  environment: ManusEnvironment;
-  baseUrl:     string;
+  environment:      ManusEnvironment;
+  baseUrl:          string;
+  vercelBypassUrl?: string;  // URL à visiter en premier pour bypasser Vercel SSO
   credentials: {
     owner?:    Credentials;
     manager?:  Credentials;
