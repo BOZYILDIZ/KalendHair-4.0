@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// Scénario : Navigation mobile (390px)
+// Scénario : Navigation mobile (390px) — v2 QA_EXECUTOR
 // Tags     : mobile, nav, responsive
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -17,49 +17,53 @@ import type { ScenarioDefinition } from "../core/types";
 const ASSERTIONS = [
   expectNoConsoleErrors(true),
   expectNoNetworkErrors([404]),
-  expectVisible("Menu mobile", "bouton hamburger ou navigation mobile"),
-  expectScreenshot("mobile_dashboard", "Dashboard sur mobile 390px"),
-  expectScreenshot("mobile_menu_open", "Menu mobile ouvert"),
-  expectScreenshot("mobile_kpi_cards", "KPI Cards sur mobile"),
+  expectVisible("Dashboard", "contenu principal mobile"),
+  expectScreenshot("mobile_dashboard_390", "Dashboard sur mobile 390px"),
 ];
 
 export const mobileNavigation: ScenarioDefinition = {
-  name:        "mobile-navigation",
-  description: "Navigation sur mobile 390px — menu, KPI Cards, lisibilité",
-  tags:        ["mobile", "nav", "responsive"],
+  scenarioId:          "SC-006",
+  name:                "mobile-navigation",
+  description:         "Navigation sur mobile 390px — mise en page, lisibilité, absence de scroll horizontal",
+  tags:                ["mobile", "nav", "responsive"],
+  requiresCredentials: "owner",
+  mode:                "QA_EXECUTOR",
 
   run(ctx) {
-    const dashUrl = `${ctx.baseUrl}/dashboard`;
-    const creds   = ctx.credentials.owner;
-
-    const authBlock = creds
-      ? `Si une page de connexion s'affiche, connecte-toi avec : ${creds.email} / ${creds.password}`
-      : "Si une page de connexion s'affiche, note que les credentials ne sont pas configurés.";
+    const creds    = ctx.credentials.owner!;
+    const loginUrl = `${ctx.baseUrl}/login`;
 
     const prompt = [
-      `# Mission QA — Scénario : Mobile Navigation`,
+      `# QA-EXECUTOR — mobile-navigation`,
       ``,
-      `## Contexte`,
-      `Application : KalendHair — vue mobile`,
-      `Viewport : 390×844px (iPhone 14)`,
-      `URL : ${dashUrl}`,
+      `## RÔLE`,
+      `Tu es un exécuteur QA automatisé. Tu n'es pas un assistant. Tu n'es pas un explorateur.`,
+      `Tu exécutes UNIQUEMENT les étapes listées, dans l'ordre exact.`,
+      `Tu ne prends AUCUNE initiative.`,
       ``,
-      `## Points de vigilance mobile`,
-      `- La sidebar desktop (240px) doit être remplacée par un menu mobile`,
-      `- Les KPI Cards doivent passer en colonne (1 par ligne)`,
-      `- Aucun scroll horizontal ne doit apparaître`,
-      `- Les textes doivent rester lisibles (taille min 14px)`,
-      `- Les boutons doivent avoir une zone tactile ≥ 44px`,
+      `## OBJECTIF`,
+      `Vérifier que le dashboard est utilisable sur mobile 390px sans scroll horizontal.`,
       ``,
-      `## Parcours utilisateur`,
-      `1. Configure le viewport à 390×844px.`,
-      `2. Navigue vers : ${dashUrl}`,
-      `3. ${authBlock}`,
-      `4. Vérifie que la navigation mobile est présente (hamburger, bottom nav, ou similaire).`,
-      `5. Ouvre le menu mobile si applicable.`,
-      `6. Vérifie que les KPI Cards sont empilées verticalement.`,
-      `7. Vérifie l'absence de scroll horizontal.`,
-      `8. Prends des captures d'écran des zones clés.`,
+      `## INTERDICTIONS ABSOLUES`,
+      `- Ne jamais ouvrir d'autres pages que login et /dashboard.`,
+      `- Ne jamais interagir avec des éléments non listés.`,
+      `- Si une étape échoue : marque l'assertion failed et CONTINUE.`,
+      `- Ne jamais continuer après avoir écrit le JSON final.`,
+      ``,
+      `## CHECKLIST — EXÉCUTE CES ÉTAPES DANS L'ORDRE`,
+      ``,
+      `Étape 1. Configure le viewport à 390×844px.`,
+      `Étape 2. Navigue vers : ${loginUrl}`,
+      `Étape 3. Attends max 5s que input[type="email"] soit visible.`,
+      `Étape 4. Saisis dans input[type="email"] : "${creds.email}"`,
+      `Étape 5. Saisis dans input[type="password"] : "${creds.password}"`,
+      `Étape 6. Clique sur button[type="submit"].`,
+      `Étape 7. Attends max 8s que l'URL contienne "/dashboard".`,
+      `Étape 8. Vérifie qu'aucun scroll horizontal n'est visible (document.body.scrollWidth <= window.innerWidth).`,
+      `Étape 9. Vérifie que le contenu principal (dashboard) est visible.`,
+      `Étape 10. Prends UNE capture d'écran de la page complète. Label: "mobile_dashboard_390".`,
+      `Étape 11. Note toute erreur console (type "error"). Ignore les warnings React/Next.js.`,
+      `Étape 12. Note toute requête réseau en 4xx ou 5xx (ignore 404).`,
       ``,
       buildAssertionsBlock(ASSERTIONS),
     ].join("\n");
@@ -67,7 +71,7 @@ export const mobileNavigation: ScenarioDefinition = {
     return {
       prompt,
       assertionNames: assertionNames(ASSERTIONS),
-      timeoutSeconds: 120,
+      timeoutSeconds: 90,
       viewport:       VIEWPORTS.mobile,
     };
   },

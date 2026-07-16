@@ -6,6 +6,14 @@
 
 export type ManusEnvironment = "local" | "ci" | "staging" | "production";
 
+// ─── Modes d'exécution ────────────────────────────────────────────────────────
+
+/** QA_EXECUTOR : exécution déterministe, aucune exploration. QA_AGENT : exploration autorisée (futur). */
+export type ManusMode = "QA_EXECUTOR" | "QA_AGENT";
+
+/** Rôle de credentials requis par un scénario. */
+export type RequiredCredential = "owner" | "admin" | "manager" | "employee";
+
 // ─── Viewports ────────────────────────────────────────────────────────────────
 
 export type Viewport = {
@@ -51,14 +59,27 @@ export type ArtifactRef = {
   url?: string;
 };
 
+// ─── Validation captures d'écran ─────────────────────────────────────────────
+
+export type ScreenshotValidationResult = {
+  label:   string;
+  found:   boolean;  // URL non-nulle et non-vide retournée par Manus
+  valid:   boolean;  // URL est une URL valide (commence par http)
+  url?:    string;
+  error?:  string;
+};
+
 // ─── Scénarios ────────────────────────────────────────────────────────────────
 
 export type ScenarioResult = {
   name:          string;
   description:   string;
+  scenarioId?:   string;  // SC-001 … SC-007 — identifiant stable
+  tags?:         string[];  // hérité de ScenarioDefinition.tags — utilisé pour le scoring
   status:        "passed" | "failed" | "error" | "timeout";
   durationMs:    number;
   taskId:        string;
+  taskUrl?:      string;   // URL directe vers le task Manus (review manuelle)
   viewport:      Viewport;
   urlsVisited:   string[];
   assertions:    AssertionResult[];
@@ -70,6 +91,20 @@ export type ScenarioResult = {
   error?:        string;
   startedAt:     string;
   completedAt:   string;
+  // ── Métriques d'exécution ──────────────────────────────────────────────────
+  pollCount?:          number;  // nombre de polls effectués
+  creditsConsumed?:    number;  // crédits Manus consommés
+  networkDurationMs?:  number;  // durée de création du task (POST)
+  pollingDurationMs?:  number;  // durée totale de polling
+  parseDurationMs?:    number;  // durée de parseManusResponse
+  // ── v2.1 ──────────────────────────────────────────────────────────────────
+  promptHash?:          string;   // SHA-256 du prompt final envoyé à Manus
+  screenshotValidation?: ScreenshotValidationResult[];
+  capturesAttendues?:   number;   // assertions screenshot déclarées
+  capturesProduites?:   number;   // screenshots retournés avec URL valide
+  capturesInvalides?:   number;   // screenshots manquants ou URL invalide
+  estimatedCostUsd?:    number;   // coût estimé en USD
+  dryRun?:              boolean;  // true si mode --dry-run
 };
 
 // ─── Run complet ──────────────────────────────────────────────────────────────
@@ -85,6 +120,10 @@ export type TestRunResult = {
   passedScenarios: number;
   failedScenarios: number;
   scenarios:       ScenarioResult[];
+  // ── v2.1 ──────────────────────────────────────────────────────────────────
+  totalCreditsConsumed?: number;
+  totalEstimatedCostUsd?: number;
+  dryRun?: boolean;
 };
 
 // ─── Contexte ─────────────────────────────────────────────────────────────────
@@ -95,8 +134,11 @@ export type Credentials = {
 };
 
 export type TestContext = {
-  environment: ManusEnvironment;
-  baseUrl:     string;
+  environment:      ManusEnvironment;
+  baseUrl:          string;
+  vercelBypassUrl?: string;  // URL bypass SSO — activée uniquement si !nativeVercelIntegration
+  manusMode:        ManusMode;
+  nativeVercelIntegration: boolean;  // true = MANUS_NATIVE_VERCEL_INTEGRATION=true → bypass désactivé
   credentials: {
     owner?:    Credentials;
     manager?:  Credentials;
@@ -115,10 +157,13 @@ export type ScenarioRunSpec = {
 };
 
 export type ScenarioDefinition = {
-  name:        string;
-  description: string;
-  tags:        string[];
-  run:         (ctx: TestContext) => ScenarioRunSpec;
+  scenarioId:           string;              // SC-001 … SC-007 — identifiant stable et immuable
+  name:                 string;
+  description:          string;
+  tags:                 string[];
+  requiresCredentials?: RequiredCredential;  // arrêt anticipé si credentials absents
+  mode?:                ManusMode;           // défaut: QA_EXECUTOR
+  run:                  (ctx: TestContext) => ScenarioRunSpec;
 };
 
 // ─── QA Score ─────────────────────────────────────────────────────────────────
@@ -133,11 +178,20 @@ export type QAScoreBreakdown = {
   performance:   number;  // 0–5
 };
 
+/**
+ * "NO_SCENARIOS_SELECTED" — statut dédié introduit suite à l'audit Devil's
+ * Advocate (mission corrective) : un run à 0 scénario ne doit JAMAIS pouvoir
+ * être confondu avec un run réussi. Distinct de BLOCK_MERGE (qui suppose que
+ * des scénarios ont réellement été évalués et ont échoué).
+ */
+export type QAVerdict = "READY_FOR_MERGE" | "BLOCK_MERGE" | "NO_SCENARIOS_SELECTED";
+
 export type QAScore = {
-  total:     number;
-  verdict:   "READY_FOR_MERGE" | "BLOCK_MERGE";
-  threshold: number;
-  breakdown: QAScoreBreakdown;
+  total:           number;
+  verdict:         QAVerdict;
+  threshold:       number;
+  breakdown:       QAScoreBreakdown;
+  qaInfraBlocked?: boolean;
 };
 
 // ─── Metadata ────────────────────────────────────────────────────────────────
@@ -153,6 +207,26 @@ export type RunMetadata = {
   manusVersion:   string;
   durationMs:     number;
   totalScenarios: number;
+  // ── v2.1 ──────────────────────────────────────────────────────────────────
+  frameworkVersion: string;  // "2.1.0"
+  schemaVersion:    string;  // "2"
+  promptVersion:    string;  // "qa-executor-v2"
+  dryRun?:          boolean;
+};
+
+// ─── Qualité du framework ─────────────────────────────────────────────────────
+
+export type FrameworkQuality = {
+  promptVersion:        boolean;
+  frameworkVersion:     boolean;
+  scenarioVersion:      boolean;
+  promptHash:           boolean;
+  dryRunCompatible:     boolean;
+  screenshotValidation: boolean;
+  credentialValidation: boolean;
+  qaExecutor:           boolean;
+  pollingStrategy:      string;
+  nativeVercel:         boolean;
 };
 
 // ─── Comparaison ─────────────────────────────────────────────────────────────

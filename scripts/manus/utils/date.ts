@@ -8,15 +8,27 @@ export function nowIso(): string {
 }
 
 /**
- * Identifiant de run unique basé sur la date.
- * Format : "2026-07-08_14-30-00" (compatible nom de dossier sur tous les OS)
+ * Identifiant de run basé sur la date, à la milliseconde près.
+ * Format : "2026-07-08_14-30-00-123" (compatible nom de dossier sur tous les OS)
+ *
+ * Correctif Devil's Advocate (hypothèse dangereuse) : la précision à la
+ * seconde utilisée jusqu'ici permettait à deux runs lancés dans la même
+ * seconde (deux jobs CI concurrents, un double-lancement manuel) de
+ * collisionner sur le même runId — même répertoire, même events.jsonl
+ * partagé, rapports (writeFileSync, non additif) silencieusement écrasés
+ * par le run qui termine en dernier. La précision milliseconde ne rend pas
+ * la collision structurellement impossible mais la rend improbable au point
+ * de sortir du cadre de cette correction (un identifiant garanti unique,
+ * ex. UUID, resterait la solution structurelle — hors périmètre ici, cf.
+ * rapport de mission : recommandation retenue comme telle).
  */
 export function runId(): string {
   return new Date()
     .toISOString()
-    .slice(0, 19)
     .replace("T", "_")
-    .replace(/:/g, "-");
+    .replace(/:/g, "-")
+    .replace(".", "-")
+    .replace("Z", "");
 }
 
 /** Formate une durée en ms en chaîne lisible. */

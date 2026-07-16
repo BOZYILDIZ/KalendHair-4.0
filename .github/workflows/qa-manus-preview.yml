@@ -1,0 +1,203 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# KalendHair — QA Manus on Vercel Preview
+#
+# STATUT : DÉSACTIVÉ — À ACTIVER APRÈS VALIDATION CHATGPT
+#
+# Ce workflow est intentionnellement désactivé (`on: {}` → aucun déclencheur).
+# Il documente la stratégie d'intégration CI prévue pour Manus QA v2.2.
+#
+# Pour activer :
+#   1. Remplacer `on: {}` par le bloc `on:` commenté ci-dessous.
+#   2. Configurer les secrets GitHub (voir section SECRETS).
+#   3. Valider avec ChatGPT + PR dédiée.
+#   4. Merger sur main.
+#
+# ─────────────────────────────────────────────────────────────────────────────
+
+# DÉCLENCHEURS PRÉVUS (commentés — désactivé pour l'instant) :
+# on:
+#   deployment_status:
+#     # Se déclenche quand Vercel publie une preview URL
+#     # Le workflow récupère l'URL via ${{ github.event.deployment_status.target_url }}
+#   pull_request:
+#     types: [opened, synchronize, reopened]
+#     branches:
+#       - main
+#   workflow_dispatch:
+#     inputs:
+#       base_url:
+#         description: "URL de l'application à tester (ex: https://pr-123.vercel.app)"
+#         required: true
+#       dry_run:
+#         description: "Exécuter en mode dry-run (true/false)"
+#         required: false
+#         default: "false"
+
+on: {}  # Désactivé — aucun déclencheur actif
+
+name: QA Manus — Preview
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SECRETS REQUIS (à configurer dans Settings → Secrets → Actions) :
+#
+#   MANUS_API_KEY           — clé API Manus (obligatoire)
+#   QA_OWNER_EMAIL          — email du compte propriétaire de test
+#   QA_OWNER_PASSWORD       — mot de passe du compte propriétaire
+#   QA_ADMIN_EMAIL          — email du compte admin de test
+#   QA_ADMIN_PASSWORD       — mot de passe du compte admin
+#   VERCEL_PROTECTION_BYPASS — token bypass SSO Vercel (si protection active)
+#
+# ─────────────────────────────────────────────────────────────────────────────
+
+env:
+  NODE_VERSION: "20"
+  MANUS_ENV: ci
+
+jobs:
+  qa-manus:
+    name: QA Manus (Manus AI Browser Agent)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      # ── 1. Checkout ────────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── 2. Setup Node + pnpm ──────────────────────────────────────────────
+      - name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # ── 3. Résoudre l'URL de preview ──────────────────────────────────────
+      # Pour deployment_status : l'URL est dans github.event.deployment_status.target_url
+      # Pour workflow_dispatch  : l'URL est passée en input
+      # Pour pull_request       : l'URL est construite depuis les métadonnées Vercel
+      - name: Resolve Preview URL
+        id: preview
+        run: |
+          if [ "${{ github.event_name }}" = "deployment_status" ]; then
+            PREVIEW_URL="${{ github.event.deployment_status.target_url }}"
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            PREVIEW_URL="${{ github.event.inputs.base_url }}"
+          else
+            # Fallback — peut être enrichi avec l'API Vercel
+            echo "⚠️  URL non déterminée automatiquement — utiliser workflow_dispatch."
+            exit 1
+          fi
+          echo "url=$PREVIEW_URL" >> "$GITHUB_OUTPUT"
+          echo "Preview URL resolved: $PREVIEW_URL"
+
+      # ── 4. Dry-run de validation ──────────────────────────────────────────
+      # Valide les prompts, les credentials et génère les hashes.
+      # Toujours exécuté avant le vrai run — zéro crédit consommé.
+      - name: Dry-run validation
+        run: npx tsx scripts/manus/run-all.ts --dry-run
+        env:
+          BASE_URL: ${{ steps.preview.outputs.url }}
+          MANUS_API_KEY: ${{ secrets.MANUS_API_KEY }}
+          QA_OWNER_EMAIL: ${{ secrets.QA_OWNER_EMAIL }}
+          QA_OWNER_PASSWORD: ${{ secrets.QA_OWNER_PASSWORD }}
+          QA_ADMIN_EMAIL: ${{ secrets.QA_ADMIN_EMAIL }}
+          QA_ADMIN_PASSWORD: ${{ secrets.QA_ADMIN_PASSWORD }}
+          VERCEL_PROTECTION_BYPASS: ${{ secrets.VERCEL_PROTECTION_BYPASS }}
+          MANUS_ENV: ci
+
+      # ── 5. Run QA complet ─────────────────────────────────────────────────
+      # Conditionnel : ignoré si dry_run=true (workflow_dispatch uniquement)
+      - name: Run QA scenarios
+        if: github.event.inputs.dry_run != 'true'
+        run: npx tsx scripts/manus/run-all.ts
+        env:
+          BASE_URL: ${{ steps.preview.outputs.url }}
+          MANUS_API_KEY: ${{ secrets.MANUS_API_KEY }}
+          QA_OWNER_EMAIL: ${{ secrets.QA_OWNER_EMAIL }}
+          QA_OWNER_PASSWORD: ${{ secrets.QA_OWNER_PASSWORD }}
+          QA_ADMIN_EMAIL: ${{ secrets.QA_ADMIN_EMAIL }}
+          QA_ADMIN_PASSWORD: ${{ secrets.QA_ADMIN_PASSWORD }}
+          VERCEL_PROTECTION_BYPASS: ${{ secrets.VERCEL_PROTECTION_BYPASS }}
+          MANUS_ENV: ci
+
+      # ── 6. Publication des artefacts ──────────────────────────────────────
+      # Rend les rapports disponibles depuis l'interface GitHub Actions.
+      - name: Upload QA reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: manus-qa-reports-${{ github.run_number }}
+          path: reports/manus/
+          retention-days: 30
+          if-no-files-found: warn
+
+      # ── 7. Lecture du verdict ─────────────────────────────────────────────
+      # Extrait le score et le verdict depuis dashboard.json.
+      # Fail le workflow si verdict = BLOCK_MERGE.
+      - name: Check QA verdict
+        if: github.event.inputs.dry_run != 'true'
+        run: |
+          if [ -f "reports/manus/dashboard.json" ]; then
+            VERDICT=$(node -e "const d=require('./reports/manus/dashboard.json'); console.log(d.latestVerdict)")
+            SCORE=$(node -e "const d=require('./reports/manus/dashboard.json'); console.log(d.latestScore)")
+            echo "QA Score: $SCORE/100"
+            echo "Verdict: $VERDICT"
+            if [ "$VERDICT" = "BLOCK_MERGE" ]; then
+              echo "🚫 QA BLOCK_MERGE — La PR ne peut pas merger. Score: $SCORE/100"
+              exit 1
+            else
+              echo "✅ QA READY_FOR_MERGE — Score: $SCORE/100"
+            fi
+          else
+            echo "⚠️  dashboard.json introuvable — run probablement incomplet"
+            exit 1
+          fi
+
+      # ── 8. Commentaire PR (optionnel — nécessite gh token) ────────────────
+      # Poste un résumé QA directement sur la PR GitHub.
+      # À activer une fois l'authentification gh configurée.
+      #
+      # - name: Comment PR with QA summary
+      #   if: github.event_name == 'pull_request'
+      #   uses: actions/github-script@v7
+      #   with:
+      #     script: |
+      #       const fs = require('fs')
+      #       const report = fs.readFileSync('reports/manus/latest/report.md', 'utf8')
+      #       const summary = report.split('\n').slice(0, 50).join('\n')
+      #       github.rest.issues.createComment({
+      #         issue_number: context.issue.number,
+      #         owner: context.repo.owner,
+      #         repo: context.repo.repo,
+      #         body: '## 🤖 Manus QA Report\n\n' + summary
+      #       })
+
+# ─────────────────────────────────────────────────────────────────────────────
+# NOTES D'ARCHITECTURE (à valider avant activation) :
+#
+# 1. COÛT : chaque run consomme ~2-10 crédits Manus par scénario.
+#    Avec 7 scénarios : 14-70 crédits par run (~$0.14-$0.70).
+#    Sur 50 PRs/mois : ~$35-$35/mois. À évaluer par rapport à la valeur.
+#
+# 2. DURÉE : 7 scénarios × ~90s = ~10 minutes.
+#    Ajouter du parallélisme (Mission 2.2) pour réduire à ~3 minutes.
+#
+# 3. CREDENTIALS : utiliser des comptes de test dédiés CI, pas les comptes prod.
+#    Créer QA_OWNER_CI et QA_ADMIN_CI séparés.
+#
+# 4. SÉCURITÉ : MANUS_API_KEY est un secret GitHub. Ne jamais le printer.
+#    Le runner Manus ne l'affiche jamais (cf. utils/env.ts).
+#
+# 5. DÉCLENCHEUR OPTIMAL : deployment_status + filtre sur environment=Preview
+#    garantit que le QA ne tourne que sur les previews effectivement déployées.
+#
+# 6. SMOKE vs FULL : en CI, envisager --tag smoke (SC-001, SC-003) pour
+#    les PRs, et le run complet uniquement sur staging avant release.
+# ─────────────────────────────────────────────────────────────────────────────

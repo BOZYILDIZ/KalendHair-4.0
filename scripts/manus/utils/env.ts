@@ -4,7 +4,7 @@
 
 import { config } from "dotenv";
 import { resolve } from "path";
-import type { ManusEnvironment } from "../core/types";
+import type { ManusEnvironment, ManusMode } from "../core/types";
 
 // ─── Chargement ───────────────────────────────────────────────────────────────
 
@@ -83,4 +83,37 @@ export function getAdminCredentials(): { email: string; password: string } | und
   const password = process.env["QA_ADMIN_PASSWORD"];
   if (!email || !password) return undefined;
   return { email, password };
+}
+
+/**
+ * Retourne le token _vercel_share pour bypasser Vercel Deployment Protection.
+ * Undefined si absent — Manus fonctionnera sans bypass (peut timeout sur SSO).
+ * ⛔ Ne jamais logguer cette valeur.
+ */
+export function getVercelProtectionBypassToken(): string | undefined {
+  return process.env["VERCEL_PROTECTION_BYPASS"] || undefined;
+}
+
+/**
+ * Retourne le mode d'exécution Manus (défaut : QA_EXECUTOR).
+ * QA_EXECUTOR : déterministe, aucune exploration.
+ * QA_AGENT    : exploration autorisée (futur).
+ */
+export function getManusMode(): ManusMode {
+  const mode = process.env["MANUS_MODE"] ?? "QA_EXECUTOR";
+  if (mode !== "QA_EXECUTOR" && mode !== "QA_AGENT") {
+    throw new Error(
+      `MANUS_MODE invalide : "${mode}". Valeurs acceptées : QA_EXECUTOR, QA_AGENT`
+    );
+  }
+  return mode as ManusMode;
+}
+
+/**
+ * Retourne true si Manus dispose d'une intégration Vercel native (OAuth).
+ * Quand true : le bypass _vercel_share est désactivé — inutile et coûteux.
+ * Configurer via MANUS_NATIVE_VERCEL_INTEGRATION=true dans .env.local.
+ */
+export function hasNativeVercelIntegration(): boolean {
+  return process.env["MANUS_NATIVE_VERCEL_INTEGRATION"] === "true";
 }
