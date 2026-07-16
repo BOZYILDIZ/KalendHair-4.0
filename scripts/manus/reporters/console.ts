@@ -90,7 +90,9 @@ export class ConsoleReporter implements Reporter {
     console.log();
     console.log(`  ${scoreBar(score.total)}  ${score.total} / 100`);
     console.log();
-    if (score.qaInfraBlocked) {
+    if (verdict === "NO_SCENARIOS_SELECTED") {
+      console.log("  🚫  NO SCENARIOS SELECTED");
+    } else if (score.qaInfraBlocked) {
       console.log("  ⚠️   QA INFRASTRUCTURE BLOCKED");
       console.log("  (Tous les scénarios ont timeouté — score non représentatif)");
     } else {

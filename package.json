@@ -14,7 +14,8 @@
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",
     "db:studio": "prisma studio",
-    "db:validate": "prisma validate"
+    "db:validate": "prisma validate",
+    "test:manus": "node --test --import tsx/esm 'scripts/manus/__tests__/**/*.test.ts'"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

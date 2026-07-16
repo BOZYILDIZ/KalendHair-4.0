@@ -1,6 +1,14 @@
-# KalendHair — Manus QA Framework v2.1
+# KalendHair — Manus QA Framework v2.2.1
 
 Infrastructure QA pilotée par Manus (agent IA navigateur), entièrement dans `scripts/manus/`.
+
+> ⚠️ Ce README couvre encore principalement les fonctionnalités v2.1. Nouveautés
+> v2.2/v2.2.1 non détaillées ci-dessous : `--profile smoke|standard|full|nightly`,
+> `--concurrency N` (exécution parallèle via sémaphore), l'abstraction
+> `AgentProvider` (`ManusProvider` / `MockProvider`), le module `analysis/auto-audit.ts`,
+> et la suite de tests unitaires `__tests__/`. Voir `docs/qa/MANUS_ROADMAP.md`
+> et le rapport CTO v2.2.1 pour le détail. Une refonte complète de ce README
+> est recommandée (cf. Mission 8 — audit documentation, v2.2.1).
 
 ---
 
@@ -26,7 +34,7 @@ tsx scripts/manus/run-all.ts --dry-run
 
 | Constante          | Valeur            |
 |--------------------|-------------------|
-| `frameworkVersion` | `2.1.0`           |
+| `frameworkVersion` | `2.2.1`           |
 | `schemaVersion`    | `2`               |
 | `promptVersion`    | `qa-executor-v2`  |
 

@@ -15,6 +15,7 @@ import type {
   AnalysisRunStats,
   QualityGate,
   QAScore,
+  QAVerdict,
   TestRunResult,
   HistoryEntry,
   RunComparison,
@@ -28,6 +29,18 @@ export function evaluateQualityGates(run: TestRunResult, score: QAScore): Qualit
   const failedScenarios = run.failedScenarios;
 
   return [
+    {
+      // Défense en profondeur (mission corrective Devil's Advocate) : un run
+      // à 0 scénario ne doit jamais franchir les quality gates avec un
+      // verdict positif, même si un futur appelant construit un AnalysisResult
+      // sans passer par computeQAScore() (qui gère déjà ce cas en amont).
+      name:        "Scénarios sélectionnés",
+      condition:   "totalScenarios > 0",
+      passed:      run.totalScenarios > 0,
+      value:       run.totalScenarios,
+      threshold:   0,
+      consequence: "BLOCK_MERGE",
+    },
     {
       name:        "Erreurs console",
       condition:   "consoleErrors === 0",
@@ -116,14 +129,21 @@ export function buildAnalysis(
 
 // ─── Verdict final consolidé ─────────────────────────────────────────────────
 
-/** Retourne le verdict définitif (quality gates > score seul). */
-export function finalVerdict(summary: RunSummary): "READY_FOR_MERGE" | "BLOCK_MERGE" {
+/**
+ * Retourne le verdict définitif (quality gates > score seul).
+ * NO_SCENARIOS_SELECTED est prioritaire sur tout : un run sans scénario ne
+ * doit jamais être requalifié en READY_FOR_MERGE ni même en BLOCK_MERGE
+ * "normal" — c'est un statut de refus, pas un résultat de scoring.
+ */
+export function finalVerdict(summary: RunSummary): QAVerdict {
+  if (summary.score.verdict === "NO_SCENARIOS_SELECTED") return "NO_SCENARIOS_SELECTED";
   return summary.analysis?.verdictFromGates ?? summary.score.verdict;
 }
 
 // ─── Helpers affichage ────────────────────────────────────────────────────────
 
-export function verdictBanner(verdict: "READY_FOR_MERGE" | "BLOCK_MERGE"): string {
+export function verdictBanner(verdict: QAVerdict): string {
+  if (verdict === "NO_SCENARIOS_SELECTED") return "🚫  NO SCENARIOS SELECTED";
   return verdict === "READY_FOR_MERGE"
     ? "✅  READY FOR MERGE"
     : "🚫  BLOCK MERGE";
