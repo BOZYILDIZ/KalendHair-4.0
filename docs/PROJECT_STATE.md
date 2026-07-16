@@ -449,4 +449,21 @@ Sprint 21 : à définir avec ChatGPT après fin du pilote fermé.
 
 ---
 
-_Dernière mise à jour : 2026-06-29 — Phase 2 Self-Service Onboarding — PR #66 mergée (SHA `e8b817f`) + PR #67 mergée (SHA `5bd714c`). Wizard complet en production. PR #68 en cours (`onboarding/pr9-e2e-validation`) : bug EmployeeSchedule corrigé dans `completeOnboardingAction`, analyse E2E complète. lint ✅ · typecheck ✅ · build ✅ (83 routes). En attente validation ChatGPT avant merge._
+## Infrastructure QA Manus — V2 (EN COURS — non committée)
+
+Framework `scripts/manus/` entièrement refondu (session 2026-07-10). **Aucun commit — en attente validation ChatGPT.**
+
+### Changements V2 (sur disque, branche `fix/manus-vercel-sso-classification`)
+- **P0** : Credential pre-check (arrêt sans coût si `QA_OWNER_EMAIL`/`QA_OWNER_PASSWORD` absents), 7 scénarios réécrits (RÔLE/INTERDICTIONS/CHECKLIST/STOP), timeouts 300→90/120/150s, sélecteurs CSS précis, INSTRUCTION FINALE dans `buildAssertionsBlock()`
+- **P1** : 6 métriques ajoutées (`pollCount`, `creditsConsumed`, `taskUrl`, `pollingDurationMs`, `parseDurationMs`, `networkDurationMs`) dans report.json + timings.json + console + markdown
+- **P2** : Backoff polling `[2s, 2s, 5s, 10s, 15s]` vs fixe 5s
+- **P3** : Bypass SSO intelligent — `MANUS_NATIVE_VERCEL_INTEGRATION=true` → bypass désactivé
+- **Architecture** : Mode `QA_EXECUTOR` (défaut, déterministe) / `QA_AGENT` (futur)
+- **Validation** : `pnpm lint` ✅ · `pnpm tsc --noEmit` ✅ · `pnpm build` ✅
+
+### Action bloquante
+Renseigner `QA_OWNER_EMAIL` + `QA_OWNER_PASSWORD` dans `.env.local` (valeurs vides actuellement).
+
+---
+
+_Dernière mise à jour : 2026-07-10 — Manus QA Framework V2 implémenté (scripts/manus/, non committé). Phase 2 Self-Service Onboarding — PR #66 mergée (SHA `e8b817f`) + PR #67 mergée (SHA `5bd714c`). Wizard complet en production. PR #68 en cours (`onboarding/pr9-e2e-validation`) : bug EmployeeSchedule corrigé dans `completeOnboardingAction`, analyse E2E complète. lint ✅ · typecheck ✅ · build ✅ (83 routes). En attente validation ChatGPT avant merge (PR #68 + Manus V2 commit)._

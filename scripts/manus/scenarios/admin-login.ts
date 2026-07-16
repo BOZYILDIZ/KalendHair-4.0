@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// Scénario : Connexion Admin (back-office)
+// Scénario : Connexion Admin — v2 QA_EXECUTOR
 // Tags     : auth, admin, smoke
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -26,37 +26,48 @@ const ASSERTIONS = [
 ];
 
 export const adminLogin: ScenarioDefinition = {
-  name:        "admin-login",
-  description: "Connexion au back-office admin et vérification de l'accès",
-  tags:        ["auth", "admin", "smoke"],
+  scenarioId:          "SC-004",
+  name:                "admin-login",
+  description:         "Connexion au back-office admin et vérification de l'accès",
+  tags:                ["auth", "admin", "smoke"],
+  requiresCredentials: "admin",
+  mode:                "QA_EXECUTOR",
 
   run(ctx) {
+    const creds        = ctx.credentials.admin!;
     const adminLoginUrl = `${ctx.baseUrl}/admin/login`;
-    const creds         = ctx.credentials.admin;
-
-    const credBlock = creds
-      ? `Utilise les credentials admin suivants :\n- Email : ${creds.email}\n- Mot de passe : ${creds.password}`
-      : "⚠️ Aucun credential admin configuré (QA_ADMIN_EMAIL / QA_ADMIN_PASSWORD). " +
-        "Vérifie simplement que la page de connexion admin est accessible.";
 
     const prompt = [
-      `# Mission QA — Scénario : Admin Login`,
+      `# QA-EXECUTOR — admin-login`,
       ``,
-      `## Contexte`,
-      `Application : KalendHair — Back-office administration`,
-      `URL de départ : ${adminLoginUrl}`,
+      `## RÔLE`,
+      `Tu es un exécuteur QA automatisé. Tu n'es pas un assistant. Tu n'es pas un explorateur.`,
+      `Tu exécutes UNIQUEMENT les étapes listées, dans l'ordre exact.`,
+      `Tu ne prends AUCUNE initiative.`,
       ``,
-      `## Règle de sécurité importante`,
-      `⚠️ Le back-office admin est réservé à l'équipe interne KalendHair.`,
-      `Il ne doit PAS être accessible depuis un compte owner/manager normal.`,
+      `## OBJECTIF`,
+      `Vérifier que la connexion admin fonctionne et redirige vers /admin.`,
       ``,
-      `## Parcours utilisateur`,
-      `1. Navigue vers : ${adminLoginUrl}`,
-      `2. Vérifie que la page de connexion admin est affichée.`,
-      `3. ${credBlock}`,
-      `4. Soumets le formulaire.`,
-      `5. Vérifie la redirection vers /admin.`,
-      `6. Vérifie que le dashboard admin est affiché.`,
+      `## INTERDICTIONS ABSOLUES`,
+      `- Ne jamais naviguer au-delà de /admin (accueil du dashboard admin).`,
+      `- Ne jamais modifier de données admin.`,
+      `- Si une étape échoue : marque l'assertion failed et CONTINUE.`,
+      `- Ne jamais continuer après avoir écrit le JSON final.`,
+      ``,
+      `## CHECKLIST — EXÉCUTE CES ÉTAPES DANS L'ORDRE`,
+      ``,
+      `Étape 1. Navigue vers : ${adminLoginUrl}`,
+      `Étape 2. Attends max 5s que input[type="email"] soit visible.`,
+      `         Si absent : marque visible_titre_admin=false et passe à l'étape 7.`,
+      `Étape 3. Saisis dans input[type="email"] : "${creds.email}"`,
+      `Étape 4. Saisis dans input[type="password"] : "${creds.password}"`,
+      `Étape 5. Clique sur button[type="submit"].`,
+      `Étape 6. Attends max 8s que l'URL contienne "/admin".`,
+      `         Si absent : marque redirect_to__admin=false et route__admin=false.`,
+      `Étape 7. Cherche un texte contenant "Administration" dans la page.`,
+      `Étape 8. Prends UNE capture d'écran. Label: "admin_dashboard".`,
+      `Étape 9. Note toute erreur console (type "error").`,
+      `Étape 10. Note toute requête réseau en 4xx ou 5xx.`,
       ``,
       buildAssertionsBlock(ASSERTIONS),
     ].join("\n");
@@ -64,7 +75,7 @@ export const adminLogin: ScenarioDefinition = {
     return {
       prompt,
       assertionNames: assertionNames(ASSERTIONS),
-      timeoutSeconds: 120,
+      timeoutSeconds: 90,
       viewport:       VIEWPORTS.desktop,
     };
   },

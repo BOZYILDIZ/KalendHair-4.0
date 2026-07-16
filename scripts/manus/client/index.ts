@@ -15,20 +15,42 @@ interface ManusCreateResponse {
   id?:      string;
 }
 
+interface ManusTaskDetail {
+  status?:        string;  // "stopped" = completed, "failed" | "error" | "cancelled" = failure
+  output?:        string;
+  result?:        string;
+  summary?:       string;
+  error?:         string;
+  artifacts?:     Array<{ type?: string; name?: string; url?: string }>;
+  title?:         string;
+  credit_usage?:  number;  // crédits Manus consommés
+  task_url?:      string;  // URL directe vers le task dans l'UI Manus
+}
+
+// Vercel v2 API wraps the response: { ok: true, task: { status, output, ... } }
 interface ManusDetailResponse {
-  status?:    string;
-  output?:    string;
-  result?:    string;
-  summary?:   string;
-  error?:     string;
-  artifacts?: Array<{ type?: string; name?: string; url?: string }>;
+  ok?:   boolean;
+  task?: ManusTaskDetail;
+  // legacy flat shape (kept for compatibility)
+  status?:       string;
+  output?:       string;
+  result?:       string;
+  summary?:      string;
+  error?:        string;
+  artifacts?:    Array<{ type?: string; name?: string; url?: string }>;
+  credit_usage?: number;
+  task_url?:     string;
 }
 
 export interface ManusTaskOutput {
-  taskId:    string;
-  status:    "completed" | "failed" | "timeout";
-  rawOutput: string;
-  error?:    string;
+  taskId:           string;
+  taskUrl:          string;   // URL directe vers le task dans l'UI Manus (review manuelle)
+  status:           "completed" | "failed" | "timeout";
+  rawOutput:        string;
+  lastManusStatus?: string;
+  pollCount:        number;   // nombre de polls effectués
+  creditsConsumed?: number;   // crédits Manus consommés
+  error?:           string;
 }
 
 // ─── Headers ─────────────────────────────────────────────────────────────────
@@ -72,13 +94,17 @@ export async function pingManus(): Promise<{
 
 // ─── Création + polling ───────────────────────────────────────────────────────
 
-const POLL_INTERVAL_MS = 5_000;
-const TERMINAL_STATUSES = new Set(["completed", "failed", "error", "cancelled"]);
+// Backoff exponentiel : 2s, 2s, 5s, 10s, 15s, puis 15s pour la suite.
+const POLL_BACKOFF_MS = [2_000, 2_000, 5_000, 10_000, 15_000];
+const POLL_MAX_MS     = 15_000;
+
+// "stopped" = Manus v2 successful completion. "completed" kept for forward compat.
+const TERMINAL_STATUSES = new Set(["stopped", "completed", "failed", "error", "cancelled"]);
 
 /**
- * Crée une tâche Manus et attend son résultat via polling.
+ * Crée une tâche Manus et attend son résultat via polling avec backoff exponentiel.
  * @param prompt           Instruction complète pour l'agent Manus.
- * @param timeoutSeconds   Timeout max (défaut 120s).
+ * @param timeoutSeconds   Timeout max (défaut 120s). Doit être un garde-fou, pas une attente normale.
  */
 export async function createAndPollTask(
   prompt:          string,
@@ -103,12 +129,18 @@ export async function createAndPollTask(
   const taskId  = created.task_id ?? created.id ?? "";
   if (!taskId) throw new Error("Manus — task_id absent dans la réponse de création.");
 
-  // ── 2. Polling ────────────────────────────────────────────────────────────
-  const maxMs      = timeoutSeconds * 1000;
-  const startedAt  = Date.now();
+  // ── 2. Polling avec backoff ───────────────────────────────────────────────
+  const maxMs     = timeoutSeconds * 1000;
+  const startedAt = Date.now();
+
+  let lastDetail:      ManusDetailResponse | null = null;
+  let lastManusStatus  = "";
+  let lastCredits:     number | undefined;
+  let pollCount        = 0;
 
   while (Date.now() - startedAt < maxMs) {
-    await sleep(POLL_INTERVAL_MS);
+    const intervalMs = POLL_BACKOFF_MS[Math.min(pollCount, POLL_BACKOFF_MS.length - 1)] ?? POLL_MAX_MS;
+    await sleep(intervalMs);
 
     const pollRes = await fetch(`${apiUrl}/v2/task.detail?task_id=${taskId}`, {
       headers: hdrs,
@@ -118,8 +150,15 @@ export async function createAndPollTask(
       throw new Error(`Manus /v2/task.detail → HTTP ${pollRes.status}`);
     }
 
-    const detail = (await pollRes.json()) as ManusDetailResponse;
-    const status = (detail.status ?? "").toLowerCase();
+    pollCount++;
+    const detail  = (await pollRes.json()) as ManusDetailResponse;
+    const inner   = detail.task ?? detail;
+    const status  = (inner.status ?? "").toLowerCase();
+    const credits = inner.credit_usage;
+
+    lastDetail      = detail;
+    lastManusStatus = status;
+    if (credits !== undefined) lastCredits = credits;
 
     process.stdout.write(".");
 
@@ -127,21 +166,38 @@ export async function createAndPollTask(
 
     process.stdout.write("\n");
 
-    const rawOutput = detail.output ?? detail.result ?? detail.summary ?? "";
+    // Résoudre la taskUrl depuis l'API ou construire par défaut
+    const taskUrl = inner.task_url ?? `https://manus.im/app/${taskId}`;
+
+    const rawOutput = inner.output ?? inner.result ?? inner.summary ?? "";
+    const finalStatus = (status === "completed" || status === "stopped") ? "completed" : "failed";
     return {
       taskId,
-      status: status === "completed" ? "completed" : "failed",
+      taskUrl,
+      status:          finalStatus,
       rawOutput,
-      error:  detail.error,
+      lastManusStatus: status,
+      pollCount,
+      creditsConsumed: credits ?? lastCredits,
+      error:           inner.error,
     };
   }
 
   process.stdout.write("\n");
+  const lastInner  = lastDetail?.task ?? lastDetail ?? null;
+  const lastOutput = lastInner
+    ? (lastInner.output ?? lastInner.result ?? lastInner.summary ?? "")
+    : "";
+  const taskUrl = lastInner?.task_url ?? `https://manus.im/app/${taskId}`;
   return {
     taskId,
-    status:    "timeout",
-    rawOutput: "",
-    error:     `Timeout after ${timeoutSeconds}s`,
+    taskUrl,
+    status:          "timeout",
+    rawOutput:       lastOutput,
+    lastManusStatus: lastManusStatus || "unknown (no poll completed)",
+    pollCount,
+    creditsConsumed: lastCredits,
+    error:           `Timeout after ${timeoutSeconds}s — last Manus status: ${lastManusStatus || "unknown"}`,
   };
 }
 

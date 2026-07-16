@@ -9,6 +9,9 @@ import {
   getBaseUrl,
   getOwnerCredentials,
   getAdminCredentials,
+  getVercelProtectionBypassToken,
+  getManusMode,
+  hasNativeVercelIntegration,
 } from "../utils/env";
 
 // ─── Builder ──────────────────────────────────────────────────────────────────
@@ -20,12 +23,23 @@ import {
 export function buildTestContext(envOverride?: ManusEnvironment): TestContext {
   loadEnv();
 
-  const environment = envOverride ?? getManusEnv();
-  const baseUrl     = getBaseUrl(environment);
+  const environment            = envOverride ?? getManusEnv();
+  const baseUrl                = getBaseUrl(environment);
+  const manusMode              = getManusMode();
+  const nativeVercelIntegration = hasNativeVercelIntegration();
+
+  // Bypass SSO : activé uniquement si token présent ET pas d'intégration native
+  const bypassToken    = getVercelProtectionBypassToken();
+  const vercelBypassUrl = (!nativeVercelIntegration && bypassToken)
+    ? `${baseUrl}?_vercel_share=${bypassToken}`
+    : undefined;
 
   return {
     environment,
     baseUrl,
+    vercelBypassUrl,
+    manusMode,
+    nativeVercelIntegration,
     credentials: {
       owner:   getOwnerCredentials(),
       admin:   getAdminCredentials(),
