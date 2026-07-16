@@ -23,7 +23,15 @@ function loadPreviousRun(currentRunId: string): RunSummary | null {
       .map((d) => d.name)
       .sort()          // alphabétique = chronologique pour le format YYYY-MM-DD_HH-mm-ss
       .reverse();      // plus récent en premier
-  } catch {
+  } catch (err) {
+    // Erreur silencieuse identifiée par l'audit Devil's Advocate : un échec de
+    // lecture du répertoire (permission refusée, disque défaillant) était
+    // auparavant indiscernable de "aucun run précédent". Reste non-bloquant
+    // (la comparaison n'est pas critique pour la suite du run) mais visible.
+    console.warn(
+      `[QA] Impossible de lister les runs précédents (${root}) — comparaison ignorée pour ce run. ` +
+      `Erreur : ${err instanceof Error ? err.message : String(err)}`
+    );
     return null;
   }
 
@@ -33,7 +41,11 @@ function loadPreviousRun(currentRunId: string): RunSummary | null {
     try {
       const content = readFileSync(jsonPath, "utf-8");
       return JSON.parse(content) as RunSummary;
-    } catch {
+    } catch (err) {
+      console.warn(
+        `[QA] report.json illisible pour le run précédent "${dir}" — run ignoré, essai du run antérieur suivant. ` +
+        `Erreur : ${err instanceof Error ? err.message : String(err)}`
+      );
       continue;
     }
   }

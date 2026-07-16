@@ -20,8 +20,9 @@ import { resolve }                  from "path";
 import { formatDuration, formatDurationDelta } from "../utils/date";
 import { scoreBar }                            from "../core/score";
 import { severityEmoji }                       from "../analysis/severity";
-import { finalVerdict }                        from "../analysis/summary";
+import { finalVerdict, verdictBanner }         from "../analysis/summary";
 import { FRAMEWORK_VERSION, SCHEMA_VERSION, PROMPT_VERSION } from "../core/version";
+import { secretRedactionEngine }                             from "../core/redaction";
 import type {
   ManusEnvironment,
   Reporter,
@@ -37,6 +38,7 @@ import type {
   AnalysisResult,
   HistoryStats,
   FrameworkQuality,
+  QAVerdict,
 } from "../core/types";
 
 export class MarkdownReporter implements Reporter {
@@ -53,7 +55,7 @@ export class MarkdownReporter implements Reporter {
     const dir = resolve(process.cwd(), "reports", "manus", summary.run.runId);
     mkdirSync(dir, { recursive: true });
 
-    const md = buildMarkdown(summary);
+    const md = secretRedactionEngine.redact(buildMarkdown(summary));
     writeFileSync(resolve(dir, "report.md"), md, "utf-8");
     console.log(`[MD]   report.md → ${dir}/report.md`);
   }
@@ -78,7 +80,7 @@ function buildMarkdown(summary: RunSummary): string {
   lines.push("```");
   lines.push(`  ${scoreBar(score.total)}  ${score.total} / 100`);
   lines.push("");
-  lines.push(`  ${verdict === "READY_FOR_MERGE" ? "✅  READY FOR MERGE" : "🚫  BLOCK MERGE"}`);
+  lines.push(`  ${verdictBanner(verdict)}`);
   lines.push("```");
   lines.push("");
   lines.push(renderScoreTable(score));
@@ -245,7 +247,7 @@ function renderExecutiveSummary(
   return lines.join("\n");
 }
 
-function renderQualityGates(gates: QualityGate[], verdict: "READY_FOR_MERGE" | "BLOCK_MERGE"): string {
+function renderQualityGates(gates: QualityGate[], verdict: QAVerdict): string {
   const lines = [
     "| Gate                    | Condition             | Valeur | Seuil | Statut | Conséquence |",
     "|-------------------------|-----------------------|-------:|------:|--------|-------------|",
@@ -266,7 +268,9 @@ function renderQualityGates(gates: QualityGate[], verdict: "READY_FOR_MERGE" | "
   lines.push(
     verdict === "READY_FOR_MERGE"
       ? "**Verdict final : ✅ READY FOR MERGE**"
-      : "**Verdict final : 🚫 BLOCK MERGE**"
+      : verdict === "NO_SCENARIOS_SELECTED"
+        ? "**Verdict final : 🚫 NO SCENARIOS SELECTED**"
+        : "**Verdict final : 🚫 BLOCK MERGE**"
   );
 
   return lines.join("\n");

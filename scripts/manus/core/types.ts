@@ -75,6 +75,7 @@ export type ScenarioResult = {
   name:          string;
   description:   string;
   scenarioId?:   string;  // SC-001 … SC-007 — identifiant stable
+  tags?:         string[];  // hérité de ScenarioDefinition.tags — utilisé pour le scoring
   status:        "passed" | "failed" | "error" | "timeout";
   durationMs:    number;
   taskId:        string;
@@ -177,9 +178,17 @@ export type QAScoreBreakdown = {
   performance:   number;  // 0–5
 };
 
+/**
+ * "NO_SCENARIOS_SELECTED" — statut dédié introduit suite à l'audit Devil's
+ * Advocate (mission corrective) : un run à 0 scénario ne doit JAMAIS pouvoir
+ * être confondu avec un run réussi. Distinct de BLOCK_MERGE (qui suppose que
+ * des scénarios ont réellement été évalués et ont échoué).
+ */
+export type QAVerdict = "READY_FOR_MERGE" | "BLOCK_MERGE" | "NO_SCENARIOS_SELECTED";
+
 export type QAScore = {
   total:           number;
-  verdict:         "READY_FOR_MERGE" | "BLOCK_MERGE";
+  verdict:         QAVerdict;
   threshold:       number;
   breakdown:       QAScoreBreakdown;
   qaInfraBlocked?: boolean;

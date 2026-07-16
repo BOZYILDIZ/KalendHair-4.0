@@ -13,6 +13,7 @@ import {
   getManusMode,
   hasNativeVercelIntegration,
 } from "../utils/env";
+import { secretRedactionEngine } from "./redaction";
 
 // ─── Builder ──────────────────────────────────────────────────────────────────
 
@@ -34,6 +35,20 @@ export function buildTestContext(envOverride?: ManusEnvironment): TestContext {
     ? `${baseUrl}?_vercel_share=${bypassToken}`
     : undefined;
 
+  const owner = getOwnerCredentials();
+  const admin = getAdminCredentials();
+
+  // ── Enregistrement dans le moteur de redaction (v2.4) ────────────────────
+  // Dès que ces valeurs existent en mémoire, elles sont enregistrées comme
+  // secrets — toute occurrence future dans un texte/objet écrit sur disque
+  // (rawOutput, dashboard, événements) sera automatiquement masquée.
+  // Lecture directe de process.env pour MANUS_API_KEY : getManusApiKey()
+  // lève une exception si absente, ce qui casserait le dry-run sans clé.
+  secretRedactionEngine.registerSecret("MANUS_API_KEY", process.env["MANUS_API_KEY"]);
+  secretRedactionEngine.registerSecret("VERCEL_BYPASS_TOKEN", bypassToken);
+  secretRedactionEngine.registerSecret("QA_OWNER_PASSWORD", owner?.password);
+  secretRedactionEngine.registerSecret("QA_ADMIN_PASSWORD", admin?.password);
+
   return {
     environment,
     baseUrl,
@@ -41,8 +56,8 @@ export function buildTestContext(envOverride?: ManusEnvironment): TestContext {
     manusMode,
     nativeVercelIntegration,
     credentials: {
-      owner:   getOwnerCredentials(),
-      admin:   getAdminCredentials(),
+      owner,
+      admin,
     },
   };
 }
